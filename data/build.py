@@ -1,0 +1,269 @@
+#!/usr/bin/env python3
+"""Build the Lake Wallenpaupack 3D map data.
+
+Inputs (all in this folder; see fetch_osm.py / fetch_dem.py for how they are made):
+  area.json            the rectangle the map covers
+  dem.npy              elevation grid (Terrarium tiles)
+  osm_roads.json       OpenStreetMap roads
+  osm_water.json       OpenStreetMap lakes, streams, beaches, wetlands
+  osm_places.json      OpenStreetMap places: marinas, launches, food, lodging, parks ...
+  osm_piers.json       OpenStreetMap piers and docks
+  buildings.geojsonl   Overture building footprints
+  places_overture.geojsonl  Overture business listings
+  places.json          hand-kept additions and corrections (optional)
+
+Outputs:
+  ../docs/lake-data.json        terrain, water, roads, places
+  ../docs/tiles/b_<i>_<j>.json  building footprints, one file per map tile (loaded as you zoom in)
+
+Run:  python build.py
+"""
+import base64, json, math, os, re
+import numpy as np
+from shapely.geometry import shape, box, LineString, Polygon, Point
+from shapely.ops import polygonize, unary_union
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+def p(name): return os.path.join(HERE, name)
+def load(name):
+    return json.load(open(p(name)))['elements'] if os.path.exists(p(name)) else []
+
+A = json.load(open(p('area.json')))
+W, S, E, N = A['W'], A['S'], A['E'], A['N']
+lat0, lon0 = (S + N) / 2, (W + E) / 2
+KX = math.cos(math.radians(lat0)) * 111320.0
+KZ = 110574.0
+NT = 8                                      # the map is cut into NT x NT tiles for close-up detail
+
+def xz(lon, lat): return [round((lon - lon0) * KX, 1), round(-(lat - lat0) * KZ, 1)]
+def ring_xz(coords, nd=1): return [[round((c[0] - lon0) * KX, nd), round(-(c[1] - lat0) * KZ, nd)] for c in coords]
+bbox = box(W, S, E, N)
+xmin, zmin = xz(W, N); xmax, zmax = xz(E, S)
+TOL = 2.0 / KZ                              # simplify to about two metres
+
+# ---- the block's edge: the rectangle, a little inside the data so nothing is cut ragged
+m = 40
+boundary = [[xmin + m, zmin + m], [xmax - m, zmin + m], [xmax - m, zmax - m], [xmin + m, zmax - m], [xmin + m, zmin + m]]
+bxz = Polygon(boundary)
+
+# ---- elevation
+dem = np.load(p('dem.npy')).astype(np.float32)
+emin = float(dem.min())
+dem_b64 = base64.b64encode(np.clip(np.round((dem - emin) * 10), 0, 65535).astype('<u2').tobytes()).decode()
+
+# ---- roads
+ROAD_KIND = {'motorway': 'hwy', 'trunk': 'hwy', 'primary': 'hwy', 'motorway_link': 'hwy', 'trunk_link': 'hwy', 'primary_link': 'hwy',
+             'secondary': 'main', 'tertiary': 'main', 'secondary_link': 'main', 'tertiary_link': 'main',
+             'unclassified': 'street', 'residential': 'street'}
+NAME_FIX = {12075988: 'Bluebird Drive'}     # corrections from people who live there, keyed by OSM way id
+el = load('osm_roads.json')
+nodes = {e['id']: (e['lon'], e['lat']) for e in el if e['type'] == 'node'}
+roads = []
+for w in el:
+    if w['type'] != 'way': continue
+    t = w.get('tags', {}); k = ROAD_KIND.get(t.get('highway'))
+    pts = [nodes[n] for n in w['nodes'] if n in nodes]
+    if not k or len(pts) < 2: continue
+    g = LineString(pts)
+    if not g.intersects(bbox): continue
+    name = NAME_FIX.get(w['id'], t.get('name', '')).replace('Cirle', 'Circle').replace('Tpk', 'Turnpike')
+    r = {'k': k, 'n': name, 'p': ring_xz(pts)}                       # nodes kept as they are so junctions still meet
+    if t.get('ref'): r['ref'] = t['ref'].split(';')[0]
+    roads.append(r)
+
+# ---- water, streams, beaches, wetlands
+el = load('osm_water.json')
+nodes = {e['id']: (e['lon'], e['lat']) for e in el if e['type'] == 'node'}
+ways = {e['id']: e for e in el if e['type'] == 'way'}
+def way_line(w): return [nodes[n] for n in w['nodes'] if n in nodes]
+def polys_out(g, min_area=250):
+    g = g.intersection(bbox).simplify(TOL)
+    out = []
+    for q in ([g] if isinstance(g, Polygon) else list(getattr(g, 'geoms', []))):
+        if isinstance(q, Polygon) and not q.is_empty and q.area * KX * KZ >= min_area:
+            out.append({'o': ring_xz(q.exterior.coords), 'h': [ring_xz(r.coords) for r in q.interiors if Polygon(r).area * KX * KZ > 150]})
+    return out
+water, features, used = [], [], set()
+for e in el:
+    if e['type'] != 'relation': continue
+    t = e.get('tags', {})
+    part = lambda role: [LineString(way_line(ways[m['ref']])) for m in e['members']
+                         if m['type'] == 'way' and m['role'] == role and m['ref'] in ways and len(way_line(ways[m['ref']])) > 1]
+    for m_ in e['members']: used.add(m_['ref'])
+    op = unary_union(list(polygonize(unary_union(part('outer'))))) if part('outer') else Polygon()
+    ip = unary_union(list(polygonize(unary_union(part('inner'))))) if part('inner') else None
+    g = op.difference(ip) if ip is not None and not ip.is_empty else op
+    if g.is_empty: continue
+    for q in polys_out(g):
+        q['n'] = t.get('name', ''); water.append(q)
+for w in ways.values():
+    t = w.get('tags', {})
+    if w['id'] in used and 'natural' not in t: continue
+    pts = way_line(w)
+    if t.get('waterway') in ('stream', 'river') and len(pts) > 1:
+        g = LineString(pts)
+        if g.intersects(bbox):
+            f = {'k': 'stream', 'p': ring_xz(g.simplify(TOL).coords)}
+            if t.get('name'): f['n'] = t['name']
+            features.append(f)
+        continue
+    if len(pts) < 4 or w['nodes'][0] != w['nodes'][-1]: continue
+    g = Polygon(pts).buffer(0)
+    if not g.intersects(bbox): continue
+    if t.get('natural') == 'water':
+        if w['id'] in used: continue
+        for q in polys_out(g):
+            q['n'] = t.get('name', ''); water.append(q)
+    elif t.get('natural') in ('beach', 'wetland'):
+        for q in polys_out(g, 400): features.append({'k': t['natural'], 'p': q['o']})
+
+# ---- piers
+el = load('osm_piers.json')
+pn = {e['id']: (e['lon'], e['lat']) for e in el if e['type'] == 'node'}
+piers = [ring_xz([pn[n] for n in w['nodes'] if n in pn]) for w in el if w['type'] == 'way']
+piers = [q for q in piers if len(q) > 1]
+
+# ---- lake name labels
+lakes, by_name = [], {}
+for q in water:
+    if q.get('n'): by_name.setdefault(q['n'], []).append(Polygon(q['o'], q['h']).buffer(0))
+for name, polys in by_name.items():
+    g = unary_union(polys).intersection(bxz)
+    if g.is_empty or g.area < 6000: continue
+    big = max(getattr(g, 'geoms', [g]), key=lambda s: s.area)
+    best, bd = big.representative_point(), -1
+    x0, z0, x1, z1 = big.bounds
+    for i in range(28):
+        for j in range(28):
+            c = Point(x0 + (x1 - x0) * (i + .5) / 28, z0 + (z1 - z0) * (j + .5) / 28)
+            if big.contains(c):
+                dd = big.exterior.distance(c)
+                if dd > bd: best, bd = c, dd
+    lakes.append({'n': name, 'x': round(best.x, 1), 'z': round(best.y, 1), 'a': round(g.area)})
+
+# ---- places
+CAT = [  # (category, test on tags, kind label, major?)
+    ('water', lambda t: t.get('leisure') == 'marina' or t.get('waterway') == 'boatyard', 'Marina', True),
+    ('water', lambda t: t.get('leisure') == 'slipway', 'Boat launch', True),
+    ('water', lambda t: t.get('amenity') == 'boat_rental', 'Boat rental', True),
+    ('water', lambda t: t.get('natural') == 'beach' or t.get('leisure') in ('beach_resort', 'swimming_area'), 'Beach', True),
+    ('water', lambda t: t.get('waterway') == 'dam' and 'Wallenpaupack' in t.get('name', ''), 'Dam', True),   # the small pond dams are not worth a pin
+    ('food', lambda t: t.get('amenity') in ('restaurant', 'bar', 'pub', 'cafe', 'fast_food', 'ice_cream'), None, False),
+    ('stay', lambda t: t.get('tourism') in ('hotel', 'motel', 'guest_house', 'hostel', 'chalet', 'resort', 'camp_site', 'caravan_site'), None, False),
+    ('nature', lambda t: t.get('leisure') in ('park', 'nature_reserve') or t.get('boundary') in ('protected_area', 'national_park')
+        or t.get('tourism') in ('viewpoint', 'picnic_site', 'attraction', 'museum', 'information') or t.get('leisure') == 'golf_course', None, False),
+    ('shops', lambda t: 'shop' in t or t.get('amenity') in ('fuel', 'marketplace', 'pharmacy', 'post_office', 'library'), None, False),
+]
+KIND = {'restaurant': 'Restaurant', 'bar': 'Bar', 'pub': 'Pub', 'cafe': 'Café', 'fast_food': 'Quick bite', 'ice_cream': 'Ice cream',
+        'hotel': 'Hotel', 'motel': 'Motel', 'guest_house': 'Guest house', 'chalet': 'Rental', 'resort': 'Resort', 'camp_site': 'Campground',
+        'caravan_site': 'RV park', 'park': 'Park', 'nature_reserve': 'Nature reserve', 'viewpoint': 'Viewpoint', 'picnic_site': 'Picnic area',
+        'attraction': 'Attraction', 'museum': 'Museum', 'information': 'Visitor information', 'golf_course': 'Golf course', 'fuel': 'Fuel',
+        'supermarket': 'Grocery', 'convenience': 'Convenience store', 'alcohol': 'Wine & spirits', 'bakery': 'Bakery', 'hardware': 'Hardware',
+        'marketplace': 'Market', 'pharmacy': 'Pharmacy', 'post_office': 'Post office', 'library': 'Library', 'protected_area': 'Protected land'}
+def slug(s): return re.sub(r'[^a-z0-9]+', '-', s.lower()).strip('-')
+pois, towns, seen = [], [], set()
+for e in load('osm_places.json'):
+    t = e.get('tags', {}); name = t.get('name')
+    c = e.get('center') or ({'lat': e['lat'], 'lon': e['lon']} if 'lat' in e else None)
+    if not c or not bbox.contains(Point(c['lon'], c['lat'])) or t.get('boundary') == 'administrative': continue
+    x, z = xz(c['lon'], c['lat'])
+    if t.get('place') in ('town', 'village', 'hamlet', 'suburb', 'neighbourhood', 'locality') or (t.get('landuse') == 'residential' and name):
+        if name and t.get('place') != 'locality':
+            towns.append({'n': name, 'x': x, 'z': z, 'k': 'town' if t.get('place') in ('town', 'village') else 'hamlet' if t.get('place') == 'hamlet' else 'community'})
+        continue
+    for cat, test, kind, major in CAT:
+        if not test(t): continue
+        kind = kind or KIND.get(t.get('amenity') or t.get('tourism') or t.get('leisure') or t.get('shop') or t.get('boundary'), 'Shop' if 'shop' in t else 'Place')
+        if not name:
+            if not major: break                                   # an unnamed shop is not worth a pin
+            name = kind
+        key = (slug(name), round(x / 150), round(z / 150))
+        if key in seen: break
+        seen.add(key)
+        q = {'id': f"{slug(name)}-{e['id']}", 'name': name, 'cat': cat, 'kind': kind, 'x': x, 'z': z, 'dlat': round(c['lat'], 6), 'dlon': round(c['lon'], 6)}
+        if major: q['major'] = True
+        facts = []
+        addr = ' '.join(v for v in [t.get('addr:housenumber'), t.get('addr:street')] if v)
+        if addr: facts.append(['Address', addr + (', ' + t['addr:city'] if t.get('addr:city') else '')])
+        if t.get('phone') or t.get('contact:phone'): facts.append(['Phone', t.get('phone') or t.get('contact:phone')])
+        if t.get('opening_hours'): facts.append(['Hours', t['opening_hours']])
+        if t.get('cuisine'): facts.append(['Serves', t['cuisine'].replace(';', ', ').replace('_', ' ')])
+        if facts: q['facts'] = facts
+        url = t.get('website') or t.get('contact:website')
+        if url: q['url'] = url if url.startswith('http') else 'https://' + url
+        pois.append(q); break
+# Overture's business listings fill in what OpenStreetMap lacks around here (shops, restaurants, lodging)
+def pretty(k): return k.replace('_', ' ').capitalize()
+def ov_cat(tax):
+    h = tax.get('hierarchy') or []; pr = tax.get('primary') or ''
+    if not h: return None
+    if pr in ('marina', 'boat_rental_and_training', 'boat_tours', 'beach', 'boat_charter', 'fishing_charter') or 'boat' in pr: return 'water', True
+    if h[0] == 'food_and_drink': return 'food', False
+    if h[0] == 'lodging': return (None if 'private_lodging' in h else ('stay', False))
+    if pr in ('park', 'historic_site', 'museum', 'golf_course', 'hiking_trail', 'nature_reserve', 'state_park', 'campground', 'ski_resort', 'amusement_park', 'art_gallery', 'winery', 'brewery', 'farm') \
+       or h[0] in ('attractions_and_activities', 'arts_and_entertainment'): return 'nature', False
+    if h[0] == 'shopping' or pr == 'gas_station': return 'shops', False
+    return None
+if os.path.exists(p('places_overture.geojsonl')):
+    for line in open(p('places_overture.geojsonl')):
+        f = json.loads(line); pr = f['properties']; name = (pr.get('names') or {}).get('primary')
+        hit = ov_cat(pr.get('taxonomy') or {})
+        if not name or not hit or not hit[0] or (pr.get('confidence') or 0) < 0.7: continue
+        lon, lat = f['geometry']['coordinates'][:2]
+        if not bbox.contains(Point(lon, lat)): continue
+        x, z = xz(lon, lat)
+        if any(slug(o['name']) == slug(name) and math.hypot(o['x'] - x, o['z'] - z) < 600 for o in pois): continue
+        if any(math.hypot(o['x'] - x, o['z'] - z) < 25 and (slug(name) in slug(o['name']) or slug(o['name']) in slug(name)) for o in pois): continue
+        q = {'id': 'ov-' + f['id'][:12], 'name': name, 'cat': hit[0], 'kind': pretty(pr['taxonomy']['primary']), 'x': x, 'z': z, 'dlat': round(lat, 6), 'dlon': round(lon, 6)}
+        if hit[1]: q['major'] = True
+        facts = []
+        ad = (pr.get('addresses') or [{}])[0]
+        if ad.get('freeform'): facts.append(['Address', ad['freeform'] + (', ' + ad['locality'] if ad.get('locality') else '')])
+        ph = (pr.get('phones') or [None])[0]
+        if ph:
+            d = re.sub(r'\D', '', ph)[-10:]
+            facts.append(['Phone', f'{d[:3]}-{d[3:6]}-{d[6:]}' if len(d) == 10 else ph])
+        if facts: q['facts'] = facts
+        web = (pr.get('websites') or [None])[0]
+        if web: q['url'] = web
+        pois.append(q)
+# hand-kept additions and corrections: same shape as above, with lat/lon; "drop": true removes an OSM place by id
+if os.path.exists(p('places.json')):
+    for q in json.load(open(p('places.json'))):
+        pois = [o for o in pois if o['id'] != q['id']]
+        if q.get('drop'): continue
+        q = dict(q); q['dlat'], q['dlon'] = q['lat'], q['lon']; q['x'], q['z'] = xz(q.pop('lon'), q.pop('lat')); pois.append(q)
+# one label per community name
+uniq = {}
+for t_ in towns:
+    k = slug(t_['n'])
+    if k not in uniq or t_['k'] == 'town': uniq[k] = t_
+towns = list(uniq.values())
+
+# ---- buildings, one file per tile
+tiles = {}
+if os.path.exists(p('buildings.geojsonl')):
+    for line in open(p('buildings.geojsonl')):
+        f = json.loads(line); g = shape(f['geometry'])
+        for q in ([g] if isinstance(g, Polygon) else list(getattr(g, 'geoms', []))):
+            q = q.simplify(0.000008)
+            c = q.centroid; x, z = xz(c.x, c.y)
+            if not bxz.contains(Point(x, z)): continue
+            i = min(NT - 1, int((x - xmin) / (xmax - xmin) * NT)); j = min(NT - 1, int((z - zmin) / (zmax - zmin) * NT))
+            h = f['properties'].get('height') or 5.0
+            tiles.setdefault((i, j), []).append({'h': round(float(h), 1), 'p': ring_xz(q.exterior.coords)[:-1]})
+site = os.path.join(HERE, '..', 'docs'); os.makedirs(os.path.join(site, 'tiles'), exist_ok=True)
+nb = 0
+for i in range(NT):
+    for j in range(NT):
+        b = tiles.get((i, j), []); nb += len(b)
+        json.dump(b, open(os.path.join(site, 'tiles', f'b_{i}_{j}.json'), 'w'), separators=(',', ':'))
+
+out = {'meta': {'W': W, 'S': S, 'E': E, 'N': N, 'lat0': lat0, 'lon0': lon0, 'kx': KX, 'kz': KZ, 'emin': emin,
+                'demW': int(dem.shape[1]), 'demH': int(dem.shape[0]), 'xmin': xmin, 'xmax': xmax, 'zmin': zmin, 'zmax': zmax, 'nt': NT},
+       'dem': dem_b64, 'boundary': boundary, 'lakes': lakes, 'water': water, 'roads': roads, 'features': features,
+       'piers': piers, 'towns': towns, 'pois': pois}
+dst = os.path.join(site, 'lake-data.json')
+json.dump(out, open(dst, 'w'), separators=(',', ':'))
+print('wrote', os.path.getsize(dst) // 1024, 'KB | roads', len(roads), 'water', len(water), 'features', len(features), 'piers', len(piers),
+      'lakes', len(lakes), 'towns', len(towns), 'pois', len(pois), 'buildings', nb)

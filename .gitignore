@@ -1,0 +1,9 @@
+# raw downloads: re-create with data/fetch_osm.py, data/fetch_dem.py and the overturemaps command in the README
+data/osm_*.json
+data/buildings.geojsonl
+data/places_overture.geojsonl
+data/*.state
+data/buildings.geojsonl.state
+data/dem.npy
+__pycache__/
+.DS_Store

@@ -1,0 +1,229 @@
+{
+ "updated": "2026-11-25",
+ "fireworks": {
+  "lat": 41.4525,
+  "lon": -75.187,
+  "note": "Launch point is not published; this is open water off the high school viewing area."
+ },
+ "fireworksDates": [
+  "07-04"
+ ],
+ "events": [
+  {
+   "n": "Small Business Saturday and Tree Lighting",
+   "d0": "2026-11-28",
+   "where": "Downtown Hawley",
+   "note": "Shopping day downtown, ending with the borough's tree lighting.",
+   "url": "https://www.poconomountains.com/hawley/events/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Hawley Farmers Market (indoors)",
+   "d0": "2026-11-27",
+   "d1": "2027-04-30",
+   "time": "Fridays 2–5 pm",
+   "where": "The Hawley Hub, 318 Main Ave, Hawley",
+   "note": "Weekly Friday market, indoors from November through April.",
+   "url": "https://www.poconomountains.com/hawley/events/farmers-market/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Hawley Winterfest",
+   "d0": "2026-12-11",
+   "d1": "2026-12-13",
+   "time": "All weekend",
+   "where": "Downtown Hawley",
+   "note": "Town-wide holiday weekend: markets, concerts, carriage rides, Santa visits and a lighted parade.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Winterfest Victorian Lighted Parade",
+   "d0": "2026-12-11",
+   "time": "6 pm",
+   "where": "Main Avenue to Bingham Park, Hawley",
+   "note": "Evening lighted parade down Main Avenue, then cocoa and s’mores in the park.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Visit with Santa",
+   "d0": "2026-12-11",
+   "d1": "2026-12-13",
+   "time": "Fri 5–8 pm · Sat & Sun 10 am–2 pm",
+   "where": "Lake Wally Cafe, 401 Main Ave, Hawley",
+   "note": "Santa meets children at the cafe across the Winterfest weekend.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/",
+   "lat": 41.4751,
+   "lon": -75.18241
+  },
+  {
+   "n": "Breakfast with Santa",
+   "d0": "2026-12-12",
+   "time": "9–11 am",
+   "where": "The Settlers Inn, 4 Main Ave, Hawley",
+   "note": "Breakfast seating with Santa at the inn.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/"
+  },
+  {
+   "n": "Santa Christmas Tree Express",
+   "d0": "2026-12-12",
+   "d1": "2026-12-13",
+   "time": "Sat 10 am, 1 pm, 4 pm · Sun 10 am, 1 pm",
+   "where": "Stourbridge Line, 100 Main Ave, Hawley",
+   "note": "Holiday excursion train with Santa, leaving from Hawley on Winterfest weekend.",
+   "url": "https://www.thestourbridgeline.net/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Winterfest Artisan Fair",
+   "d0": "2026-12-12",
+   "d1": "2026-12-13",
+   "time": "10 am–5 pm",
+   "where": "Hawley Silk Mill, 8 Silk Mill Dr",
+   "note": "Two-day indoor fair of local makers.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/",
+   "lat": 41.47191,
+   "lon": -75.17214
+  },
+  {
+   "n": "Christkindl Market",
+   "d0": "2026-12-12",
+   "d1": "2026-12-13",
+   "time": "Noon–5 pm",
+   "where": "Wallenpaupack Brewing Co., 73 Welwood Ave, Hawley",
+   "note": "Holiday vendor market at the brewery.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/",
+   "lat": 41.46572,
+   "lon": -75.18053
+  },
+  {
+   "n": "Road to Bethlehem live nativity",
+   "d0": "2026-12-12",
+   "time": "5–6:30 pm",
+   "where": "Hawley United Methodist Church, 315 Church St",
+   "note": "Free guided walk through seven live nativity scenes.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-winterfest/"
+  },
+  {
+   "n": "Wally Ice Fest",
+   "d0": "2027-02-06",
+   "d1": "2027-02-07",
+   "where": "875 Main St, Newfoundland (south of the map)",
+   "note": "Pond hockey weekend with skating, keg curling, bonfire, bands and food. Depends on the ice, so it is sometimes moved.",
+   "url": "https://wallyicefest.com/"
+  },
+  {
+   "n": "Run-Walk for the Osprey 10K",
+   "d0": "2027-04-18",
+   "where": "Lacawac Sanctuary",
+   "note": "Trail race raising funds for the Browning Beaver Meadow Sanctuary.",
+   "url": "https://lacawac.org/programs-and-events/",
+   "lat": 41.37928,
+   "lon": -75.29157
+  },
+  {
+   "n": "Cocktails for Conservation",
+   "d0": "2027-06-17",
+   "where": "Lacawac Sanctuary",
+   "note": "Ticketed fundraising evening for the sanctuary.",
+   "url": "https://lacawac.org/programs-and-events/",
+   "lat": 41.37928,
+   "lon": -75.29157
+  },
+  {
+   "n": "Wally Wine Fest",
+   "sort": "2027-06-04",
+   "usual": "Early June",
+   "last": "June 5–7, 2026",
+   "where": "Silver Birches, 205 Route 507",
+   "note": "Lakeside wine festival weekend.",
+   "url": "https://www.scrantonchamber.com/settlers-hospitality-announces-big-6-in-2026/",
+   "lat": 41.43196,
+   "lon": -75.18024
+  },
+  {
+   "n": "Fireworks over Lake Wallenpaupack",
+   "sort": "2027-07-04",
+   "usual": "July 4",
+   "last": "July 4, 2026",
+   "time": "Dusk, about 9:15 pm",
+   "where": "Watch from Wallenpaupack Area High School, 2552 Route 6, or from a boat",
+   "note": "Free fireworks over the north end of the lake, run by the Chamber on local donations. Rain date is usually July 5.",
+   "url": "https://www.poconomountains.com/blog/post/six-spots-to-say-ooh-and-awe-over-fourth-of-july-fireworks-in-the-pocono-mountains/",
+   "lat": 41.4525,
+   "lon": -75.187,
+   "fx": "fireworks"
+  },
+  {
+   "n": "Hawley Fourth of July Parade and Picnic",
+   "sort": "2027-07-04",
+   "usual": "July 4",
+   "last": "July 4, 2026",
+   "time": "Parade at noon",
+   "where": "Main Avenue to Bingham Park, Hawley",
+   "note": "Noon parade ending in a community picnic with live music.",
+   "url": "https://www.poconomountains.com/articles/post/pocono-patriotic-events-set-for-america-250/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Wildflower Concert Series",
+   "sort": "2027-07-05",
+   "usual": "July to mid-August",
+   "last": "July 5 – Aug 15, 2026",
+   "time": "6 pm",
+   "where": "Dorflinger-Suydam Wildlife Sanctuary, White Mills (north of the map)",
+   "note": "Outdoor summer concerts in a natural amphitheatre.",
+   "url": "https://dorflinger.org/wildflower-music-festival-landing-page/schedule/"
+  },
+  {
+   "n": "Farm-to-Plate Dinner",
+   "d0": "2027-08-07",
+   "where": "Lacawac Sanctuary",
+   "note": "Ticketed fundraising dinner at the sanctuary.",
+   "url": "https://lacawac.org/programs-and-events/",
+   "lat": 41.37928,
+   "lon": -75.29157
+  },
+  {
+   "n": "Wally Lake Fest",
+   "sort": "2027-08-27",
+   "usual": "Late August",
+   "last": "Aug 28–30, 2026",
+   "time": "Friday to Sunday",
+   "where": "Visitor Center, the high school, Silver Birches and the Tafton Dike",
+   "note": "End-of-summer lake festival: open market, boat and outdoor expo, a floating-stage concert, car cruise and live music.",
+   "url": "http://www.northernpoconos.org/wally-lake-fest/",
+   "lat": 41.44941,
+   "lon": -75.17906
+  },
+  {
+   "n": "Run to Read 5K",
+   "sort": "2027-09-26",
+   "usual": "Late September",
+   "last": "Sept 27, 2026",
+   "where": "Bingham Park, Hawley",
+   "note": "5K run and walk through Hawley for the public library.",
+   "url": "https://runscore.runsignup.com/Race/PA/Hawley/HawleyPublicLibraryRuntoRead5KRun",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Hawley Harvest Hoedown",
+   "sort": "2027-10-02",
+   "usual": "Early October",
+   "last": "Oct 3–4, 2026",
+   "where": "Downtown Hawley and Bingham Park",
+   "note": "Two-day autumn festival with live music, food and a children’s day in the park.",
+   "url": "https://www.poconomountains.com/hawley/events/hawley-harvest-hoedown/",
+   "lat": 41.47592,
+   "lon": -75.18212
+  }
+ ]
+}

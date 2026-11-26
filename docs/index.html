@@ -237,6 +237,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
         <input id="q" type="search" placeholder="Find a street or place…" autocomplete="off" spellcheck="false" aria-label="Find a street or place">
         <div id="results" role="listbox"></div>
       </div>
+      <button class="hbtn" id="bEvents" hidden>Events</button>
       <button class="hbtn" id="bComs">Communities</button>
       <button class="hbtn" id="bInfo">About</button>
     </div>
@@ -270,6 +271,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
+import { initSky } from './sky.js?v=1';
 
 const EX = 2.0;            // vertical exaggeration
 const DEPTH = 260;         // thickness of the earth block under the lowest point
@@ -1117,6 +1119,8 @@ if (EDIT){
   });
 }
 
+const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, getCamD: () => camD});
+
 /* ---------------- loop ---------------- */
 function resize(){ const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   for (const it of items) it.w = 0; }
@@ -1136,14 +1140,14 @@ function frame(now){
   document.body.classList.toggle('far', sphTmp.radius > 3600);
   camD = sphTmp.radius;
   tilesUpdate(controls.target.x, controls.target.z, camD);
-  life.update(now, camD);
+  life.update(now, camD); sky.update(now);
   renderer.render(scene, camera);
   layout();
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
 { const ld = document.getElementById('load'); ld.classList.add('done'); setTimeout(() => ld.remove(), 900); }
-window.__lake = {life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
+window.__lake = {sky, life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
 </script>
 </body>
 </html>

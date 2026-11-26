@@ -51,3 +51,12 @@ Community outlines: U.S. Census Bureau (TIGERweb, census designated places).
 
 © 2026 DeWitt Hutchins. All rights reserved. See `LICENSE`. The code, design, models and
 artwork are not open source; the map data keeps its own licences, listed above.
+
+## Weather, seasons and events
+
+`docs/sky.js` adds the live layer:
+
+- **Weather**: the National Weather Service hourly forecast and alerts for the middle of the lake (no key needed). Rain, snow, clouds, fog, lightning and night shading follow it. Test with `?wx=snow|rain|storm|fog|cloudy|clear` and `?night=1`.
+- **Fireworks**: after dark on July 4, or on the date of any event in `events.json` marked `"fx": "fireworks"`. Test with `?fx=fireworks`. The launch point is not published by the organiser; the spot in `events.json` is open water off the high school viewing area.
+- **Santa**: all day December 24 and until 7 am on the 25th, circling the lake. Test with `?fx=santa`.
+- **Events**: `docs/events.json`, kept by hand from the organisers' own pages. Each entry has a source link; events without an announced date carry `usual` and `last` instead of `d0`.

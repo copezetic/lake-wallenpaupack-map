@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25",
+ "updated": "2026-11-26",
  "fireworks": {
   "lat": 41.4525,
   "lon": -75.187,
@@ -269,6 +269,295 @@
    "note": "New Year’s Day hike at the sanctuary. Listed as a public event on Facebook.",
    "lat": 41.37928,
    "lon": -75.29157
+  },
+  {
+   "n": "Winter Wonderland Parade and Tree & Star Lighting",
+   "d0": "2026-11-27",
+   "time": "6 pm",
+   "where": "Main Street to Central Park, Honesdale",
+   "note": "Holiday parade down Main Street to Central Park, where the tree and the Irving Cliff star are lit. Rain date November 28; the borough's own calendar lists the 28th, so check before you go.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2026/11/27/winter-wonderland-paradetree-star-lighting-in-central-park",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Shop Small Saturday in Honesdale",
+   "d0": "2026-11-28",
+   "time": "10 am–4 pm",
+   "where": "Downtown Honesdale",
+   "note": "Downtown shopping day, with Santa at the Fred R. Miller Pavilion.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2026/11/28/shop-small-saturday",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Winter Wonderland Open House",
+   "d0": "2026-11-28",
+   "time": "11 am–4 pm",
+   "where": "Wayne County Historical Society Museum, 810 Main St, Honesdale",
+   "note": "Free museum open house with exhibits, a local author, live music and cocoa.",
+   "url": "https://www.waynehistorypa.com/news/current/11282026",
+   "lat": 41.57232,
+   "lon": -75.2558
+  },
+  {
+   "n": "Main Street Farmers Market (indoors)",
+   "d0": "2026-11-28",
+   "d1": "2027-04-24",
+   "time": "Saturdays 11 am–1 pm",
+   "where": "The Cooperage Project, 1030 Main St, Honesdale",
+   "note": "Indoor winter market every Saturday with local produce, meat, eggs, honey and baked goods.",
+   "url": "https://thecooperageproject.org/programs/markets/main-street-farmers-market/",
+   "lat": 41.57515,
+   "lon": -75.25726
+  },
+  {
+   "n": "Images of Hawley exhibit",
+   "d0": "2026-11-04",
+   "d1": "2026-12-15",
+   "time": "Wed–Sat 10 am–5 pm, Sun 1–5 pm",
+   "where": "Dorflinger Factory Museum, Route 6, White Mills",
+   "note": "Temporary exhibit of early photographs of Hawley by Louis Hensel.",
+   "url": "https://dorflingerfactorymuseum.com/news-events/",
+   "lat": 41.52652,
+   "lon": -75.20286
+  },
+  {
+   "n": "Acoustic Bluegrass Jam",
+   "d0": "2026-12-01",
+   "time": "7–9 pm",
+   "where": "The Cooperage Project, 1030 Main St, Honesdale",
+   "note": "Free first-Tuesday jam, open to acoustic players of any level and to listeners.",
+   "url": "https://thecooperageproject.org/events-news/acoustic-bluegrass-jam-422-433/?occurrence=2026-12-01",
+   "lat": 41.57515,
+   "lon": -75.25726
+  },
+  {
+   "n": "Great Honesdale Cookie Stroll",
+   "d0": "2026-12-05",
+   "time": "11 am–4 pm",
+   "where": "Downtown Honesdale",
+   "note": "Ticketed self-guided walk collecting a cookie from each of 13 downtown businesses.",
+   "url": "https://app.seemylegacy.com/community/2727/campaign/10845/overview",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Pick Your Own Christmas Tree",
+   "d0": "2026-12-05",
+   "time": "10 am–2 pm",
+   "where": "D&H Canal Park at Lock 31, Route 6, Hawley",
+   "note": "Historical society sale where you choose and cut a white pine from the park's field. Cash only, weather permitting.",
+   "url": "https://www.waynehistorypa.com/news/current/12052026",
+   "lat": 41.49398,
+   "lon": -75.19471
+  },
+  {
+   "n": "Candlelit Brass Madrigals Holiday Concert",
+   "d0": "2026-12-12",
+   "time": "6–8 pm",
+   "where": "The Cooperage Project, 1030 Main St, Honesdale",
+   "note": "Ticketed NEPA Philharmonic concert of Renaissance madrigals and carols for brass quintet and chamber singers.",
+   "url": "https://thecooperageproject.org/events-news/holidayconcert/?occurrence=2026-12-12",
+   "lat": 41.57515,
+   "lon": -75.25726
+  },
+  {
+   "n": "Winter Solstice Celebration",
+   "d0": "2026-12-20",
+   "time": "5 pm",
+   "where": "D&H Canal Park at Lock 31, Route 6, Hawley",
+   "note": "Free evening gathering with candle lighting and a bonfire. Reservations are needed by noon the day before.",
+   "url": "https://www.waynehistorypa.com/news/current/12202026",
+   "lat": 41.49398,
+   "lon": -75.19471
+  },
+  {
+   "n": "Honesdale Indoor Sidewalk Sales",
+   "usual": "Thursday to Saturday in the third week of February",
+   "last": "2026-02-21",
+   "sort": "2027-02-19",
+   "where": "Downtown Honesdale",
+   "note": "Winter clearance sales inside the downtown shops.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2026/2/19/indoor-sidewalk-sales",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Historical Society Spring Open House",
+   "usual": "First Saturday of May",
+   "last": "2026-05-02",
+   "sort": "2027-05-02",
+   "where": "Wayne County Historical Society Museum, 810 Main St, Honesdale",
+   "note": "Open house as the museum starts its longer season hours.",
+   "url": "https://www.waynehistorypa.com/news/current/05012026",
+   "lat": 41.57232,
+   "lon": -75.2558
+  },
+  {
+   "n": "Girls' Night Out in Honesdale",
+   "usual": "A Thursday evening in early May and again in mid-September",
+   "last": "2026-09-17",
+   "sort": "2027-05-07",
+   "where": "Downtown Honesdale",
+   "note": "Evening shopping event at the downtown businesses.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2026/9/17/girls-apos-night-out",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Saturdays at the Canal Park",
+   "usual": "Saturdays, late May to mid-October",
+   "last": "2026-10-10",
+   "sort": "2027-05-23",
+   "where": "D&H Canal Park at Lock 31, Route 6, Hawley",
+   "note": "Weekly afternoons with the canal store open and a guided tour of the lock house.",
+   "url": "https://www.waynehistorypa.com/news/current/10102026",
+   "lat": 41.49398,
+   "lon": -75.19471
+  },
+  {
+   "n": "Wayne County Farmers Market",
+   "usual": "Saturdays, late May through October, 9:30 am–12:30 pm",
+   "last": "2026-10-31",
+   "sort": "2027-05-23",
+   "where": "200 Willow Ave, Honesdale",
+   "note": "Outdoor growers' and producers' market, rain or shine.",
+   "url": "https://discovernepa.com/event/wayne-county-farmers-market/2026-09-26/",
+   "lat": 41.56729,
+   "lon": -75.25112
+  },
+  {
+   "n": "Glassworker's House open days",
+   "usual": "Last Sunday of the month, May to October, noon–4 pm",
+   "last": "2026-10-25",
+   "sort": "2027-05-31",
+   "where": "45 Charles St, White Mills",
+   "note": "Monthly open afternoons at a restored 1867 Dorflinger worker's house.",
+   "url": "https://dorflinger.org/historic-white-mills-landing-page/",
+   "lat": 41.52778,
+   "lon": -75.20079
+  },
+  {
+   "n": "Honesdale Roots & Rhythm Music & Arts Festival",
+   "usual": "A Saturday in mid to late June",
+   "last": "2026-06-20",
+   "sort": "2027-06-20",
+   "where": "Wayne County Fairgrounds, Route 191, Honesdale",
+   "note": "Free all-day music festival with artisans and food vendors; it moved to the fairgrounds in 2026.",
+   "url": "https://discovernepa.com/events/live-music-and-theater/on-tour-in-nepa-summer-concert-guide/",
+   "lat": 41.60001,
+   "lon": -75.26769
+  },
+  {
+   "n": "Honesdale Sidewalk Sale Days",
+   "usual": "Thursday to Saturday in mid-July",
+   "last": "2026-07-18",
+   "sort": "2027-07-16",
+   "where": "Downtown Honesdale",
+   "note": "Three days of outdoor sales downtown with live music.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2026/7/16/sidewalk-sale-days",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Summer Concert Series in Central Park",
+   "usual": "Monday and Thursday evenings in July",
+   "last": "2026-07-27",
+   "sort": "2027-07-02",
+   "where": "Central Park, Honesdale",
+   "note": "Outdoor concerts on the park stage. Bring a chair.",
+   "url": "https://honesdaleborough.com/events/summer-festival-of-events-500-pm-989-455-862-670-322/",
+   "lat": 41.57447,
+   "lon": -75.25498
+  },
+  {
+   "n": "Wayne County Fair",
+   "usual": "Nine days from the first Friday of August",
+   "last": "2026-08-15",
+   "sort": "2027-08-07",
+   "where": "Wayne County Fairgrounds, Route 191, Honesdale",
+   "note": "The county's agricultural fair.",
+   "url": "https://waynecountyfair.com/",
+   "lat": 41.60001,
+   "lon": -75.26769
+  },
+  {
+   "n": "Stourbridge Lion Anniversary",
+   "usual": "Saturday nearest August 8",
+   "last": "2026-08-08",
+   "sort": "2027-08-08",
+   "where": "Wayne County Historical Society Museum, 810 Main St, Honesdale",
+   "note": "Free museum day with talks around the full-size replica of the 1829 Stourbridge Lion locomotive.",
+   "url": "https://www.waynehistorypa.com/news/current/08082026",
+   "lat": 41.57232,
+   "lon": -75.2558
+  },
+  {
+   "n": "Greene-Dreher-Sterling Fair",
+   "usual": "Ten days from the last Friday of August, through Labor Day weekend",
+   "last": "2026-09-06",
+   "sort": "2027-08-28",
+   "where": "GDS Fairgrounds, 457 Crestmont Dr, Newfoundland",
+   "note": "Community agricultural fair with a rodeo, demolition derbies and tractor and truck pulls.",
+   "url": "https://gdsfair.org/fair-schedule/",
+   "lat": 41.30819,
+   "lon": -75.32263
+  },
+  {
+   "n": "White Mills Brilliant Weekend",
+   "usual": "Third weekend of September",
+   "last": "2026-09-20",
+   "sort": "2027-09-17",
+   "where": "Dorflinger Factory Museum, Route 6, White Mills",
+   "note": "Cut-glass weekend. The dealer show and sale is open to the public on Saturday and Sunday.",
+   "url": "https://dorflingerfactorymuseum.com/news-events/",
+   "lat": 41.52652,
+   "lon": -75.20286
+  },
+  {
+   "n": "GDS Fall Flea Market & Craft Show",
+   "usual": "Last Saturday of September",
+   "last": "2026-09-26",
+   "sort": "2027-09-26",
+   "where": "GDS Fairgrounds, 457 Crestmont Dr, Newfoundland",
+   "note": "Flea market and craft vendors at the fairgrounds.",
+   "url": "https://gdsfair.org/",
+   "lat": 41.30819,
+   "lon": -75.32263
+  },
+  {
+   "n": "Harvest & Heritage Day",
+   "usual": "Saturday of Columbus Day weekend",
+   "last": "2026-10-10",
+   "sort": "2027-10-10",
+   "where": "Downtown Honesdale",
+   "note": "Downtown fall festival with vendors, live music and a pumpkin carving contest.",
+   "url": "https://app.seemylegacy.com/community/2727/initiative/265",
+   "lat": 41.57676,
+   "lon": -75.25879
+  },
+  {
+   "n": "Fall Foliage Antiques Show",
+   "usual": "Columbus Day weekend, Saturday and Sunday",
+   "last": "2026-10-11",
+   "sort": "2027-10-10",
+   "where": "Dorflinger Factory Museum, Route 6, White Mills",
+   "note": "Two-day antiques show: glass, silver, jewelry, ceramics, textiles and furniture.",
+   "url": "https://dorflingerfactorymuseum.com/news-events/",
+   "lat": 41.52652,
+   "lon": -75.20286
+  },
+  {
+   "n": "Honesdale Halloween Parade",
+   "usual": "A weekday evening in the last week of October",
+   "last": "2025-10-28",
+   "sort": "2027-10-28",
+   "where": "Main Street, Honesdale",
+   "note": "Evening costume parade along Main Street.",
+   "url": "https://visithonesdalepa.com/events/calendar-of-events/#!event/2025/10/28/halloween-parade",
+   "lat": 41.57676,
+   "lon": -75.25879
   }
  ]
 }

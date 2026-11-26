@@ -1,0 +1,221 @@
+{
+ "updated": "2026-11-25",
+ "intro": "Bass, walleye and striped bass are what anglers travel here for. The Pennsylvania Fish and Boat Commission manages the lake under the ordinary statewide rules.",
+ "fine": "This is a guide, not the law. Seasons and limits change every year, so check the Commission's current summary book before you keep a fish.",
+ "sections": [
+  {
+   "title": "What's in the lake",
+   "items": [
+    {
+     "n": "Sport fish",
+     "note": "Smallmouth and largemouth bass, walleye, chain pickerel, yellow perch, striped bass, brown trout, channel catfish and panfish. The Commission's 2021 netting survey also turned up northern pike, black crappie, bluegill and rock bass.",
+     "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack.html",
+     "link": "Fish and Boat Commission lake page"
+    },
+    {
+     "n": "Stocked",
+     "note": "Striped bass, walleye and brown trout go in as fingerlings. Most of the lake's fish sustain themselves; channel catfish have reproduced on their own since 2001. The lake is also where the Commission collects its walleye brood stock."
+    }
+   ]
+  },
+  {
+   "title": "Rules in brief (2026)",
+   "text": "No special rules for this lake; statewide inland limits apply. A fishing licence is required from age 16.",
+   "items": [
+    {
+     "n": "Striped bass and hybrids",
+     "note": "Open all year. 20 inch minimum, 2 a day combined."
+    },
+    {
+     "n": "Walleye",
+     "note": "January 1 to March 14 and May 2 to December 31. 15 inch minimum, 6 a day."
+    },
+    {
+     "n": "Bass",
+     "note": "January 1 to April 10 and October 1 to December 31: 15 inch minimum, 4 a day. April 11 to June 12: catch and release only. June 13 to September 30: 12 inch minimum, 6 a day."
+    },
+    {
+     "n": "Pickerel and pike",
+     "note": "Pickerel 18 inch minimum, 4 a day. Northern pike 24 inch minimum, 2 a day."
+    },
+    {
+     "n": "Panfish and catfish",
+     "note": "Open all year, no minimum size, 50 a day combined."
+    },
+    {
+     "n": "Eating your catch",
+     "note": "Pennsylvania advises no more than one meal a month of walleye from this lake, because of mercury.",
+     "url": "https://files.dep.state.pa.us/Water/Drinking%20Water%20and%20Facility%20Regulation/WaterQualityPortalFiles/FishConsumption/FishAdvisory/FCA_SummaryBookExcerpt_2026.pdf",
+     "link": "State advisory list"
+    },
+    {
+     "n": "The official rules",
+     "note": "Seasons, sizes and limits for the current year.",
+     "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/fishandboat/documents/fishing/regulations/summarybook.pdf",
+     "link": "Fishing summary book"
+    },
+    {
+     "n": "Licences",
+     "url": "https://www.pa.gov/agencies/fishandboat/fishing/buy-fishing-license-permit",
+     "link": "Buy a licence"
+    }
+   ]
+  },
+  {
+   "title": "Where to launch",
+   "items": [
+    {
+     "n": "Mangan Cove access",
+     "poi": "boat-launch-1594865050",
+     "note": "Fish and Boat Commission ramp off Route 590, half a mile from Route 6. Free to launch, with an accessible fishing pier and room for about 48 trailers. The docks came out in late September 2026 for the drawdown and are due back in late March 2027."
+    },
+    {
+     "n": "Wilsonville Recreation Area",
+     "poi": "boat-launch-2670938738",
+     "note": "113 Ammon Drive, Hawley. Run for the dam's owner, Brookfield; launch fee, waived for campers."
+    },
+    {
+     "n": "Caffrey Recreation Area",
+     "lat": 41.4314,
+     "lon": -75.2309,
+     "note": "431 Lakeshore Drive, Lakeville. Launch fee, waived for campers."
+    },
+    {
+     "n": "Ironwood Point Recreation Area",
+     "lat": 41.3692,
+     "lon": -75.2789,
+     "note": "155 Burns Hill Road, Greentown. Launch fee, waived for campers; accessible fishing pier."
+    },
+    {
+     "n": "Ledgedale Recreation Area",
+     "poi": "boat-launch-1594858525",
+     "note": "153 Ledgedale Road, Greentown. Launch fee, waived for campers."
+    }
+   ]
+  },
+  {
+   "title": "Fishing from shore",
+   "items": [
+    {
+     "n": "Tafton Dike Observation Area",
+     "lat": 41.4448,
+     "lon": -75.1794,
+     "note": "Shoreline fishing access near Routes 6 and 507."
+    },
+    {
+     "n": "Shuman Point Natural Area",
+     "lat": 41.447,
+     "lon": -75.2039,
+     "note": "About two miles of shoreline to fish, with parking on Route 590."
+    },
+    {
+     "n": "Fishing piers",
+     "note": "Accessible piers at Mangan Cove and Ironwood Point."
+    },
+    {
+     "n": "Borrow a rod",
+     "note": "The visitors center at 2512 Route 6 lends rods and tackle free.",
+     "url": "https://www.poconomountains.com/things-to-do/water-recreation/lake-wallenpaupack/",
+     "link": "Pocono Mountains Visitors Bureau"
+    },
+    {
+     "n": "Not here",
+     "note": "Fishing is not allowed in the Beech House Creek Wildlife Refuge."
+    }
+   ]
+  },
+  {
+   "title": "Boating rules anglers meet",
+   "items": [
+    {
+     "n": "Speed",
+     "note": "25 mph from sunset to sunrise. 45 mph by day on weekends and holidays from the Saturday before Memorial Day through Labor Day. No horsepower limit."
+    },
+    {
+     "n": "Slow, no wake",
+     "note": "Wallenpaupack Creek; about 1,000 feet below Ledgedale Bridge; within about 600 feet of the dam; and between Cairns Island and the Pike County shore.",
+     "url": "https://www.law.cornell.edu/regulations/pennsylvania/58-Pa-Code-SS-111-52",
+     "link": "58 Pa. Code \u00a7 111.52"
+    }
+   ]
+  },
+  {
+   "title": "On the ice",
+   "items": [
+    {
+     "n": "Nobody checks the ice",
+     "note": "The Commission says ice here is not officially monitored by any authority, and people have gone through. Wear a life jacket, carry ice awls, test with an ice staff as you go, and never go alone. Five lines at most while ice fishing.",
+     "url": "https://www.pa.gov/agencies/fishandboat/newsroom/anglers-encouraged-to-keep-safety-in-mind-when-ice-fishing-this-winter",
+     "link": "Commission ice safety advice"
+    }
+   ]
+  },
+  {
+   "title": "Stocked trout streams nearby",
+   "items": [
+    {
+     "n": "Lackawaxen River",
+     "note": "Stocked in Pike County from just above Middle Creek to the mouth, and in Wayne County below the Dyberry Creek confluence."
+    },
+    {
+     "n": "West Branch Wallenpaupack Creek",
+     "note": "Stocked from the Mountain Cobb Road bridge to the Forks Road bridge. A 1.74 mile trophy trout stretch, artificial lures only, runs down to Callapoose Road."
+    },
+    {
+     "n": "Jones Creek and Decker Brook",
+     "note": "Jones Creek from the Mountain Cobb Road bridge to its mouth; Decker Brook from the second Route 6 bridge down to the state game lands line."
+    }
+   ]
+  },
+  {
+   "title": "Tackle and guides",
+   "text": "Listed for convenience, not endorsed.",
+   "items": [
+    {
+     "n": "Wallenpaupack Sports Shop",
+     "poi": "ov-7e23126e-e1d",
+     "note": "30 Welwood Avenue, Hawley."
+    },
+    {
+     "n": "Housefly Fishing",
+     "poi": "ov-182d40bc-436"
+    },
+    {
+     "n": "Mike Salamon Guide Service",
+     "url": "https://mikesalamonguideservice.com",
+     "link": "Website"
+    },
+    {
+     "n": "Hooked Up Guide Service",
+     "note": "Striped bass.",
+     "url": "https://hookedupguide.com",
+     "link": "Website"
+    },
+    {
+     "n": "Troll On Guide Service",
+     "note": "Striped bass trips.",
+     "url": "https://trollonguideservice.com",
+     "link": "Website"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "n": "PA Fish and Boat Commission",
+   "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack.html"
+  },
+  {
+   "n": "2026 fishing summary book",
+   "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/fishandboat/documents/fishing/regulations/summarybook.pdf"
+  },
+  {
+   "n": "2021 biologist report",
+   "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/fishandboat/documents/fishing/where-to-fish/biologist-reports/4-5x04-21-lakewallenpaupack.pdf"
+  },
+  {
+   "n": "Brookfield recreation brochure",
+   "url": "https://safewaters.com/wp-content/uploads/2026/06/Lake-Wallenpaupack-Camping-Brochure-2018.pdf"
+  }
+ ]
+}

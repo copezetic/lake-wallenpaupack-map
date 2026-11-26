@@ -117,6 +117,9 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 .pin .dot{position:relative}.pin .dot::after{content:'';position:absolute;inset:-12px;border-radius:50%}
 .lake.tuck{visibility:hidden}
 .pin.off{display:none}
+.pin.home .tag{background:#7a3b2e;color:var(--card);border-color:#7a3b2e;font-weight:700}.pin.home .stem{height:26px;background:#7a3b2e}.pin.home .dot{width:13px;height:13px}
+#panel .lnk{all:unset;cursor:pointer;text-decoration:underline;color:#7a3b2e}
+#panel .plist.near button{display:flex;gap:8px;align-items:baseline;width:100%;box-sizing:border-box}#panel .plist.near b{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink-soft);min-width:92px}#panel .plist.near small{margin-left:auto;white-space:nowrap}
 .found{display:flex;flex-direction:column;align-items:center}
 .found .tag{font:700 13px var(--sc);letter-spacing:.14em;background:var(--accent);color:#fbf4e4;padding:3px 9px 2px}
 .found .stem{width:1px;height:22px;background:var(--accent)}
@@ -237,6 +240,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
         <input id="q" type="search" placeholder="Find a street or place…" autocomplete="off" spellcheck="false" aria-label="Find a street or place">
         <div id="results" role="listbox"></div>
       </div>
+      <button class="hbtn" id="bFish" hidden>Fishing</button>
       <button class="hbtn" id="bEvents" hidden>Events</button>
       <button class="hbtn" id="bComs">Communities</button>
       <button class="hbtn" id="bInfo">About</button>
@@ -272,6 +276,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=4';
+import { initFishing } from './fishing.js?v=1';
 
 const EX = 2.0;            // vertical exaggeration
 const DEPTH = 260;         // thickness of the earth block under the lowest point
@@ -954,6 +959,84 @@ function routeTo(p, quiet){
 
 { const at = new URLSearchParams(location.search).get('at');            // ?at=lat,lon pretends to be there (for testing)
   if (at){ const [la, lo] = at.split(',').map(Number); watchId = -1; locBtn.classList.add('on'); gotFix(la, lo); } }
+
+initFishing({D, M, openSheet, openPlace, flyTo, esc, panel, chips});
+
+/* ---------------- listing links for agents ----------------
+   ?home=lat,lon&t=label&ag=code shows a home and what is near it. The code must be in agents.json and in date,
+   otherwise the link simply opens the plain map. ?ag=code&make=1 lets an agent tap a spot and copy the link. */
+(async () => {
+  const P = new URLSearchParams(location.search), code = P.get('ag'); if (!code) return;
+  let ag = null; try { ag = (await (await fetch('agents.json', {cache: 'no-cache'})).json()).agents[code]; } catch(e){}
+  if (!ag || (ag.until && ag.until < new Date().toISOString().slice(0, 10))) return;
+  const RED = '#7a3b2e'; let hx, hz, label, it = null, chip = null;
+  const lakeRing = D.water.map(w => w.o).reduce((a, b) => b.length > a.length ? b : a);
+  const pip = (r, x, z) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++){ const a = r[i], b = r[j];
+    if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+  function reach(a){                                     // road distance from one node to every other
+    const best = new Map([[a, 0]]), len = new Map([[a, 0]]), done = new Set(), h = [[0, a]];
+    const up = i => { while (i > 0){ const p = (i - 1) >> 1; if (h[p][0] <= h[i][0]) break; [h[p], h[i]] = [h[i], h[p]]; i = p; } };
+    const down = () => { let i = 0; for (;;){ let l = 2 * i + 1, r = l + 1, m = i; if (l < h.length && h[l][0] < h[m][0]) m = l; if (r < h.length && h[r][0] < h[m][0]) m = r; if (m === i) break; [h[m], h[i]] = [h[i], h[m]]; i = m; } };
+    while (h.length){ const top = h[0], last = h.pop(); if (h.length){ h[0] = last; down(); } const [d, n] = top; if (done.has(n)) continue; done.add(n);
+      for (const e of n.e){ const nd = d + e.w; if (nd < (best.get(e.to) ?? Infinity)){ best.set(e.to, nd); len.set(e.to, len.get(n) + e.len); h.push([nd, e.to]); up(h.length - 1); } } }
+    return len;
+  }
+  const WANT = [['Marina', p => p.kind === 'Marina'], ['Boat launch', p => p.kind === 'Boat launch'], ['Beach', p => p.kind === 'Beach'],
+    ['Groceries', p => /grocery/i.test(p.kind || '')], ['Restaurant', p => /restaurant/i.test(p.kind || '')], ['Coffee', p => /coffee|caf/i.test(p.kind || '')],
+    ['Fuel', p => /fuel|gas station/i.test(p.kind || '')], ['Park or trail', p => p.cat === 'nature']];
+  function show(fly = true){
+    const a = nearestNode(hx, hz), len = a ? reach(a) : new Map(), off = a ? Math.hypot(a.x - hx, a.z - hz) : 0;
+    const road = p => { const n = nearestNode(p.x, p.z), d = n && len.get(n); return d == null ? Infinity : d + off + Math.hypot(n.x - p.x, n.z - p.z); };
+    const rows = WANT.map(([k, f]) => { let b = null, bd = Infinity; for (const p of D.pois) if (f(p)){ const d = road(p); if (d < bd){ bd = d; b = p; } } return b && [k, b, bd]; }).filter(Boolean);
+    let shore = Infinity; for (const q of lakeRing) shore = Math.min(shore, Math.hypot(q[0] - hx, q[1] - hz));
+    const com = COMS.find(t => t.a && t.a.some(r => pip(r, hx, hz)));
+    const ll = [(M.lat0 - hz / M.kz).toFixed(6), (M.lon0 + hx / M.kx).toFixed(6)];
+    panel.style.setProperty('--c', RED);
+    openSheet('Home for sale', label, `${com ? `<p>In <button class="lnk" id="hCom">${esc(com.n)}</button>.</p>` : ''}
+      <div class="big">${miles(shore)} <small>· to the lake shore, in a straight line</small></div>
+      <div class="sec">Nearest by road</div><div class="plist near">${rows.map(([k, p, d], i) => `<button data-i="${i}"><b>${esc(k)}</b> ${esc(p.name)}<small>${miles(d)} · ${Math.max(1, Math.round(d / 900))} min</small></button>`).join('')}</div>
+      <div class="sec">Presented by</div><p><b>${esc(ag.name)}</b>${ag.firm ? `<br>${esc(ag.firm)}` : ''}${ag.phone ? `<br><a href="tel:${esc(ag.phone.replace(/[^0-9+]/g, ''))}">${esc(ag.phone)}</a>` : ''}${ag.url && /^https:\/\//.test(ag.url) ? `<br><a href="${esc(ag.url)}" target="_blank" rel="noopener">Agent’s website</a>` : ''}</p>
+      <div class="acts"><button class="btn pri" id="hShare">Share</button><a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0]},${ll[1]}" target="_blank" rel="noopener">Google Maps</a></div>
+      <p class="fine">Distances and times are estimates from this map's roads, not a survey or a promise. The home's position was set by the agent. Ask the agent about the property itself.</p>`);
+    panel.querySelectorAll('.near button').forEach(b => b.onclick = () => openPlace(rows[+b.dataset.i][1]));
+    const hc = panel.querySelector('#hCom'); if (hc) hc.onclick = () => isolate(com);
+    panel.querySelector('#hShare').onclick = () => share(label, `?home=${ll[0]},${ll[1]}&t=${encodeURIComponent(label)}&ag=${encodeURIComponent(code)}`);
+    if (fly) flyTo(hx + (small ? 0 : 160), hz + (small ? 220 : 0), 2200);
+  }
+  function place(x, z, text){
+    hx = x; hz = z; label = (text || 'Home for sale').slice(0, 80);
+    if (!it){ const el = document.createElement('button'); el.className = 'lb pin home'; el.style.setProperty('--c', RED);
+      el.innerHTML = `<span class="tag"></span><span class="stem"></span><span class="dot"></span>`; el.addEventListener('click', e => { e.stopPropagation(); show(); });
+      it = addLabel(el, x, z, 6); it.ring = true;
+      chip = document.createElement('button'); chip.className = 'chip sky fx'; chip.onclick = () => show(); chips.prepend(chip); }
+    it.v.set(x, Y(x, z) + 6, z); it.el.firstChild.textContent = label; chip.textContent = 'The home';
+  }
+  const h = (P.get('home') || '').split(',').map(Number);
+  if (h.length === 2 && h.every(isFinite)){
+    const x = (h[1] - M.lon0) * M.kx, z = -(h[0] - M.lat0) * M.kz;
+    if (x > M.xmin && x < M.xmax && z > M.zmin && z < M.zmax){ place(x, z, P.get('t')); setTimeout(show, 700); }
+  }
+  if (P.has('make')){                                    // the agent's own tool: tap the spot, name it, copy the link
+    const ray = new THREE.Raycaster(); let dn = null; say('Tap the home’s spot on the map to make a listing link.');
+    canvas.addEventListener('pointerdown', e => dn = [e.clientX, e.clientY]);
+    canvas.addEventListener('pointerup', e => {
+      if (!dn || Math.hypot(e.clientX - dn[0], e.clientY - dn[1]) > 6) return;
+      const r = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+      const hit = ray.intersectObject(terrain, true)[0]; if (!hit) return;
+      place(hit.point.x, hit.point.z, label);
+      const ll = [(M.lat0 - hz / M.kz).toFixed(6), (M.lon0 + hx / M.kx).toFixed(6)];
+      panel.style.setProperty('--c', RED);
+      openSheet('Listing link', 'Name this home', `<p>Tap again to move the pin. Give it the name buyers should see, then copy the link into your listing.</p>
+        <input id="hName" maxlength="80" placeholder="12 Maple Lane" value="${esc(label === 'Home for sale' ? '' : label)}" style="width:100%;box-sizing:border-box;font:500 17px var(--serif);padding:9px 10px;border:1px solid var(--ink);background:var(--card);color:var(--ink)">
+        <div class="acts"><button class="btn pri" id="hCopy">Copy the link</button><button class="btn" id="hSee">Preview</button></div>
+        <p class="fine">Links work while ${esc(ag.name)}’s subscription is current.</p>`);
+      const name = panel.querySelector('#hName'), url = () => `?home=${ll[0]},${ll[1]}&t=${encodeURIComponent(name.value.trim() || 'Home for sale')}&ag=${encodeURIComponent(code)}`;
+      name.oninput = () => place(hx, hz, name.value.trim());
+      panel.querySelector('#hCopy').onclick = () => { const u = location.origin + location.pathname + url(); (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(() => say('Link copied.'), () => prompt('Copy this link', u)); };
+      panel.querySelector('#hSee').onclick = () => show();
+    });
+  }
+})();
 
 /* ---------------- life on the map: boats, trees and wildlife (shown when you zoom in) ---------------- */
 const life = (() => {

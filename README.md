@@ -67,3 +67,15 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - **Sun, moon and river** rows in the weather sheet: sun and moon are computed in the page; river temperature and flow come from U.S. Geological Survey gauges 01431500 (Hawley) and 01432055 (near Baoba, below the power plant).
 - **Lake level is linked, not shown.** Brookfield's safewaters.com terms forbid automated copying and republishing, so the sheet only links there.
 - **Share links**: `?p=<place id>` opens a place, `?c=<community-slug>` a community.
+
+### Listing links for agents (subscription feature)
+
+- A paying agent gets a code in `docs/agents.json` (`name`, `firm`, `phone`, `url`, `until` = last paid day).
+- `?home=lat,lon&t=Label&ag=code` opens the map on that home with a "Home for sale" sheet: community, straight-line distance to the lake, nearest marina / launch / beach / groceries / restaurant / coffee / fuel / park by road, and the agent's card.
+- `?ag=code&make=1` is the agent's tool: tap the spot, name it, copy the link.
+- An unknown or expired code opens the plain map, so removing or dating an agent in `agents.json` turns their links off. `demo` is a sample agent.
+- Nothing about a home is stored here; the position and label ride in the link.
+
+### Fishing
+
+`docs/fishing.json` drives the Fishing sheet (`docs/fishing.js`). Kept by hand from official sources; every entry should be traceable to the sources listed in the file. `?fishing` opens the sheet.

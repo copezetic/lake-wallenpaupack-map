@@ -1,0 +1,6 @@
+{
+  "_note": "Agents whose listing links work. Key = the code in the link (?ag=code). 'until' is the last paid day (YYYY-MM-DD); after it the link opens the plain map.",
+  "agents": {
+    "demo": {"name": "Sample Agent", "firm": "Sample Realty (demonstration only)", "phone": "", "url": "", "until": "2099-12-31"}
+  }
+}

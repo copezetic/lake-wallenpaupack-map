@@ -11,7 +11,8 @@
    "n": "Oakview",
    "k": "community",
    "lat": 41.400911,
-   "lon": -75.260867
+   "lon": -75.260867,
+   "sep": true
   },
   {
    "n": "Parkside",
@@ -53,7 +54,8 @@
    "n": "Knollwood",
    "k": "community",
    "lat": 41.394721,
-   "lon": -75.261835
+   "lon": -75.261835,
+   "sep": true
   },
   {
    "n": "Millbrook",
@@ -179,7 +181,8 @@
    "n": "Paupack Glen",
    "k": "community",
    "lat": 41.390601,
-   "lon": -75.259933
+   "lon": -75.259933,
+   "sep": true
   },
   {
    "n": "Burns Island",

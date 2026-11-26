@@ -294,7 +294,7 @@ towns = [dict(t_, n=FIX.get(t_['n'], t_['n'])) for t_ in towns if FIX.get(t_['n'
 if os.path.exists(p('communities.json')):
     for c in json.load(open(p('communities.json')))['communities']:
         if not bbox.contains(Point(c['lon'], c['lat'])): continue
-        x, z = xz(c['lon'], c['lat']); towns.append({'n': c['n'], 'x': x, 'z': z, 'k': c['k']})
+        x, z = xz(c['lon'], c['lat']); towns.append({'n': c['n'], 'x': x, 'z': z, 'k': c['k'], **({'sep': 1} if c.get('sep') else {})})
 # one label per name, unless the same name really is used in two places
 order = {'town': 0, 'hamlet': 1, 'community': 2, 'island': 2}
 uniq = []
@@ -303,6 +303,7 @@ for t_ in sorted(towns, key=lambda t_: order[t_['k']]):
 towns = uniq
 
 # ---- community areas, for showing one community on its own
+SEP_R = 450
 # Census outlines where they exist; otherwise the streets nearest the name, which is only a rough guide.
 def rings(g): return [[[round(v[0]), round(v[1])] for v in q.exterior.coords[:-1]] for q in getattr(g, 'geoms', [g]) if not q.is_empty]
 census = []
@@ -314,17 +315,45 @@ for name, g in census:
     own = [t_ for t_ in towns if slug(t_['n']) == slug(name)]
     for t_ in own[:1]: t_['a'] = rings(g.intersection(bxz).simplify(6)); t_['src'] = 'census'
     for t_ in towns:
-        if t_ not in own and t_['k'] == 'community' and g.contains(Point(t_['x'], t_['z'])): t_['in'] = name
+        if t_ not in own and t_['k'] == 'community' and g.contains(Point(t_['x'], t_['z'])): t_['encl' if t_.get('sep') else 'in'] = name
 taken = unary_union([g for _, g in census]) if census else Polygon()
 thru = unary_union([LineString(r['p']) for r in roads if r['k'] != 'street']).buffer(14)
+def cut(g):
+    out = []
+    for ln in getattr(g, 'geoms', [g]):
+        if ln.is_empty or ln.geom_type != 'LineString' or ln.length < 8: continue
+        n = max(1, round(ln.length / 60))
+        out += [LineString([ln.interpolate(i / n, normalized=True), ln.interpolate((i + 1) / n, normalized=True)]) for i in range(n)]
+    return out
 segs = []
 for r in roads:
-    if r['k'] != 'street': continue
-    g = LineString(r['p']).difference(thru).difference(taken)
-    for ln in getattr(g, 'geoms', [g]):
-        if ln.is_empty or ln.length < 8: continue
-        n = max(1, round(ln.length / 60))
-        segs += [LineString([ln.interpolate(i / n, normalized=True), ln.interpolate((i + 1) / n, normalized=True)]) for i in range(n)]
+    if r['k'] == 'street': segs += cut(LineString(r['p']).difference(thru).difference(taken))
+# communities marked "sep" in communities.json sit inside a Census outline but are not part of it:
+# they take the streets nearest their name, and that ground comes out of the Census community
+seps = [t_ for t_ in towns if 'encl' in t_]
+if seps:
+    inner = []
+    for r in roads:
+        if r['k'] == 'street': inner += cut(LineString(r['p']).difference(thru).intersection(taken))
+    got = {}
+    for q in inner:
+        m_ = q.centroid; i = min(range(len(seps)), key=lambda i: math.hypot(seps[i]['x'] - m_.x, seps[i]['z'] - m_.y))
+        if math.hypot(seps[i]['x'] - m_.x, seps[i]['z'] - m_.y) < SEP_R: got.setdefault(i, []).append(q)
+    cz = dict(census)
+    for i, c in enumerate(seps):
+        if i not in got: continue
+        g = unary_union([q.buffer(75) for q in got[i]]).buffer(45).buffer(-70).intersection(cz[c['encl']]).simplify(8)
+        parts = sorted(getattr(g, 'geoms', [g]), key=lambda q: -q.area)[:1]
+        if parts and parts[0].area > 12000: c['a'] = rings(parts[0]); c['src'] = 'streets'; c['g'] = parts[0]
+    for name, g in census:
+        cutout = [c['g'] for c in seps if c['encl'] == name and 'g' in c]
+        if not cutout: continue
+        rest = g.intersection(bxz).difference(unary_union(cutout).buffer(1)).simplify(6)
+        rest = [q for q in getattr(rest, 'geoms', [rest]) if q.area > 12000]
+        for t_ in towns:
+            if t_.get('src') == 'census' and slug(t_['n']) == slug(name): t_['a'] = rings(unary_union(rest))
+    for c in seps: c.pop('g', None)
+for t_ in towns: t_.pop('sep', None); t_.pop('encl', None)
 net = unary_union([q.buffer(3) for q in segs]); comps = list(getattr(net, 'geoms', [net]))
 coms = [t_ for t_ in towns if t_['k'] == 'community' and 'a' not in t_ and 'in' not in t_]
 claims = {}

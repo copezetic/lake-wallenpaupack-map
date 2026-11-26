@@ -236,7 +236,7 @@ export function initSky(c){
     const tm = new THREE.MeshBasicMaterial({map: ttex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2});
     for (const t of tiles){ const m = new THREE.Mesh(t.mesh.geometry, tm); m.renderOrder = 1; tg.add(m); }
     const XS = M.xmax - M.xmin, ZS = M.zmax - M.zmin, px = x => (x - M.xmin) / XS * TS, pz = z => (z - M.zmin) / ZS * TS;
-    const Z = 13, n = 2 ** Z, lon2x = lon => Math.floor((lon + 180) / 360 * n), lat2y = lat => Math.floor((1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2 * n);
+    const Z = 12, n = 2 ** Z, lon2x = lon => Math.floor((lon + 180) / 360 * n), lat2y = lat => Math.floor((1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2 * n);
     const x2lon = x => x / n * 360 - 180, y2lat = y => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI;
     let on = false, timer = 0;
     const tchip = document.createElement('button'); tchip.className = 'chip sky'; tchip.textContent = 'Traffic'; tchip.title = 'Live traffic on the major roads'; chip.after(tchip);

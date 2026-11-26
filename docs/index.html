@@ -275,11 +275,11 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=4';
+import { initSky } from './sky.js?v=5';
 import { initFishing } from './fishing.js?v=1';
 
 const EX = 2.0;            // vertical exaggeration
-const DEPTH = 260;         // thickness of the earth block under the lowest point
+const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
 const CATS = {
   water:  {label:'On the Water',   c:'#4f79a6'},
   food:   {label:'Food & Drink',   c:'#b5562f'},
@@ -408,6 +408,13 @@ function paint(x0, z0, x1, z1, TW, detail){
     g.fillStyle = '#2b3a40'; g.fillText(L.txt, 0, 0);
     g.restore();
   }
+  // toward the edge of the detailed map everything pales into the faded country beyond
+  for (const [ex, ez, dx, dz] of [[M.xmin, 0, 1, 0], [M.xmax, 0, -1, 0], [0, M.zmin, 0, 1], [0, M.zmax, 0, -1]]){
+    const a = dx ? [px(ex), 0, px(ex + dx * FADE), 0] : [0, pz(ez), 0, pz(ez + dz * FADE)];
+    if (dx ? (Math.max(a[0], a[2]) < 0 || Math.min(a[0], a[2]) > TW) : (Math.max(a[1], a[3]) < 0 || Math.min(a[1], a[3]) > TH)) continue;
+    const gr = g.createLinearGradient(...a); gr.addColorStop(0, `rgba(${WASH},${WASH_A})`); gr.addColorStop(.3, `rgba(${WASH},${WASH_A * .62})`); gr.addColorStop(.65, `rgba(${WASH},${WASH_A * .2})`); gr.addColorStop(1, `rgba(${WASH},0)`);
+    g.fillStyle = gr; dx ? g.fillRect(Math.min(a[0], a[2]), 0, Math.abs(a[2] - a[0]), TH) : g.fillRect(0, Math.min(a[1], a[3]), TW, Math.abs(a[3] - a[1]));
+  }
   const tex = new THREE.CanvasTexture(cv);
   tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 16; tex.generateMipmaps = true;
   return tex;
@@ -421,86 +428,66 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, 1, 30, 140000);
 await document.fonts.ready.catch(() => {});
 try { await Promise.all([document.fonts.load('600 14px "Cormorant SC"'), document.fonts.load('600 14px "Cormorant Garamond"')]); } catch(e){}
-const mapTex = paint(M.xmin, M.zmin, M.xmax, M.zmax, small ? 2048 : 4096, false);
+const mapTex = paint(M.xmin, M.zmin, M.xmax, M.zmax, Math.round((small ? 3072 : 5120) * Math.min(1, XS / ZS)), false);
 
-/* terrain: one grid for the whole map, cut into NT x NT tiles so each can take a sharper painting when you come close */
-const NT = M.nt, TWX = XS / NT, TWZ = ZS / NT;
+/* terrain: one grid for the whole detailed map, cut into tiles so each can take a sharper painting when you come close */
+const NTX = M.ntx, NTZ = M.ntz, TWX = XS / NTX, TWZ = ZS / NTZ;
 const maxH = (() => { let m = 0; for (const v of dem16) if (v > m) m = v; return m / 10 * EX; })();
 const tiles = [];
 function buildTerrain(){
-  const CPT = small ? 30 : 46, nx = NT * CPT + 1, nz = NT * CPT + 1, N = nx * nz, CELL = XS / (nx - 1);
-  const X = new Float32Array(N), Z = new Float32Array(N), st = new Uint8Array(N);
+  const CPT = small ? 30 : 46, nx = NTX * CPT + 1, nz = NTZ * CPT + 1, N = nx * nz;
+  const pos = new Float32Array(N * 3), uv = new Float32Array(N * 2), idx = Array.from({length: NTX * NTZ}, () => []);
   for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++){
-    const k = j*nx + i; X[k] = M.xmin + XS * i / (nx-1); Z[k] = M.zmin + ZS * j / (nz-1);
-    st[k] = inside(X[k], Z[k]) ? 1 : 0;
+    const k = j*nx + i, x = M.xmin + XS * i / (nx-1), z = M.zmin + ZS * j / (nz-1);
+    pos[k*3] = x; pos[k*3+1] = Y(x, z); pos[k*3+2] = z; uv[k*2] = i / (nx-1); uv[k*2+1] = 1 - j / (nz-1);
   }
-  for (let j = 0; j < nz; j++) for (let i = 0; i < nx; i++){
-    const k = j*nx + i; if (st[k]) continue;
-    let near = false;
-    for (let dj = -1; dj <= 1 && !near; dj++) for (let di = -1; di <= 1; di++){
-      const a = i+di, b = j+dj; if (a>=0 && b>=0 && a<nx && b<nz && st[b*nx+a] === 1){ near = true; break; }
-    }
-    if (!near) continue;
-    const [bx, bz, d] = nearestOnBoundary(X[k], Z[k]);
-    if (d < CELL * 1.6){ X[k] = bx; Z[k] = bz; st[k] = 2; }
-  }
-  const remap = new Int32Array(N).fill(-1), pos = [], uv = [], idx = Array.from({length: NT * NT}, () => []);
-  const vid = k => { if (remap[k] < 0){ remap[k] = pos.length / 3; pos.push(X[k], Y(X[k], Z[k]), Z[k]);
-    uv.push((X[k]-M.xmin)/XS, 1 - (Z[k]-M.zmin)/ZS); } return remap[k]; };
-  const edges = new Map();
-  const tri = (a, b, c, t) => {
-    if (!st[a] || !st[b] || !st[c]) return;
-    if (st[a] !== 1 && st[b] !== 1 && st[c] !== 1) return;
-    const A = vid(a), Bv = vid(b), C = vid(c); idx[t].push(A, Bv, C);
-    for (const [p, q] of [[A,Bv],[Bv,C],[C,A]]){ const key = p < q ? p*1e6+q : q*1e6+p; const e = edges.get(key);
-      if (e) e.n++; else edges.set(key, {n:1, p, q}); }
-  };
   for (let j = 0; j < nz-1; j++) for (let i = 0; i < nx-1; i++){
-    const a = j*nx+i, b = a+1, c = a+nx, d = c+1, t = Math.floor(j / CPT) * NT + Math.floor(i / CPT); tri(a, c, b, t); tri(b, c, d, t);
+    const a = j*nx+i, b = a+1, c = a+nx, d = c+1; idx[Math.floor(j / CPT) * NTX + Math.floor(i / CPT)].push(a, c, b, b, c, d);
   }
-  const pA = new THREE.Float32BufferAttribute(pos, 3), uA = new THREE.Float32BufferAttribute(uv, 2), top = new THREE.Group();
-  for (let j = 0; j < NT; j++) for (let i = 0; i < NT; i++){
-    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', pA); geo.setAttribute('uv', uA); geo.setIndex(idx[j * NT + i]);
+  const pA = new THREE.BufferAttribute(pos, 3), uA = new THREE.BufferAttribute(uv, 2), top = new THREE.Group();
+  for (let j = 0; j < NTZ; j++) for (let i = 0; i < NTX; i++){
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', pA); geo.setAttribute('uv', uA); geo.setIndex(idx[j * NTX + i]);
     const x0 = M.xmin + i * TWX, z0 = M.zmin + j * TWZ;
     geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(x0 + TWX / 2, maxH / 2, z0 + TWZ / 2), Math.hypot(TWX, TWZ) / 2 + maxH);
     const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: mapTex})); top.add(mesh);
     tiles.push({i, j, x0, z0, x1: x0 + TWX, z1: z0 + TWZ, mesh, state: 0, tex: null, group: null, movers: []});
   }
-
-  // the cut sides of the block, banded like a slice of earth
-  const sp = [], suv = [], scol = [], sidx = [];
-  const Ld = new THREE.Vector2(-0.6, -0.8).normalize();
-  for (const e of edges.values()){
-    if (e.n !== 1) continue;
-    const ax = pos[e.p*3], ay = pos[e.p*3+1], az = pos[e.p*3+2], bx = pos[e.q*3], by = pos[e.q*3+1], bz = pos[e.q*3+2];
-    let nxn = bz - az, nzn = -(bx - ax); const l = Math.hypot(nxn, nzn) || 1; nxn /= l; nzn /= l;
-    const mx = (ax+bx)/2 + nxn*4, mz = (az+bz)/2 + nzn*4; if (inside(mx, mz)){ nxn = -nxn; nzn = -nzn; }
-    const sh = 0.72 + 0.28 * Math.max(0, nxn*Ld.x*-1 + nzn*Ld.y*-1) + 0.12 * Math.max(0, nzn);
-    const o = sp.length / 3;
-    sp.push(ax, ay, az, bx, by, bz, ax, -DEPTH, az, bx, -DEPTH, bz);
-    const ua = (ax + az) / 700, ub = (bx + bz) / 700;
-    suv.push(ua, (ay + DEPTH)/(maxH + DEPTH), ub, (by + DEPTH)/(maxH + DEPTH), ua, 0, ub, 0);
-    for (let k = 0; k < 4; k++) scol.push(sh, sh, sh);
-    sidx.push(o, o+2, o+1, o+1, o+2, o+3);
-  }
-  const sc = document.createElement('canvas'); sc.width = 256; sc.height = 512; const sg = sc.getContext('2d');
-  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  let y = 0; const tones = ['#6b4a2e','#7a5636','#5d3f27','#86623f','#70502f','#93704a','#664629'];
-  while (y < 512){ const h = 5 + rnd()*26; sg.fillStyle = tones[Math.floor(rnd()*tones.length)]; sg.fillRect(0, y, 256, h + 1); y += h; }
-  for (let k = 0; k < 2600; k++){ sg.fillStyle = `rgba(${rnd() > .5 ? '255,235,200' : '30,18,8'},${.05 + rnd()*.09})`; sg.fillRect(rnd()*256, rnd()*512, 1 + rnd()*14, 1); }
-  const grd = sg.createLinearGradient(0, 0, 0, 512); grd.addColorStop(0, 'rgba(120,110,70,.55)'); grd.addColorStop(.06, 'rgba(0,0,0,0)');
-  grd.addColorStop(.7, 'rgba(0,0,0,0)'); grd.addColorStop(1, 'rgba(20,10,0,.45)'); sg.fillStyle = grd; sg.fillRect(0, 0, 256, 512);
-  const stex = new THREE.CanvasTexture(sc); stex.wrapS = THREE.RepeatWrapping; stex.colorSpace = THREE.SRGBColorSpace;
-  const sgeo = new THREE.BufferGeometry();
-  sgeo.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3));
-  sgeo.setAttribute('uv', new THREE.Float32BufferAttribute(suv, 2));
-  sgeo.setAttribute('color', new THREE.Float32BufferAttribute(scol, 3));
-  sgeo.setIndex(sidx);
-  const side = new THREE.Mesh(sgeo, new THREE.MeshBasicMaterial({map: stex, vertexColors: true, side: THREE.DoubleSide}));
-  return {top, side};
+  return top;
 }
-const {top: terrain, side} = buildTerrain();
-scene.add(terrain, side);
+const terrain = buildTerrain();
+scene.add(terrain);
+
+/* the country beyond: a coarse, pale relief that runs on past the detailed map and fades into the page, so the map has no edge */
+const farMat = (() => {
+  const F = D.far; if (!F) return null;
+  const raw = Uint8Array.from(atob(F.d), c => c.charCodeAt(0)), h16 = new Int16Array(raw.buffer), W = F.w, H = F.h;
+  const hf = (i, j) => h16[Math.min(H-1, Math.max(0, j)) * W + Math.min(W-1, Math.max(0, i))] / 10;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H; const g = cv.getContext('2d'), im = g.createImageData(W, H);
+  const L = new THREE.Vector3(-1, 1.15, -1).normalize(), n = new THREE.Vector3();
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++){
+    n.set(-(hf(i+1,j) - hf(i-1,j)) / (2*F.cx) * 3.2, 1, -(hf(i,j+1) - hf(i,j-1)) / (2*F.cz) * 3.2).normalize();
+    const sh = 0.66 + 0.50 * Math.max(0, n.dot(L)), t = Math.min(1, Math.max(0, hf(i,j)) / 300), o = (j*W + i) * 4;
+    im.data[o] = Math.min(255, (150 + 52*t) * sh); im.data[o+1] = Math.min(255, (170 + 26*t) * sh); im.data[o+2] = Math.min(255, (122 + 18*t) * sh); im.data[o+3] = 255;
+  }
+  g.putImageData(im, 0, 0); g.fillStyle = `rgba(${WASH},${WASH_A})`; g.fillRect(0, 0, W, H);
+  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.flipY = false; tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+  const pos = new Float32Array(W * H * 3), uv = new Float32Array(W * H * 2), idx = [];
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++){ const k = j*W + i;
+    pos[k*3] = F.x0 + i * F.cx; pos[k*3+1] = hf(i, j) * EX; pos[k*3+2] = F.z0 + j * F.cz; uv[k*2] = (i + .5) / W; uv[k*2+1] = (j + .5) / H; }
+  const i0 = F.pad, i1 = W - 1 - F.pad, j0 = F.pad, j1 = H - 1 - F.pad;          // the cells under the detailed map are left out
+  for (let j = 0; j < H-1; j++) for (let i = 0; i < W-1; i++){ if (i >= i0 && i < i1 && j >= j0 && j < j1) continue;
+    const a = j*W + i, b = a+1, c = a+W, d = c+1; idx.push(a, c, b, b, c, d); }
+  const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2)); geo.setIndex(idx);
+  const mat = new THREE.ShaderMaterial({transparent: true,
+    uniforms: {map: {value: tex}, rect: {value: new THREE.Vector4((M.xmin + M.xmax) / 2, (M.zmin + M.zmax) / 2, XS / 2, ZS / 2)}, fadeA: {value: 1500}, fadeB: {value: 30000}},
+    vertexShader: `varying vec2 vUv; varying vec2 vP; void main(){ vUv = uv; vP = position.xz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform sampler2D map; uniform vec4 rect; uniform float fadeA; uniform float fadeB; varying vec2 vUv; varying vec2 vP;
+      void main(){ float d = length(max(abs(vP - rect.xy) - rect.zw, 0.0)); gl_FragColor = vec4(texture2D(map, vUv).rgb, 1.0 - smoothstep(fadeA, fadeB, d));
+        #include <colorspace_fragment>
+      }`});
+  const m = new THREE.Mesh(geo, mat); m.renderOrder = -2; m.frustumCulled = false; scene.add(m);
+  return mat;
+})();
 
 /* houses: little extruded blocks, built tile by tile */
 function housesMesh(list){
@@ -537,7 +524,7 @@ const MAXT = small ? 4 : 6, TPX = small ? 1536 : 2048;
 let tileBusy = false;
 async function wakeTile(t){
   tileBusy = true; t.state = 1;
-  t.tex = paint(t.x0, t.z0, t.x1, t.z1, TPX, true); t.tex.repeat.set(NT, NT); t.tex.offset.set(-t.i, t.j + 1 - NT);
+  t.tex = paint(t.x0, t.z0, t.x1, t.z1, TPX, true); t.tex.repeat.set(NTX, NTZ); t.tex.offset.set(-t.i, t.j + 1 - NTZ);
   t.mesh.material.map = t.tex; t.mesh.material.needsUpdate = true;
   let blds = []; try { blds = await (await fetch(`tiles/b_${t.i}_${t.j}.json`)).json(); } catch(e){}
   if (iso) blds = blds.filter(b => inIso(b.p[0][0], b.p[0][1], 40));
@@ -559,24 +546,13 @@ function tilesUpdate(x, z, dist){
   if (!tileBusy){ const next = want.find(t => !t.state); if (next && tiles.filter(t => t.state).length < MAXT) wakeTile(next); }
 }
 
-/* soft shadow on the "table" */
-(function shadow(){
-  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d');
-  const r = g.createRadialGradient(128, 128, 20, 128, 128, 128);
-  r.addColorStop(0, 'rgba(70,50,20,.42)'); r.addColorStop(.55, 'rgba(70,50,20,.2)'); r.addColorStop(1, 'rgba(70,50,20,0)');
-  g.fillStyle = r; g.fillRect(0, 0, 256, 256);
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(XS * 1.25, ZS * 1.55),
-    new THREE.MeshBasicMaterial({map: new THREE.CanvasTexture(c), transparent: true, depthWrite: false}));
-  m.rotation.x = -Math.PI / 2; m.position.set(60, -DEPTH - 2, 120); m.renderOrder = -1; scene.add(m);
-})();
 
 /* ---------------- camera + controls ---------------- */
 const controls = new MapControls(camera, canvas);
 controls.enableDamping = true; controls.dampingFactor = .09;
-controls.minDistance = 160; controls.maxDistance = 60000; controls.maxPolarAngle = Math.PI * .47;
+controls.minDistance = 160; controls.maxDistance = 64000; controls.maxPolarAngle = Math.PI * .47;
 controls.zoomSpeed = 1.1; controls.rotateSpeed = .5;
-const bx = B.map(p => p[0]), bz = B.map(p => p[1]);
-const cx0 = (Math.min(...bx) + Math.max(...bx)) / 2, cz0 = (Math.min(...bz) + Math.max(...bz)) / 2 + 150;
+const cx0 = (-75.248 - M.lon0) * M.kx, cz0 = -(41.4115 - M.lat0) * M.kz + 150;      // the opening view is the lake itself; the towns are a pan away
 const aspect0 = (innerWidth / innerHeight) || 1.6;
 const HOME = {t: new THREE.Vector3(cx0, 60, cz0), az: aspect0 < 1 ? -0.9 : -0.25, pol: 0.82, d: aspect0 < 1 ? Math.min(60000, 24000 / aspect0) : Math.max(27000, 44000 / aspect0)};
 function place(t, az, pol, d){
@@ -696,7 +672,7 @@ const LEGAL = `<div class="sec">Copyright</div><p>© 2026 DeWitt Hutchins. All r
    <p>An independent publication. It is not affiliated with, sponsored by or endorsed by any community, association, utility, government body or business shown. All names and trademarks belong to their owners and appear only to identify places.</p>`;
 document.getElementById('bLegal').onclick = e => { e.preventDefault(); openSheet('Legal', 'Copyright and disclaimer', LEGAL); };
 document.getElementById('bInfo').onclick = () => openSheet('About', 'The whole lake in 3D',
-  `<p>Lake Wallenpaupack and everything around it on one model: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, ${D.towns.length} towns, communities and islands, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
+  `<p>Lake Wallenpaupack and the country around it on one model, from Greentown and the interstate up through Hawley to Honesdale: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, ${D.towns.length} towns, communities and islands, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
    <div class="sec">An early draft</div><p>The places on this map come from public map data. Doubles and obvious mistakes have been cleared out, but nobody has visited or called each one yet. If something is wrong, missing or in the wrong spot, that is expected at this stage.</p>
    <div class="sec">Where the data comes from</div><p>Roads, water and places: OpenStreetMap contributors. Buildings and business listings: Overture Maps. Terrain: USGS elevation data. Community names: the Pike County Office of Community Planning's 2012 map of lake developments, which marks where each one meets the shore.</p>
    <p class="fine">An independent map. Not an official publication of any community, association or business shown.</p>` + LEGAL);
@@ -1227,10 +1203,12 @@ function frame(now){
   }
   controls.update();
   if (controls.target.y < 0) controls.target.y = 0;
+  if (!fly){ const pad = 9000; controls.target.x = Math.min(M.xmax + pad, Math.max(M.xmin - pad, controls.target.x)); controls.target.z = Math.min(M.zmax + pad, Math.max(M.zmin - pad, controls.target.z)); }
   offTmp.copy(camera.position).sub(controls.target); sphTmp.setFromVector3(offTmp);
   if (isFinite(sphTmp.theta)) needle.setAttribute('transform', `rotate(${(sphTmp.theta * 180 / Math.PI).toFixed(1)} 30 30)`);
   document.body.classList.toggle('far', sphTmp.radius > 3600);
   camD = sphTmp.radius;
+  if (farMat){ farMat.uniforms.fadeB.value = Math.min(62000, Math.max(9000, camD * 1.5)); farMat.uniforms.fadeA.value = farMat.uniforms.fadeB.value * .08; }
   tilesUpdate(controls.target.x, controls.target.z, camD);
   life.update(now, camD); sky.update(now);
   renderer.render(scene, camera);

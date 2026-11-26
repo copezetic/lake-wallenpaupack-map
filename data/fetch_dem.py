@@ -15,7 +15,8 @@ for X in range(X0, X1 + 1):
         im = np.asarray(Image.open(io.BytesIO(urllib.request.urlopen(u, timeout=60).read())).convert('RGB')).astype(np.float32)
         big[(Yt - Y0) * 256:(Yt - Y0 + 1) * 256, (X - X0) * 256:(X - X0 + 1) * 256] = im[..., 0] * 256 + im[..., 1] + im[..., 2] / 256 - 32768
 # resample the Mercator crop onto an even lat/lon grid
-Wn, Hn = 620, int(round(620 * (a['N'] - a['S']) * 110574 / ((a['E'] - a['W']) * math.cos(math.radians((a['N'] + a['S']) / 2)) * 111320)))
+Wn = 560
+Wn, Hn = Wn, int(round(Wn * (a['N'] - a['S']) * 110574 / ((a['E'] - a['W']) * math.cos(math.radians((a['N'] + a['S']) / 2)) * 111320)))
 lon = a['W'] + (np.arange(Wn) + .5) / Wn * (a['E'] - a['W']); lat = a['N'] - (np.arange(Hn) + .5) / Hn * (a['N'] - a['S'])
 px = ((lon + 180) / 360 * 2 ** Z - X0) * 256; py = np.array([(ty(l) - Y0) * 256 for l in lat])
 xi = np.clip(px.astype(int), 0, big.shape[1] - 2); yi = np.clip(py.astype(int), 0, big.shape[0] - 2); fx = px - xi; fy = (py - yi)[:, None]

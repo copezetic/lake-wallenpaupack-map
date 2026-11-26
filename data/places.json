@@ -228,5 +228,10 @@
   "kind": "Wildlife refuge",
   "lat": 41.449426,
   "lon": -75.213288
+ },
+ {
+  "id": "ov-77bb25c6-54c",
+  "drop": true,
+  "_why": "not a real shop name; Dutch's Market is at this spot"
  }
 ]

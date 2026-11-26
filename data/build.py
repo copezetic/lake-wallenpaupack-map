@@ -33,15 +33,15 @@ W, S, E, N = A['W'], A['S'], A['E'], A['N']
 lat0, lon0 = (S + N) / 2, (W + E) / 2
 KX = math.cos(math.radians(lat0)) * 111320.0
 KZ = 110574.0
-NT = 8                                      # the map is cut into NT x NT tiles for close-up detail
 
 def xz(lon, lat): return [round((lon - lon0) * KX, 1), round(-(lat - lat0) * KZ, 1)]
 def ring_xz(coords, nd=1): return [[round((c[0] - lon0) * KX, nd), round(-(c[1] - lat0) * KZ, nd)] for c in coords]
 bbox = box(W, S, E, N)
 xmin, zmin = xz(W, N); xmax, zmax = xz(E, S)
+NTX, NTZ = round((xmax - xmin) / 2000), round((zmax - zmin) / 2000)   # the map is cut into tiles about 2 km square for close-up detail
 TOL = 2.0 / KZ                              # simplify to about two metres
 
-# ---- the block's edge: the rectangle, a little inside the data so nothing is cut ragged
+# ---- the edge of the detailed map: the rectangle, a little inside the data so nothing is cut ragged
 m = 40
 boundary = [[xmin + m, zmin + m], [xmax - m, zmin + m], [xmax - m, zmax - m], [xmin + m, zmax - m], [xmin + m, zmin + m]]
 bxz = Polygon(boundary)
@@ -49,7 +49,32 @@ bxz = Polygon(boundary)
 # ---- elevation
 dem = np.load(p('dem.npy')).astype(np.float32)
 emin = float(dem.min())
-dem_b64 = base64.b64encode(np.clip(np.round((dem - emin) * 10), 0, 65535).astype('<u2').tobytes()).decode()
+dem = dem - emin
+# the country beyond the map: a coarse grid of heights that runs far past the rectangle, drawn faded by the viewer.
+# Its lines fall exactly on the rectangle's edges, and the detailed heights are eased onto it over the last few
+# hundred metres, so the two surfaces meet without a step.
+FAR_N, FAR_PAD, EASE = 36, 130, 350.0
+far = None
+if os.path.exists(p('far_dem.npy')):
+    fd = np.clip(np.load(p('far_dem.npy')).astype(np.float32), 40, 2500); fm = json.load(open(p('far_meta.json')))
+    XSm, ZSm = xmax - xmin, zmax - zmin
+    ncx = FAR_N; cx = XSm / ncx; ncz = round(ZSm / cx); cz = ZSm / ncz
+    gx = xmin + (np.arange(ncx + 2 * FAR_PAD + 1) - FAR_PAD) * cx; gz = zmin + (np.arange(ncz + 2 * FAR_PAD + 1) - FAR_PAD) * cz
+    fu = np.clip(((lon0 + gx / KX) - fm['W']) / (fm['E'] - fm['W']) * fm['w'] - .5, 0, fm['w'] - 1.001)
+    fv = np.clip((fm['N'] - (lat0 - gz / KZ)) / (fm['N'] - fm['S']) * fm['h'] - .5, 0, fm['h'] - 1.001)
+    ui = fu.astype(int); vi = fv.astype(int); a = (fu - ui)[None, :]; b = (fv - vi)[:, None]
+    hc = (fd[vi][:, ui] * (1 - a) + fd[vi][:, ui + 1] * a) * (1 - b) + (fd[vi + 1][:, ui] * (1 - a) + fd[vi + 1][:, ui + 1] * a) * b - emin
+    DH_, DW_ = dem.shape
+    px = xmin + XSm * np.arange(DW_) / (DW_ - 1); pz = zmin + ZSm * np.arange(DH_) / (DH_ - 1)
+    cu = np.clip((px - xmin) / cx + FAR_PAD, 0, hc.shape[1] - 1.001); cv = np.clip((pz - zmin) / cz + FAR_PAD, 0, hc.shape[0] - 1.001)
+    ci = cu.astype(int); cj = cv.astype(int); a = (cu - ci)[None, :]; b = (cv - cj)[:, None]
+    coarse = (hc[cj][:, ci] * (1 - a) + hc[cj][:, ci + 1] * a) * (1 - b) + (hc[cj + 1][:, ci] * (1 - a) + hc[cj + 1][:, ci + 1] * a) * b
+    edge = np.minimum(np.minimum(px - xmin, xmax - px)[None, :], np.minimum(pz - zmin, zmax - pz)[:, None])
+    t = np.clip(1 - edge / EASE, 0, 1); t = t * t * (3 - 2 * t)
+    dem = dem * (1 - t) + coarse * t
+    far = {'w': int(hc.shape[1]), 'h': int(hc.shape[0]), 'x0': round(float(gx[0]), 1), 'z0': round(float(gz[0]), 1), 'cx': cx, 'cz': cz, 'pad': FAR_PAD,
+           'd': base64.b64encode(np.clip(np.round(hc * 10), -32768, 32767).astype('<i2').tobytes()).decode()}
+dem_b64 = base64.b64encode(np.clip(np.round(dem * 10), 0, 65535).astype('<u2').tobytes()).decode()
 
 # ---- roads
 ROAD_KIND = {'motorway': 'hwy', 'trunk': 'hwy', 'primary': 'hwy', 'motorway_link': 'hwy', 'trunk_link': 'hwy', 'primary_link': 'hwy',
@@ -291,6 +316,8 @@ pois = sorted(kept, key=lambda o: (o['cat'], o['name']))
 # communities and islands kept by hand (communities.json), on top of the few OpenStreetMap knows
 FIX = {'Lake Wallenpaupack Estate': 'Lake Wallenpaupack Estates', 'Tanglewood': None, 'Tanglewood Estate': None}
 towns = [dict(t_, n=FIX.get(t_['n'], t_['n'])) for t_ in towns if FIX.get(t_['n'], t_['n'])]
+for t_ in towns:
+    if t_['n'] in ('Greentown',) and t_['k'] == 'hamlet': t_['k'] = 'town'      # the village at the south end gets a town's lettering
 if os.path.exists(p('communities.json')):
     for c in json.load(open(p('communities.json')))['communities']:
         if not bbox.contains(Point(c['lon'], c['lat'])): continue
@@ -386,20 +413,22 @@ if os.path.exists(p('buildings.geojsonl')):
             q = q.simplify(0.000008)
             c = q.centroid; x, z = xz(c.x, c.y)
             if not bxz.contains(Point(x, z)): continue
-            i = min(NT - 1, int((x - xmin) / (xmax - xmin) * NT)); j = min(NT - 1, int((z - zmin) / (zmax - zmin) * NT))
+            i = min(NTX - 1, int((x - xmin) / (xmax - xmin) * NTX)); j = min(NTZ - 1, int((z - zmin) / (zmax - zmin) * NTZ))
             h = f['properties'].get('height') or 5.0
             tiles.setdefault((i, j), []).append({'h': round(float(h), 1), 'p': ring_xz(q.exterior.coords)[:-1]})
 site = os.path.join(HERE, '..', 'docs'); os.makedirs(os.path.join(site, 'tiles'), exist_ok=True)
+for f in os.listdir(os.path.join(site, 'tiles')): os.remove(os.path.join(site, 'tiles', f))
 nb = 0
-for i in range(NT):
-    for j in range(NT):
+for i in range(NTX):
+    for j in range(NTZ):
         b = tiles.get((i, j), []); nb += len(b)
         json.dump(b, open(os.path.join(site, 'tiles', f'b_{i}_{j}.json'), 'w'), separators=(',', ':'))
 
 out = {'meta': {'W': W, 'S': S, 'E': E, 'N': N, 'lat0': lat0, 'lon0': lon0, 'kx': KX, 'kz': KZ, 'emin': emin,
-                'demW': int(dem.shape[1]), 'demH': int(dem.shape[0]), 'xmin': xmin, 'xmax': xmax, 'zmin': zmin, 'zmax': zmax, 'nt': NT},
+                'demW': int(dem.shape[1]), 'demH': int(dem.shape[0]), 'xmin': xmin, 'xmax': xmax, 'zmin': zmin, 'zmax': zmax, 'ntx': NTX, 'ntz': NTZ},
        'dem': dem_b64, 'boundary': boundary, 'lakes': lakes, 'water': water, 'roads': roads, 'features': features,
        'piers': piers, 'towns': towns, 'pois': pois}
+if far: out['far'] = far
 dst = os.path.join(site, 'lake-data.json')
 json.dump(out, open(dst, 'w'), separators=(',', ':'))
 print('wrote', os.path.getsize(dst) // 1024, 'KB | roads', len(roads), 'water', len(water), 'features', len(features), 'piers', len(piers),

@@ -17,13 +17,20 @@ business shown.
 ## Rebuilding the data
 
     cd data
-    python fetch_dem.py                      # terrain
+    python fetch_dem.py                      # terrain for the detailed map
+    python fetch_far.py                      # coarse terrain for the faded country beyond it
     python fetch_osm.py                      # roads, water, places, piers
-    overturemaps download --bbox=-75.342,41.345,-75.154,41.478 -f geojsonseq -t building -o buildings.geojsonl
-    overturemaps download --bbox=-75.342,41.345,-75.154,41.478 -f geojsonseq -t place -o places_overture.geojsonl
+    overturemaps download --bbox=-75.375,41.295,-75.150,41.605 -f geojsonseq -t building -o buildings.geojsonl
+    overturemaps download --bbox=-75.375,41.295,-75.150,41.605 -f geojsonseq -t place -o places_overture.geojsonl
     python build.py                          # writes docs/lake-data.json and docs/tiles/
 
 Needs Python with `numpy`, `shapely`, `pillow` and `overturemaps`.
+
+The detailed map runs from Greentown and the interstate in the south to Honesdale in the north
+(`area.json`; the `--bbox` above must match it). It has no edge: `fetch_far.py` pulls coarse
+terrain for about 85 km around, and the viewer draws that as pale relief that fades into the
+page. The build eases the detailed heights onto the coarse ones over the last 350 m so the two
+meet without a step, and the painting pales over the last 800 m.
 
 Corrections go in `data/places.json`, one entry per place id: `"drop": true` removes it,
 `"patch": {...}` changes fields (name, kind, cat), and an entry with `lat`/`lon` adds a new

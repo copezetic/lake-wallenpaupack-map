@@ -1,0 +1,122 @@
+{
+ "updated": "2026-11-26",
+ "bandFeet": 100,
+ "intro": "The lake's own boating rules in brief, and where to find fuel and a pump-out.",
+ "sections": [
+  {
+   "title": "Speed",
+   "items": [
+    {
+     "n": "25 mph at night",
+     "note": "Between sunset and sunrise."
+    },
+    {
+     "n": "45 mph on summer weekend days",
+     "note": "Sunrise to sunset on weekends and holidays, from the Saturday before Memorial Day to Labor Day. The regulation sets no numeric daytime limit on weekdays or outside that season."
+    },
+    {
+     "n": "No horsepower limit",
+     "note": "So says the Fish and Boat Commission's page for the lake.",
+     "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+     "link": "Fish and Boat Commission"
+    }
+   ]
+  },
+  {
+   "title": "Slow, no wake",
+   "items": [
+    {
+     "n": "Within 100 feet of shore, docks and people",
+     "note": "The statewide rule: slow, no-wake speed within 100 feet of the shoreline, docks, launch ramps, swimmers, downed skiers, people wading, anchored, moored or drifting boats, floats, and anywhere so marked. The button above draws that 100-foot strip along the shore."
+    },
+    {
+     "n": "On Wallenpaupack Creek",
+     "note": "Named in the lake's regulation."
+    },
+    {
+     "n": "Below the Ledgedale Bridge",
+     "note": "From the bridge to a point about 1,000 feet downstream."
+    },
+    {
+     "n": "By the dam",
+     "note": "From the dam to a point about 600 feet south."
+    },
+    {
+     "n": "Behind Cairns Island",
+     "note": "Between the island and the Pike County shore."
+    }
+   ]
+  },
+  {
+   "title": "Towed sports",
+   "items": [
+    {
+     "n": "Waterskiing at the western end",
+     "note": "Not allowed on weekends and holidays between a buoyed line about 200 yards east of Cairns Island and the Ledgedale Recreation Area."
+    },
+    {
+     "n": "Kiteskiing and parasailing",
+     "note": "Not allowed anywhere on the lake on weekends and holidays."
+    }
+   ]
+  },
+  {
+   "title": "Fuel on the water",
+   "text": "Only marinas that say on their own websites that they have a gas dock are listed. Others may sell fuel: call ahead, and expect docks to close for the winter.",
+   "items": [
+    {
+     "n": "Lighthouse Harbor Marina",
+     "poi": "ov-7e6442a5-7ca",
+     "note": "Lists a gas dock.",
+     "url": "https://www.lighthouseharbor.com/",
+     "link": "Marina's site"
+    },
+    {
+     "n": "1st Klas Marina",
+     "poi": "ov-d0966c87-9bc",
+     "note": "Advertises a gas dock.",
+     "url": "https://www.1stklas.com/",
+     "link": "Marina's site"
+    }
+   ]
+  },
+  {
+   "title": "Pump-out",
+   "items": [
+    {
+     "n": "Wilsonville Recreation Area",
+     "poi": "boat-launch-2670938738",
+     "note": "The Fish and Boat Commission says sewage pump-out is available here for a fee.",
+     "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+     "link": "Fish and Boat Commission"
+    },
+    {
+     "n": "Caffrey Recreation Area",
+     "poi": "ov-fffccd88-413",
+     "note": "The Fish and Boat Commission says sewage pump-out is available here for a fee.",
+     "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+     "link": "Fish and Boat Commission"
+    }
+   ]
+  },
+  {
+   "title": "Depth",
+   "text": "The Fish and Boat Commission gives the lake as about 60 feet at its deepest. No openly licensed depth survey of the lake was found, so this map shows no depth contours."
+  }
+ ],
+ "fine": "A summary, not the regulations and not a chart. Buoys and posted signs on the water come first, and rules change.",
+ "sources": [
+  {
+   "n": "58 Pa. Code § 103.3",
+   "url": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/058/chapter103/s103.3.html&d=reduce"
+  },
+  {
+   "n": "58 Pa. Code § 111.52",
+   "url": "https://www.pacodeandbulletin.gov/Display/pacode?file=/secure/pacode/data/058/chapter111/s111.52.html&d=reduce"
+  },
+  {
+   "n": "Fish and Boat Commission: Lake Wallenpaupack",
+   "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+  }
+ ]
+}

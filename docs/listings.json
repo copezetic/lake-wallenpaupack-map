@@ -1,0 +1,20 @@
+{
+ "_note": "Homes shown on the main map for subscribing agents. Each entry: ag (a code in agents.json), t (label), lat, lon, optional price, note, url, until (last day to show), and open: [{d: YYYY-MM-DD, time}]. Entries marked demo only show when the address ends in ?demo.",
+ "listings": [
+  {
+   "ag": "demo",
+   "demo": true,
+   "t": "12 Maple Lane (sample)",
+   "lat": 41.402,
+   "lon": -75.27,
+   "price": "Sample listing",
+   "note": "A demonstration entry: this home does not exist.",
+   "open": [
+    {
+     "d": "2099-06-06",
+     "time": "1–3 pm"
+    }
+   ]
+  }
+ ]
+}

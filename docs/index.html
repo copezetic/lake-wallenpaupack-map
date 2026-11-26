@@ -275,8 +275,9 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=5';
+import { initSky } from './sky.js?v=6';
 import { initFishing } from './fishing.js?v=1';
+import { initExtras, openNow } from './extras.js?v=1';
 
 const EX = 2.0;            // vertical exaggeration
 const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
@@ -331,6 +332,7 @@ const bbOf = pts => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const q
 for (const r of D.roads){ r.bb = bbOf(r.p); r.len = 0; for (let i = 1; i < r.p.length; i++) r.len += Math.hypot(r.p[i][0]-r.p[i-1][0], r.p[i][1]-r.p[i-1][1]); }
 for (const w of D.water) w.bb = bbOf(w.o);
 for (const f of D.features) f.bb = bbOf(f.p);
+D.trails = D.trails || []; for (const t of D.trails) t.bb = bbOf(t.p);
 const pierBB = D.piers.map(bbOf);
 const hits = (bb, x0, z0, x1, z1, pad = 0) => bb[0] < x1 + pad && bb[2] > x0 - pad && bb[1] < z1 + pad && bb[3] > z0 - pad;
 const along = (r, d) => { let acc = 0; for (let i = 1; i < r.p.length; i++){ const sl = Math.hypot(r.p[i][0]-r.p[i-1][0], r.p[i][1]-r.p[i-1][1]);
@@ -394,6 +396,9 @@ function paint(x0, z0, x1, z1, TW, detail){
   for (const k of order) for (const r of mine) if (r.k === k){ line(r.p);
     g.strokeStyle = WID[k]*S < 2.2 ? (k === 'street' ? 'rgba(246,239,220,.85)' : '#fbf4de') : k === 'hwy' ? '#f8e9bd' : k === 'main' ? '#f6efdc' : '#efe7d2';
     g.lineWidth = Math.max(MINW[k], WID[k]*S); g.stroke(); }
+  // trails: dotted brown lines, drawn only once they are wide enough to read
+  if (2.4 * S >= .7){ g.strokeStyle = detail ? 'rgba(128,74,36,.9)' : 'rgba(128,74,36,.6)'; g.lineWidth = Math.max(1, 2.4 * S); g.setLineDash(detail ? [7 * S, 6 * S] : [3, 3]);
+    for (const t of D.trails) if (on(t.bb)){ line(t.p); g.stroke(); } g.setLineDash([]); }
   // street names
   g.textAlign = 'center'; g.textBaseline = 'middle';
   for (const L of roadLabels){
@@ -638,7 +643,7 @@ function openPlace(p){
   panel.style.setProperty('--c', CATS[p.cat].c);
   panel.innerHTML = `<button class="x" aria-label="Close">×</button>
     ${p.photo ? `<img class="ph" src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">` : ''}
-    <div class="kick"><i></i>${esc(p.kind || CATS[p.cat].label)}</div><h2>${esc(p.name)}</h2>
+    <div class="kick"><i></i>${esc(p.kind || CATS[p.cat].label)}${p.sponsor ? ' · Sponsored' : ''}</div><h2>${esc(p.name)}</h2>${(o => o ? `<p style="margin:-4px 0 8px;font:700 11.5px var(--sc);letter-spacing:.13em;color:${o.open ? '#3f6b3a' : '#7a3b2e'}">${esc(o.text)}</p>` : '')(openNow(p))}
     ${p.photo && p.photoCredit ? `<div class="cred">Photo: ${esc(p.photoCredit)}</div>` : ''}<p>${esc(p.blurb || '')}</p>
     ${p.facts?.length ? `<dl>${p.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>` : ''}
     <div class="acts">${p.outside ? '' : '<button class="btn pri" id="goRoute">Route on this map</button>'}${p.url ? `<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.urlLabel || 'Website')}</a>` : ''}
@@ -937,6 +942,7 @@ function routeTo(p, quiet){
   if (at){ const [la, lo] = at.split(',').map(Number); watchId = -1; locBtn.classList.add('on'); gotFix(la, lo); } }
 
 initFishing({D, M, openSheet, openPlace, flyTo, esc, panel, chips});
+initExtras({THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chips, items, pinEls, addLabel, place, controls, camera, say, share, CATS, stopFly: () => { fly = null; }});
 
 /* ---------------- listing links for agents ----------------
    ?home=lat,lon&t=label&ag=code shows a home and what is near it. The code must be in agents.json and in date,

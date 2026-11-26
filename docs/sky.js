@@ -58,7 +58,7 @@ export function initSky(c){
     const gmst = (18.697374558 + 24.06570982441908 * n) % 24, ha = (gmst * 15 + LON) * Math.PI / 180 - ra, la = LAT * Math.PI / 180;
     return Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(ha)) * 180 / Math.PI;
   }
-  const dark = () => Q.has('night') || Q.has('fx') ? 1 : Math.min(1, Math.max(0, (3 - sunAlt()) / 10));   // 0 by day, 1 once the sun is 7° down
+  const dark = () => Q.has('day') ? 0 : Q.has('night') || Q.has('fx') ? 1 : Math.min(1, Math.max(0, (3 - sunAlt()) / 10));   // 0 by day, 1 once the sun is 7° down
 
   /* ---------- weather: National Weather Service hourly forecast for the lake ---------- */
   const W = {kind: 'clear', heavy: 0, cover: 0, wind: 0, dir: 270, temp: null, text: '', periods: [], alerts: [], ok: false};

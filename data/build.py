@@ -148,6 +148,27 @@ pn = {e['id']: (e['lon'], e['lat']) for e in el if e['type'] == 'node'}
 piers = [ring_xz([pn[n] for n in w['nodes'] if n in pn]) for w in el if w['type'] == 'way']
 piers = [q for q in piers if len(q) > 1]
 
+# ---- trails: named footpaths and the members of hiking routes
+trails = []
+el = load('osm_trails.json')
+tn = {e['id']: (e['lon'], e['lat']) for e in el if e['type'] == 'node'}
+route_of = {}
+for e in el:
+    if e['type'] == 'relation' and e.get('tags', {}).get('route') in ('hiking', 'foot') and e['tags'].get('name'):
+        for m_ in e['members']:
+            if m_['type'] == 'way': route_of.setdefault(m_['ref'], e['tags']['name'])
+NOT_TRAIL = re.compile(r'\b(road|lane|avenue|street|drive|bridge|footbridge|driveway)\b|overgrown|blazes\)$|^\(', re.I)
+for w in el:
+    if w['type'] != 'way': continue
+    t = w.get('tags', {}); name = t.get('name') or route_of.get(w['id'])
+    pts = [tn[n] for n in w['nodes'] if n in tn]
+    if not name or len(pts) < 2 or NOT_TRAIL.search(name): continue
+    g = LineString(pts)
+    if not bbox.contains(g): continue
+    name = re.sub(r'\s*\((?:\d+ mph|[A-Za-z ]+)\)$', '', name).replace(' #', ' ')
+    trails.append({'n': name, 'p': ring_xz(g.simplify(TOL).coords)})
+print('trails', len(trails), 'pieces,', len({t_['n'] for t_ in trails}), 'names')
+
 # ---- lake name labels
 lakes, by_name = [], {}
 for q in water:
@@ -427,7 +448,7 @@ for i in range(NTX):
 out = {'meta': {'W': W, 'S': S, 'E': E, 'N': N, 'lat0': lat0, 'lon0': lon0, 'kx': KX, 'kz': KZ, 'emin': emin,
                 'demW': int(dem.shape[1]), 'demH': int(dem.shape[0]), 'xmin': xmin, 'xmax': xmax, 'zmin': zmin, 'zmax': zmax, 'ntx': NTX, 'ntz': NTZ},
        'dem': dem_b64, 'boundary': boundary, 'lakes': lakes, 'water': water, 'roads': roads, 'features': features,
-       'piers': piers, 'towns': towns, 'pois': pois}
+       'piers': piers, 'towns': towns, 'pois': pois, 'trails': trails}
 if far: out['far'] = far
 dst = os.path.join(site, 'lake-data.json')
 json.dump(out, open(dst, 'w'), separators=(',', ':'))

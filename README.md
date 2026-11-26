@@ -86,3 +86,14 @@ artwork are not open source; the map data keeps its own licences, listed above.
 ### Fishing
 
 `docs/fishing.json` drives the Fishing sheet (`docs/fishing.js`). Kept by hand from official sources; every entry should be traceable to the sources listed in the file. `?fishing` opens the sheet.
+
+### Town guides, sponsors, homes, trails, boating and the tour (`docs/extras.js`)
+
+- **Town guides**: the Towns chip (or `?town=honesdale|hawley|greentown`) lists every place in and around a town by category. A place counts if it is within the town's radius, or carries the town in its address and is within about twice that.
+- **Sponsored places** (`docs/sponsors.json`): `poi` (a place id), `until` (last paid day) and optional `blurb`, `photo`, `photoCredit`, `url`. A sponsor not in the map data can be added with an `add` block (`name`, `cat`, `kind`, `lat`, `lon`). Sponsored pins are larger, always shown, listed first in their town guide, and always marked "Sponsored". Lapsed entries simply stop showing.
+- **Homes and open houses** (`docs/listings.json`): `ag` (a current code in `agents.json`), `t`, `lat`, `lon`, optional `price`, `note`, `url`, `until`, and `open: [{d, time}]`. They show as pins on the main map and under an "Open houses" / "Homes for sale" chip.
+- Entries marked `"demo": true` in either file show only when the address carries `?demo`, for showing a prospect what they would get.
+- **Trails**: `python fetch_trails.py` pulls named footpaths and hiking routes from OpenStreetMap; the build writes them as `trails` and the viewer draws them dotted. The Trails chip lists them above `docs/outdoors.json` (hiking places, winter, ice), which is kept by hand with a source on each entry.
+- **Boating** (`docs/boating.json`): speed and no-wake rules from 58 Pa. Code §§ 103.3 and 111.52, fuel docks (only marinas that say so on their own sites) and pump-outs. `bandFeet` draws the statewide 100-foot no-wake strip along the lake shore. No depth contours: no openly licensed survey was found (checked 2026-11-26).
+- **Opening hours**: a place card says "Open now" or "Closed now" only when the map data has hours in a form the page understands (13 places on 2026-11-26).
+- **Overview tour**: `?tour` hides the controls and plays a captioned fly-through (about 80 seconds) for screen recording. Add `&wx=clear&day` for fair daytime weather, `&loop` to repeat, `&wait=5` for a longer pause before it starts. The last card's wording is in `docs/tour.json`. Esc leaves the tour.

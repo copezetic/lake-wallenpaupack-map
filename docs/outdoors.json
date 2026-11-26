@@ -1,0 +1,126 @@
+{
+ "updated": "2026-11-26",
+ "sections": [
+  {
+   "title": "Places to hike",
+   "items": [
+    {
+     "n": "Shuman Point Natural Area",
+     "poi": "shuman-point-natural-area-700951121",
+     "note": "A loop of about three miles through woods along the shore, off Route 590."
+    },
+    {
+     "n": "Ledgedale Natural Area",
+     "poi": "lm-ledgedale-natural-area",
+     "note": "Eighty acres with four marked trails, off Kuhn Hill Road."
+    },
+    {
+     "n": "Lacawac Sanctuary",
+     "poi": "lacawac-sanctuary-700750343",
+     "note": "More than 12 miles of trails, open sunrise to sunset.",
+     "url": "https://www.lacawac.org/visit-us.html",
+     "link": "Sanctuary's site"
+    },
+    {
+     "n": "Bruce Lake Natural Area",
+     "poi": "bruce-lake-natural-area-6368931",
+     "note": "State forest land beside Promised Land State Park."
+    },
+    {
+     "n": "Promised Land State Park",
+     "poi": "promised-land-state-park-12657477",
+     "note": "State park at the south edge of the map.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/promised-land-state-park/winter.html",
+     "link": "State park page"
+    },
+    {
+     "n": "Dorflinger-Suydam Wildlife Sanctuary",
+     "poi": "ov-ec4de35c-cb1",
+     "note": "Trails at White Mills. No pets.",
+     "url": "https://dorflinger.org/?p=213",
+     "link": "Sanctuary's site"
+    },
+    {
+     "n": "Prompton State Park",
+     "lat": 41.5895,
+     "lon": -75.329,
+     "d": 5200,
+     "note": "Twenty-six miles of trails around Prompton Lake, west of Honesdale.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/prompton-state-park/hiking.html",
+     "link": "State park page"
+    },
+    {
+     "n": "Bingham Park and the river walk",
+     "poi": "bingham-park-261978404",
+     "note": "Hawley's borough park, on the Lackawaxen."
+    }
+   ]
+  },
+  {
+   "title": "Winter",
+   "items": [
+    {
+     "n": "Snowmobiling at Promised Land",
+     "poi": "promised-land-state-park-12657477",
+     "note": "More than 23 miles of designated trails on park and state forest land, open from the day after the last deer season in December to April 1 when there is snow.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/promised-land-state-park/winter.html",
+     "link": "State park page"
+    },
+    {
+     "n": "Skiing and snowshoeing at Promised Land",
+     "poi": "promised-land-state-park-12657477",
+     "note": "All trails are open to cross-country skis and snowshoes; the park office lends snowshoes when there are at least six inches of snow.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/promised-land-state-park/winter.html",
+     "link": "State park page"
+    },
+    {
+     "n": "Skiing and snowshoeing at Prompton",
+     "lat": 41.5895,
+     "lon": -75.329,
+     "d": 5200,
+     "note": "Trails are open to cross-country skis and snowshoes, with sledding and ice fishing too.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/prompton-state-park/winter.html",
+     "link": "State park page"
+    },
+    {
+     "n": "Downhill: Ski Big Bear at Masthope",
+     "note": "The nearest ski hill, at Lackawaxen, east of Hawley and off this map. Skiing and snow tubing.",
+     "url": "https://www.ski-bigbear.com/",
+     "link": "Ski area's site"
+    }
+   ]
+  },
+  {
+   "title": "On the ice",
+   "items": [
+    {
+     "n": "Nobody checks the lake's ice",
+     "note": "The Fish and Boat Commission has said the ice on Lake Wallenpaupack is not monitored by any authority, and that there is no such thing as safe ice.",
+     "url": "https://www.pa.gov/agencies/fishandboat/newsroom/pfbc-warns-of-rapidly-changing-ice-conditions",
+     "link": "Fish and Boat Commission"
+    },
+    {
+     "n": "State parks' rule of thumb",
+     "note": "At least four inches of solid ice for one person and seven for a small group, and the ice near shore is weaker. This is general guidance, not a reading for this lake.",
+     "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/prompton-state-park/winter.html",
+     "link": "State park page"
+    }
+   ]
+  }
+ ],
+ "fine": "Collected from the organisations' own pages. Seasons, hours and rules change: check before you go.",
+ "sources": [
+  {
+   "n": "PA state parks (DCNR)",
+   "url": "https://www.pa.gov/agencies/dcnr"
+  },
+  {
+   "n": "Lacawac Sanctuary",
+   "url": "https://www.lacawac.org/"
+  },
+  {
+   "n": "Fish and Boat Commission",
+   "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+  }
+ ]
+}

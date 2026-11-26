@@ -1,0 +1,499 @@
+{
+ "_source": "Names and shoreline positions read from \"Lake Wallenpaupack Developments and Landmarks\" (Pike County Office of Community Planning for LWWMD, July 2012), georeferenced against shared landmarks (about 100 m error). Positions mark where each development meets the lake, not its centre.",
+ "communities": [
+  {
+   "n": "Ivywood",
+   "k": "community",
+   "lat": 41.404142,
+   "lon": -75.242933
+  },
+  {
+   "n": "Oakview",
+   "k": "community",
+   "lat": 41.400911,
+   "lon": -75.260867
+  },
+  {
+   "n": "Parkside",
+   "k": "community",
+   "lat": 41.369625,
+   "lon": -75.298295
+  },
+  {
+   "n": "Al-Wa-Da",
+   "k": "community",
+   "lat": 41.360625,
+   "lon": -75.272449
+  },
+  {
+   "n": "Lynndale",
+   "k": "community",
+   "lat": 41.427591,
+   "lon": -75.199763
+  },
+  {
+   "n": "Oak Hill",
+   "k": "community",
+   "lat": 41.419867,
+   "lon": -75.268774
+  },
+  {
+   "n": "Deerwoods",
+   "k": "community",
+   "lat": 41.357837,
+   "lon": -75.274392
+  },
+  {
+   "n": "New Salem",
+   "k": "community",
+   "lat": 41.375604,
+   "lon": -75.305975
+  },
+  {
+   "n": "Knollwood",
+   "k": "community",
+   "lat": 41.394721,
+   "lon": -75.261835
+  },
+  {
+   "n": "Millbrook",
+   "k": "community",
+   "lat": 41.388118,
+   "lon": -75.240789
+  },
+  {
+   "n": "Rockledge",
+   "k": "community",
+   "lat": 41.43601,
+   "lon": -75.222843
+  },
+  {
+   "n": "The Escape",
+   "k": "community",
+   "lat": 41.363155,
+   "lon": -75.303461
+  },
+  {
+   "n": "Salem Park",
+   "k": "community",
+   "lat": 41.372516,
+   "lon": -75.302477
+  },
+  {
+   "n": "Lake Crest",
+   "k": "community",
+   "lat": 41.362849,
+   "lon": -75.295437
+  },
+  {
+   "n": "Penn Woods",
+   "k": "community",
+   "lat": 41.367774,
+   "lon": -75.263584
+  },
+  {
+   "n": "Deer Haven",
+   "k": "community",
+   "lat": 41.377676,
+   "lon": -75.256781
+  },
+  {
+   "n": "Pine Beach",
+   "k": "community",
+   "lat": 41.456328,
+   "lon": -75.202305
+  },
+  {
+   "n": "Briar Hill",
+   "k": "community",
+   "lat": 41.413635,
+   "lon": -75.25511
+  },
+  {
+   "n": "Tafton View",
+   "k": "community",
+   "lat": 41.421902,
+   "lon": -75.178245
+  },
+  {
+   "n": "Laurel Lane",
+   "k": "community",
+   "lat": 41.366665,
+   "lon": -75.311637
+  },
+  {
+   "n": "Kipp Island",
+   "k": "island",
+   "lat": 41.380013,
+   "lon": -75.260494
+  },
+  {
+   "n": "Lake Harbor",
+   "k": "community",
+   "lat": 41.372369,
+   "lon": -75.255129
+  },
+  {
+   "n": "Mangan Cove",
+   "k": "community",
+   "lat": 41.461129,
+   "lon": -75.192265
+  },
+  {
+   "n": "Sunny Point",
+   "k": "community",
+   "lat": 41.439163,
+   "lon": -75.213723
+  },
+  {
+   "n": "Colony Cove",
+   "k": "community",
+   "lat": 41.415685,
+   "lon": -75.207993
+  },
+  {
+   "n": "Sandy Shore",
+   "k": "community",
+   "lat": 41.426804,
+   "lon": -75.23795
+  },
+  {
+   "n": "Tra Mar Cove",
+   "k": "community",
+   "lat": 41.364614,
+   "lon": -75.325997
+  },
+  {
+   "n": "Sunset Acres",
+   "k": "community",
+   "lat": 41.435585,
+   "lon": -75.173137
+  },
+  {
+   "n": "Indian Rocks",
+   "k": "community",
+   "lat": 41.372747,
+   "lon": -75.315624
+  },
+  {
+   "n": "Paupack Glen",
+   "k": "community",
+   "lat": 41.390601,
+   "lon": -75.259933
+  },
+  {
+   "n": "Burns Island",
+   "k": "island",
+   "lat": 41.372537,
+   "lon": -75.270921
+  },
+  {
+   "n": "Circle Green",
+   "k": "community",
+   "lat": 41.395071,
+   "lon": -75.24546
+  },
+  {
+   "n": "Sunset Point",
+   "k": "community",
+   "lat": 41.437875,
+   "lon": -75.177565
+  },
+  {
+   "n": "Epply Island",
+   "k": "island",
+   "lat": 41.433838,
+   "lon": -75.21129
+  },
+  {
+   "n": "Simons Point",
+   "k": "community",
+   "lat": 41.416476,
+   "lon": -75.215501
+  },
+  {
+   "n": "Martins Cove",
+   "k": "community",
+   "lat": 41.425676,
+   "lon": -75.269575
+  },
+  {
+   "n": "Hermans Woods",
+   "k": "community",
+   "lat": 41.369056,
+   "lon": -75.334922
+  },
+  {
+   "n": "Rolling Acres",
+   "k": "community",
+   "lat": 41.368902,
+   "lon": -75.329151
+  },
+  {
+   "n": "Otter Springs",
+   "k": "community",
+   "lat": 41.431433,
+   "lon": -75.170482
+  },
+  {
+   "n": "Otter Springs",
+   "k": "community",
+   "lat": 41.420123,
+   "lon": -75.173573
+  },
+  {
+   "n": "Tanners Point",
+   "k": "community",
+   "lat": 41.370304,
+   "lon": -75.315939
+  },
+  {
+   "n": "Cairns Island",
+   "k": "island",
+   "lat": 41.365306,
+   "lon": -75.299147
+  },
+  {
+   "n": "Big Woods Two",
+   "k": "community",
+   "lat": 41.367649,
+   "lon": -75.285115
+  },
+  {
+   "n": "Big Woods One",
+   "k": "community",
+   "lat": 41.366364,
+   "lon": -75.278365
+  },
+  {
+   "n": "Hemlock Point",
+   "k": "community",
+   "lat": 41.365487,
+   "lon": -75.272073
+  },
+  {
+   "n": "Hemlock Grove",
+   "k": "community",
+   "lat": 41.378574,
+   "lon": -75.241977
+  },
+  {
+   "n": "Paupack Point",
+   "k": "community",
+   "lat": 41.45591,
+   "lon": -75.197173
+  },
+  {
+   "n": "Captains Cove",
+   "k": "community",
+   "lat": 41.442078,
+   "lon": -75.177303
+  },
+  {
+   "n": "Boulder Point",
+   "k": "community",
+   "lat": 41.427382,
+   "lon": -75.224968
+  },
+  {
+   "n": "Tafton Heights",
+   "k": "community",
+   "lat": 41.41491,
+   "lon": -75.179596
+  },
+  {
+   "n": "Beechwood Cove",
+   "k": "community",
+   "lat": 41.359814,
+   "lon": -75.270916
+  },
+  {
+   "n": "Lakeview Acres",
+   "k": "community",
+   "lat": 41.368321,
+   "lon": -75.270649
+  },
+  {
+   "n": "Lakeland North",
+   "k": "community",
+   "lat": 41.380327,
+   "lon": -75.273986
+  },
+  {
+   "n": "Millbrook Cove",
+   "k": "community",
+   "lat": 41.385562,
+   "lon": -75.239871
+  },
+  {
+   "n": "Woodlyn Shores",
+   "k": "community",
+   "lat": 41.454192,
+   "lon": -75.194269
+  },
+  {
+   "n": "Spinnler Point",
+   "k": "community",
+   "lat": 41.430438,
+   "lon": -75.196116
+  },
+  {
+   "n": "Sunset Village",
+   "k": "community",
+   "lat": 41.4104,
+   "lon": -75.238885
+  },
+  {
+   "n": "Loch Highlands",
+   "k": "community",
+   "lat": 41.401875,
+   "lon": -75.243758
+  },
+  {
+   "n": "Woodland Hills",
+   "k": "community",
+   "lat": 41.423142,
+   "lon": -75.244377
+  },
+  {
+   "n": "Paradise Point",
+   "k": "community",
+   "lat": 41.421244,
+   "lon": -75.258533
+  },
+  {
+   "n": "Sterling Shores",
+   "k": "community",
+   "lat": 41.375233,
+   "lon": -75.336404
+  },
+  {
+   "n": "Five Mile Point",
+   "k": "community",
+   "lat": 41.37537,
+   "lon": -75.315773
+  },
+  {
+   "n": "Driftwood Cove",
+   "k": "community",
+   "lat": 41.378043,
+   "lon": -75.308264
+  },
+  {
+   "n": "Lakeland Colony",
+   "k": "community",
+   "lat": 41.374411,
+   "lon": -75.270297
+  },
+  {
+   "n": "Cove Point Club",
+   "k": "community",
+   "lat": 41.440959,
+   "lon": -75.222566
+  },
+  {
+   "n": "Nemanie Village",
+   "k": "community",
+   "lat": 41.411446,
+   "lon": -75.230887
+  },
+  {
+   "n": "Paupack Gardens",
+   "k": "community",
+   "lat": 41.409357,
+   "lon": -75.234232
+  },
+  {
+   "n": "Goose Pond Cove",
+   "k": "community",
+   "lat": 41.407232,
+   "lon": -75.261244
+  },
+  {
+   "n": "Oak Hill Estates",
+   "k": "community",
+   "lat": 41.451725,
+   "lon": -75.173222
+  },
+  {
+   "n": "Tanglwood North",
+   "k": "community",
+   "lat": 41.41645,
+   "lon": -75.168872
+  },
+  {
+   "n": "Tanglwood Lakes",
+   "k": "community",
+   "lat": 41.360547,
+   "lon": -75.2548
+  },
+  {
+   "n": "Brunners Landing",
+   "k": "community",
+   "lat": 41.361076,
+   "lon": -75.276465
+  },
+  {
+   "n": "Tanglwood Lakes",
+   "k": "community",
+   "lat": 41.37906,
+   "lon": -75.254752
+  },
+  {
+   "n": "Seeley's Landing",
+   "k": "community",
+   "lat": 41.430226,
+   "lon": -75.181407
+  },
+  {
+   "n": "Beech House Cove",
+   "k": "community",
+   "lat": 41.44629,
+   "lon": -75.213096
+  },
+  {
+   "n": "Whispering Pines",
+   "k": "community",
+   "lat": 41.416667,
+   "lon": -75.226279
+  },
+  {
+   "n": "White Sand Springs",
+   "k": "community",
+   "lat": 41.424612,
+   "lon": -75.202458
+  },
+  {
+   "n": "White Sand Springs",
+   "k": "community",
+   "lat": 41.419198,
+   "lon": -75.203665
+  },
+  {
+   "n": "Wilson Hill",
+   "k": "community",
+   "lat": 41.456051,
+   "lon": -75.177577
+  },
+  {
+   "n": "White Pines on the Lake",
+   "k": "community",
+   "lat": 41.37652,
+   "lon": -75.258373
+  },
+  {
+   "n": "Wallenpaupack Lake Estates",
+   "k": "community",
+   "lat": 41.39298,
+   "lon": -75.27333,
+   "src": "centre of the WLE map"
+  },
+  {
+   "n": "The Hideout",
+   "k": "community",
+   "lat": 41.44237,
+   "lon": -75.34083,
+   "src": "Overture (association office)"
+  }
+ ]
+}

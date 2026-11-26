@@ -171,6 +171,7 @@ for e in load('osm_places.json'):
         if name and t.get('place') != 'locality':
             towns.append({'n': name, 'x': x, 'z': z, 'k': 'town' if t.get('place') in ('town', 'village') else 'hamlet' if t.get('place') == 'hamlet' else 'community'})
         continue
+    if name and t.get('tourism') == 'attraction' and (name[0].islower() or name.endswith('?')): continue   # mappers' notes, not places
     for cat, test, kind, major in CAT:
         if not test(t): continue
         kind = kind or KIND.get(t.get('amenity') or t.get('tourism') or t.get('leisure') or t.get('shop') or t.get('boundary'), 'Shop' if 'shop' in t else 'Place')
@@ -194,6 +195,14 @@ for e in load('osm_places.json'):
         pois.append(q); break
 # Overture's business listings fill in what OpenStreetMap lacks around here (shops, restaurants, lodging)
 def pretty(k): return k.replace('_', ' ').capitalize()
+def tidy(n):
+    n = re.sub(r'\s*,?\s*\b(l\.?l\.?c|inc)\b\.?$', '', n, flags=re.I)
+    n = re.sub(r'\s*[-,]?\s*Lake Wallenpaupack,? (PA|Pennsylvania)$', '', n)
+    n = re.sub(r'\bIi\b', 'II', n)
+    if n.isupper() and len(n) > 4: n = n.title()
+    return n.strip(' ,-')
+# listings that are not somewhere a visitor would go
+DULL = re.compile(r'hearing aid|carpet|flooring|computer|electrical supply|electronics|auto dealer|auto body|apartment', re.I)
 def ov_cat(tax):
     h = tax.get('hierarchy') or []; pr = tax.get('primary') or ''
     if not h: return None
@@ -209,6 +218,8 @@ if os.path.exists(p('places_overture.geojsonl')):
         f = json.loads(line); pr = f['properties']; name = (pr.get('names') or {}).get('primary')
         hit = ov_cat(pr.get('taxonomy') or {})
         if not name or not hit or not hit[0] or (pr.get('confidence') or 0) < 0.7: continue
+        name = tidy(name)
+        if ', Pennsylvania' in name or DULL.search(name + ' ' + pretty(pr['taxonomy']['primary'])): continue   # encyclopedia entries and trades
         lon, lat = f['geometry']['coordinates'][:2]
         if not bbox.contains(Point(lon, lat)): continue
         x, z = xz(lon, lat)
@@ -230,15 +241,66 @@ if os.path.exists(p('places_overture.geojsonl')):
 # hand-kept additions and corrections: same shape as above, with lat/lon; "drop": true removes an OSM place by id
 if os.path.exists(p('places.json')):
     for q in json.load(open(p('places.json'))):
+        old = [o for o in pois if o['id'] == q['id']]
+        if not old and (q.get('drop') or q.get('patch')): print('places.json: no place with id', q['id'])
         pois = [o for o in pois if o['id'] != q['id']]
         if q.get('drop'): continue
+        if q.get('patch'):
+            for o in old: o.update(q['patch']); pois.append(o)
+            continue
         q = dict(q); q['dlat'], q['dlon'] = q['lat'], q['lon']; q['x'], q['z'] = xz(q.pop('lon'), q.pop('lat')); pois.append(q)
-# one label per community name
-uniq = {}
-for t_ in towns:
-    k = slug(t_['n'])
-    if k not in uniq or t_['k'] == 'town': uniq[k] = t_
-towns = list(uniq.values())
+# everything inside a resort is the resort: one pin, not one per lounge
+for big, r in (('Cove Haven Resort', 650),):
+    hub = next((o for o in pois if o['name'] == big), None)
+    if hub: pois = [o for o in pois if o is hub or o.get('major') or math.hypot(o['x'] - hub['x'], o['z'] - hub['z']) > r]
+# unnamed boat launches: one per spot, named after the recreation area they belong to
+launches = [o for o in pois if o['name'] == 'Boat launch']
+for o in launches:
+    if o not in pois: continue
+    pois = [q for q in pois if q is o or q not in launches or math.hypot(q['x'] - o['x'], q['z'] - o['z']) > 160]
+    near = min((q for q in pois if 'Recreation Area' in q['name'] or 'Access Area' in q['name']), key=lambda q: math.hypot(q['x'] - o['x'], q['z'] - o['z']), default=None)
+    if near and math.hypot(near['x'] - o['x'], near['z'] - o['z']) < 320:
+        o['name'] = re.sub(r' (Campground|Access Area)$', '', near['name']) + ' boat launch'
+# the same place listed twice: same words within a short walk, or the same name a little further off
+STOP = set('the a an and of at on in inc llc co company restaurant bar grill grille pub cafe shop shoppe store stores pa hawley lake wallenpaupack'.split())
+def toks(n):
+    n = re.sub(r"[’'`.]", '', n.lower())
+    return frozenset(w.rstrip('s') for w in re.findall(r'[a-z0-9]+', n) if w not in STOP)
+def squash(n): return re.sub(r'[^a-z0-9]', '', re.sub(r"[’'`.]", '', n.lower())).replace('coffeehouse', 'coffee').replace('house', '')
+def same(a, b):
+    d = math.hypot(a['x'] - b['x'], a['z'] - b['z']); ta, tb = toks(a['name']), toks(b['name'])
+    if not ta or not tb: return False
+    if squash(a['name']).rstrip('s') == squash(b['name']).rstrip('s') or ta == tb: return d < 800
+    wide = 1500 if a['cat'] == b['cat'] == 'nature' else 160
+    if (ta <= tb or tb <= ta) and d < wide: return True
+    first = lambda n: re.sub(r"[’'`.]", '', n.lower()).split()[0]
+    return d < 30 and a['cat'] == b['cat'] and first(a['name']) == first(b['name']) and len(first(a['name'])) > 3
+def rank(o): return (not o['id'].startswith('ov-'), len(o.get('facts', [])) + ('url' in o), -len(o['name']))   # OpenStreetMap's position first, then the fuller card
+kept = []
+for o in sorted(pois, key=rank, reverse=True):
+    twin = next((k for k in kept if same(k, o)), None)
+    if twin is None: kept.append(o); continue
+    have = {f[0] for f in twin.get('facts', [])}
+    for f in o.get('facts', []):
+        if f[0] not in have: twin.setdefault('facts', []).append(f)
+    if 'url' in o and 'url' not in twin: twin['url'] = o['url']
+    if o.get('major'): twin['major'] = True
+print('places', len(pois), '->', len(kept), 'after merging doubles')
+pois = sorted(kept, key=lambda o: (o['cat'], o['name']))
+
+# communities and islands kept by hand (communities.json), on top of the few OpenStreetMap knows
+FIX = {'Lake Wallenpaupack Estate': 'Lake Wallenpaupack Estates', 'Tanglewood': None, 'Tanglewood Estate': None}
+towns = [dict(t_, n=FIX.get(t_['n'], t_['n'])) for t_ in towns if FIX.get(t_['n'], t_['n'])]
+if os.path.exists(p('communities.json')):
+    for c in json.load(open(p('communities.json')))['communities']:
+        if not bbox.contains(Point(c['lon'], c['lat'])): continue
+        x, z = xz(c['lon'], c['lat']); towns.append({'n': c['n'], 'x': x, 'z': z, 'k': c['k']})
+# one label per name, unless the same name really is used in two places
+order = {'town': 0, 'hamlet': 1, 'community': 2, 'island': 2}
+uniq = []
+for t_ in sorted(towns, key=lambda t_: order[t_['k']]):
+    if not any(slug(u['n']) == slug(t_['n']) and math.hypot(u['x'] - t_['x'], u['z'] - t_['z']) < 1200 for u in uniq): uniq.append(t_)
+towns = uniq
 
 # ---- buildings, one file per tile
 tiles = {}

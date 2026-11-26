@@ -25,14 +25,21 @@ business shown.
 
 Needs Python with `numpy`, `shapely`, `pillow` and `overturemaps`.
 
-Corrections and additions go in `data/places.json` (same fields as a place in
-`lake-data.json`, with `lat`/`lon`; `"drop": true` removes a place by id). Road-name
-fixes go in `NAME_FIX` in `build.py`.
+Corrections go in `data/places.json`, one entry per place id: `"drop": true` removes it,
+`"patch": {...}` changes fields (name, kind, cat), and an entry with `lat`/`lon` adds a new
+place. The build also merges doubles on its own (same words within a short walk) and folds
+everything inside a resort into the resort's pin. Road-name fixes go in `NAME_FIX` in `build.py`.
+
+Community and island names live in `data/communities.json`. Most were read from the Pike
+County Office of Community Planning's 2012 map "Lake Wallenpaupack Developments and
+Landmarks" and georeferenced against shared landmarks (about 100 m error); each sits where
+the development meets the shore, not at its centre.
 
 ## Data
 
 Map data © OpenStreetMap contributors (ODbL). Buildings: Overture Maps Foundation.
 Terrain: USGS elevation data via Mapzen Terrarium tiles.
+Community names: Pike County Office of Community Planning / LWWMD, 2012.
 
 ## Copyright
 

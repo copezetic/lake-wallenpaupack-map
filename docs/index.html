@@ -89,6 +89,8 @@ body.aerial #credit,body.aerial #hint{background:rgba(247,242,230,.95);padding:5
 .lb{position:absolute;left:0;top:0;will-change:transform;white-space:nowrap}
 .lb.town{font:700 12.5px var(--sc);letter-spacing:.16em;color:#4a3a2a;text-shadow:0 0 3px #f3ecd9,0 0 3px #f3ecd9,0 0 6px #f3ecd9;pointer-events:none}
 .lb.town.t1{font-size:15px;color:#2b2118}
+.lb.town.com{font-size:11px;letter-spacing:.1em}
+.lb.town.isl{font:italic 600 13px var(--serif);letter-spacing:.02em;color:#2f5560}
 .lake{font:italic 600 19px var(--serif);color:#3d5a63;letter-spacing:.04em;transform-origin:0 0;
   text-shadow:0 0 4px #dfe6dc,0 0 4px #dfe6dc,0 0 8px #dfe6dc}
 .lake.big{font-size:25px;letter-spacing:.1em}
@@ -584,8 +586,8 @@ for (const l of D.lakes){
   addLabel(el, l.x, l.z, 2, 'center').maxD = l.a > 5e6 ? 0 : l.a > 150000 ? 16000 : 6500;
 }
 for (const t of D.towns){
-  const el = document.createElement('div'); el.className = 'lb town' + (t.k === 'town' ? ' t1' : ''); el.textContent = t.n;
-  addLabel(el, t.x, t.z, 4, 'center').maxD = t.k === 'town' ? 0 : t.k === 'hamlet' ? 20000 : 11000;
+  const el = document.createElement('div'); el.className = 'lb town' + (t.k === 'town' ? ' t1' : t.k === 'island' ? ' isl' : t.k === 'community' ? ' com' : ''); el.textContent = t.n;
+  addLabel(el, t.x, t.z, 4, 'center').maxD = t.k === 'town' ? 0 : t.k === 'hamlet' ? 20000 : 7500;
 }
 const pinEls = new Map();
 for (const p of D.pois){
@@ -666,9 +668,9 @@ const LEGAL = `<div class="sec">Copyright</div><p>© 2026 DeWitt Hutchins. All r
    <p>An independent publication. It is not affiliated with, sponsored by or endorsed by any community, association, utility, government body or business shown. All names and trademarks belong to their owners and appear only to identify places.</p>`;
 document.getElementById('bLegal').onclick = e => { e.preventDefault(); openSheet('Legal', 'Copyright and disclaimer', LEGAL); };
 document.getElementById('bInfo').onclick = () => openSheet('About', 'The whole lake in 3D',
-  `<p>Lake Wallenpaupack and everything around it on one model: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
-   <div class="sec">An early draft</div><p>The places on this map come from public map data and nobody has checked them yet. If something is wrong, missing or in the wrong spot, that is expected at this stage.</p>
-   <div class="sec">Where the data comes from</div><p>Roads, water and places: OpenStreetMap contributors. Buildings: Overture Maps. Terrain: USGS elevation data.</p>
+  `<p>Lake Wallenpaupack and everything around it on one model: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, ${D.towns.length} towns, communities and islands, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
+   <div class="sec">An early draft</div><p>The places on this map come from public map data. Doubles and obvious mistakes have been cleared out, but nobody has visited or called each one yet. If something is wrong, missing or in the wrong spot, that is expected at this stage.</p>
+   <div class="sec">Where the data comes from</div><p>Roads, water and places: OpenStreetMap contributors. Buildings and business listings: Overture Maps. Terrain: USGS elevation data. Community names: the Pike County Office of Community Planning's 2012 map of lake developments, which marks where each one meets the shore.</p>
    <p class="fine">An independent map. Not an official publication of any community, association or business shown.</p>` + LEGAL);
 let back = null, placeOpen = false;      // the view you had before opening a place card
 function view(){ const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target)); return {x: controls.target.x, z: controls.target.z, d: s.radius, az: s.theta}; }
@@ -707,7 +709,7 @@ for (const r of D.roads){
 const index = [...D.pois.map(p => ({n: p.name, kind: 'Place', p})),
   ...[...streets.values()].sort((a, b) => a.n.localeCompare(b.n)).map(s => ({n: s.n, kind: 'Street', s}))];
 for (const l of D.lakes) index.push({n: l.n, kind: 'Lake', at: [l.x, l.z, Math.max(1800, Math.sqrt(l.a) * 3.2)]});
-for (const t of D.towns) index.push({n: t.n, kind: 'Community', at: [t.x, t.z, 3400]});
+for (const t of D.towns) index.push({n: t.n, kind: t.k === 'island' ? 'Island' : 'Community', at: [t.x, t.z, t.k === 'town' || t.k === 'hamlet' ? 3400 : 1900]});
 const q = document.getElementById('q'), results = document.getElementById('results'); let cur = -1, shown = [];
 function hideResults(){ results.style.display = 'none'; cur = -1; }
 function showResults(){

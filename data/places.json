@@ -1,0 +1,232 @@
+[
+ {
+  "id": "ov-1d561764-a61",
+  "drop": true,
+  "was": "Bg Tavern",
+  "why": "same as Blooming Grove Tavern"
+ },
+ {
+  "id": "ov-80d65511-c99",
+  "drop": true,
+  "was": "Kipp Island"
+ },
+ {
+  "id": "ov-f63d29c6-c15",
+  "drop": true,
+  "was": "Lacawac Sanctuary"
+ },
+ {
+  "id": "ov-65adee81-1b9",
+  "drop": true,
+  "was": "Lakawac Wildlife Sanctuary"
+ },
+ {
+  "id": "ov-6fabe01c-2b9",
+  "drop": true,
+  "was": "Shahola Marsh Reservoir"
+ },
+ {
+  "id": "t-dock-pier-1332539639",
+  "drop": true,
+  "was": "T-Dock (pier)",
+  "why": "private community amenity"
+ },
+ {
+  "id": "ov-aec3805c-500",
+  "drop": true,
+  "was": "WLE - Deer Lake Beach",
+  "why": "private community amenity"
+ },
+ {
+  "id": "ov-f9332d49-b12",
+  "drop": true,
+  "was": "The Wake Zone - Indoor Golf + Taproom"
+ },
+ {
+  "id": "ov-35164e5e-bb4",
+  "drop": true,
+  "was": "Wallenpaupack HS Stadium"
+ },
+ {
+  "id": "ov-91d7a623-f60",
+  "drop": true,
+  "was": "Family Farms Northeast"
+ },
+ {
+  "id": "ov-87e9395d-676",
+  "drop": true,
+  "was": "Alaska Company"
+ },
+ {
+  "id": "all-american-computer-repair-4384585432",
+  "drop": true,
+  "was": "All American Computer Repair"
+ },
+ {
+  "id": "art-s-auto-body-7853732856",
+  "drop": true,
+  "was": "Art's Auto Body"
+ },
+ {
+  "id": "ov-44561a10-fd5",
+  "drop": true,
+  "was": "CVS Beauty"
+ },
+ {
+  "id": "ov-947d8be4-6f5",
+  "drop": true,
+  "was": "CVS Beauty"
+ },
+ {
+  "id": "ov-cc7f794c-e85",
+  "drop": true,
+  "was": "Dolan Racing Products"
+ },
+ {
+  "id": "ov-c187f6c1-112",
+  "drop": true,
+  "was": "Onvo"
+ },
+ {
+  "id": "ov-e0309fa8-33b",
+  "drop": true,
+  "was": "Promised Land Truck Stop"
+ },
+ {
+  "id": "ov-5caf52e6-cef",
+  "drop": true,
+  "was": "Promised Land rest stop"
+ },
+ {
+  "id": "sgl-183-gun-range-7858975058",
+  "drop": true,
+  "was": "SGL 183 Gun Range"
+ },
+ {
+  "id": "ov-cb8208c9-7be",
+  "drop": true,
+  "was": "The Hearing Center - Hawley"
+ },
+ {
+  "id": "ov-52f83f7e-49b",
+  "drop": true,
+  "was": "Cove Haven Resort Pocono Moutains"
+ },
+ {
+  "id": "ov-f3ebf50d-416",
+  "drop": true,
+  "was": "Epply 1 - Lakeside Cabins"
+ },
+ {
+  "id": "ov-32f559a4-0ae",
+  "drop": true,
+  "was": "Loch Highlands",
+  "why": "a community, not lodging"
+ },
+ {
+  "id": "ov-22eec68f-379",
+  "drop": true,
+  "was": "Settlers Hospitality Group"
+ },
+ {
+  "id": "rubber-duckie-boat-rental-docks-693328957",
+  "drop": true,
+  "was": "Rubber Duckie Boat Rental Docks"
+ },
+ {
+  "id": "ov-8c2902d8-548",
+  "drop": true,
+  "was": "Wilsonville Recreation Area"
+ },
+ {
+  "id": "exxon-9743872111",
+  "patch": {
+   "name": "Promised Land Truck Stop",
+   "kind": "Fuel"
+  }
+ },
+ {
+  "id": "boat-launch-1594865050",
+  "patch": {
+   "name": "PA Fish & Boat Commission Access Area"
+  }
+ },
+ {
+  "id": "ov-b6bd7d20-a30",
+  "patch": {
+   "cat": "nature"
+  }
+ },
+ {
+  "id": "cove-haven-resort-964210110",
+  "patch": {
+   "kind": "Resort"
+  }
+ },
+ {
+  "id": "greshams-chop-house-5625538227",
+  "patch": {
+   "name": "Gresham's Chop House"
+  }
+ },
+ {
+  "id": "the-boathouse-729764255",
+  "patch": {
+   "name": "The Boat House Restaurant"
+  }
+ },
+ {
+  "id": "ov-1dca417a-538",
+  "patch": {
+   "kind": "Pharmacy"
+  }
+ },
+ {
+  "id": "ov-54f13ec0-d3b",
+  "patch": {
+   "name": "Jukebox Classics & Vintage Slot Machines"
+  }
+ },
+ {
+  "id": "ov-274ad2f3-b6b",
+  "patch": {
+   "kind": "Framing shop"
+  }
+ },
+ {
+  "id": "ov-7c68cf1b-fc1",
+  "patch": {
+   "kind": "General store"
+  }
+ },
+ {
+  "id": "ov-1fcea9ff-195",
+  "patch": {
+   "kind": "Farm market"
+  }
+ },
+ {
+  "id": "lm-tafton-dike",
+  "name": "Tafton Dike",
+  "cat": "nature",
+  "kind": "Landmark",
+  "lat": 41.445797,
+  "lon": -75.179927
+ },
+ {
+  "id": "lm-ledgedale-natural-area",
+  "name": "Ledgedale Natural Area",
+  "cat": "nature",
+  "kind": "Natural area",
+  "lat": 41.360316,
+  "lon": -75.326715
+ },
+ {
+  "id": "lm-ppl-beech-house-creek-wildlife-refuge",
+  "name": "Beech House Creek Wildlife Refuge",
+  "cat": "nature",
+  "kind": "Wildlife refuge",
+  "lat": 41.449426,
+  "lon": -75.213288
+ }
+]

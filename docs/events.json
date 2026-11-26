@@ -224,6 +224,51 @@
    "url": "https://www.poconomountains.com/hawley/events/hawley-harvest-hoedown/",
    "lat": 41.47592,
    "lon": -75.18212
+  },
+  {
+   "n": "Cookie Walk",
+   "d0": "2026-12-12",
+   "time": "9 am",
+   "where": "815 Church St, Hawley",
+   "note": "Part of Hawley Winterfest. Listed as a public event on Facebook.",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "A Winterfest Ring & Sing Christmas",
+   "d0": "2026-12-13",
+   "time": "2 pm",
+   "where": "315 Church St, Hawley",
+   "note": "Part of Hawley Winterfest. Listed as a public event on Facebook.",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Breakfast with Santa fundraiser",
+   "d0": "2026-12-19",
+   "time": "10 am",
+   "where": "The Hawley Hub, 318 Main Ave, Hawley",
+   "note": "Listed as a public event on Facebook.",
+   "lat": 41.47592,
+   "lon": -75.18212
+  },
+  {
+   "n": "Paupack Polar Plunge",
+   "d0": "2027-01-01",
+   "time": "11 am",
+   "where": "1st Klas Marina, Tafton",
+   "note": "New Year’s Day plunge into the lake. Listed as a public event on Facebook.",
+   "lat": 41.41747,
+   "lon": -75.20573
+  },
+  {
+   "n": "First Day Hike",
+   "d0": "2027-01-01",
+   "time": "11 am",
+   "where": "Lacawac Sanctuary, 94 Sanctuary Rd",
+   "note": "New Year’s Day hike at the sanctuary. Listed as a public event on Facebook.",
+   "lat": 41.37928,
+   "lon": -75.29157
   }
  ]
 }

@@ -271,7 +271,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=1';
+import { initSky } from './sky.js?v=2';
 
 const EX = 2.0;            // vertical exaggeration
 const DEPTH = 260;         // thickness of the earth block under the lowest point
@@ -1119,7 +1119,7 @@ if (EDIT){
   });
 }
 
-const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, getCamD: () => camD});
+const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, tiles, getCamD: () => camD});
 
 /* ---------------- loop ---------------- */
 function resize(){ const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();

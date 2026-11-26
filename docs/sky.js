@@ -1,8 +1,9 @@
 /* Lake Wallenpaupack map — the sky: live weather, night, fireworks, Santa, and the events list.
    © 2026 DeWitt Hutchins. All rights reserved.
    Test switches: ?wx=snow|rain|storm|fog|cloudy|clear  ?night=1  ?fx=fireworks|santa */
+const TRAFFIC_KEY = '';      // TomTom key, restricted to this site's address; empty = no traffic layer
 export function initSky(c){
-  const {THREE, scene, camera, M, D, openSheet, flyTo, esc, chips, maxH, getCamD, panel} = c;
+  const {THREE, scene, camera, M, D, openSheet, flyTo, esc, chips, maxH, getCamD, panel, tiles} = c;
   const Q = new URLSearchParams(location.search);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const gl = document.getElementById('gl');
@@ -180,6 +181,38 @@ export function initSky(c){
     panel.querySelectorAll('button[data-ev]').forEach(b => b.onclick = () => { const e = list[+b.dataset.ev], [x, z] = toXZ(e.lat, e.lon); flyTo(x, z, 2600); });
   }
   const bEv = document.getElementById('bEvents'); if (bEv) bEv.onclick = eventsSheet;
+
+  /* ---------- live traffic on the major roads (TomTom flow tiles, laid over the ground) ---------- */
+  const tkey = Q.get('tk') || TRAFFIC_KEY;
+  if (tkey){
+    const TS = 2048, tc = document.createElement('canvas'); tc.width = tc.height = TS; const tx = tc.getContext('2d');
+    const ttex = new THREE.CanvasTexture(tc); ttex.colorSpace = THREE.SRGBColorSpace; ttex.anisotropy = 8;
+    const tg = new THREE.Group(); tg.visible = false; scene.add(tg);
+    const tm = new THREE.MeshBasicMaterial({map: ttex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2});
+    for (const t of tiles){ const m = new THREE.Mesh(t.mesh.geometry, tm); m.renderOrder = 1; tg.add(m); }
+    const XS = M.xmax - M.xmin, ZS = M.zmax - M.zmin, px = x => (x - M.xmin) / XS * TS, pz = z => (z - M.zmin) / ZS * TS;
+    const Z = 13, n = 2 ** Z, lon2x = lon => Math.floor((lon + 180) / 360 * n), lat2y = lat => Math.floor((1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2 * n);
+    const x2lon = x => x / n * 360 - 180, y2lat = y => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI;
+    let on = false, timer = 0;
+    const tchip = document.createElement('button'); tchip.className = 'chip sky'; tchip.textContent = 'Traffic'; tchip.title = 'Live traffic on the major roads'; chip.after(tchip);
+    const credit = document.getElementById('credit');
+    async function draw(){
+      const jobs = [];
+      for (let x = lon2x(M.W); x <= lon2x(M.E); x++) for (let y = lat2y(M.N); y <= lat2y(M.S); y++) jobs.push(new Promise(res => { const im = new Image(); im.crossOrigin = 'anonymous';
+        im.onload = () => res({im, x, y}); im.onerror = () => res(null); im.src = `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/${Z}/${x}/${y}.png?key=${encodeURIComponent(tkey)}&tileSize=512`; }));
+      const got = (await Promise.all(jobs)).filter(Boolean);
+      if (!got.length){ tchip.textContent = 'Traffic unavailable'; return; }
+      tx.globalCompositeOperation = 'source-over'; tx.clearRect(0, 0, TS, TS);
+      for (const {im, x, y} of got){ const [x0, z0] = toXZ(y2lat(y), x2lon(x)), [x1, z1] = toXZ(y2lat(y + 1), x2lon(x + 1)); tx.drawImage(im, px(x0), pz(z0), px(x1) - px(x0), pz(z1) - pz(z0)); }
+      tx.globalCompositeOperation = 'destination-in'; tx.lineCap = tx.lineJoin = 'round'; tx.strokeStyle = '#000'; tx.lineWidth = 90 / XS * TS; tx.beginPath();   // keep only what lies along a major road
+      for (const r of D.roads) if (r.k !== 'street') r.p.forEach((p, i) => i ? tx.lineTo(px(p[0]), pz(p[1])) : tx.moveTo(px(p[0]), pz(p[1])));
+      tx.stroke(); tx.globalCompositeOperation = 'source-over'; ttex.needsUpdate = true;
+      tchip.textContent = 'Traffic · live';
+    }
+    tchip.onclick = () => { on = !on; tg.visible = on; tchip.classList.toggle('fx', on); clearInterval(timer);
+      let note = document.getElementById('ttc'); if (on && !note && credit){ note = document.createElement('span'); note.id = 'ttc'; note.textContent = ' Traffic © TomTom.'; credit.appendChild(note); } if (note) note.hidden = !on;
+      if (on){ tchip.textContent = 'Traffic…'; draw(); timer = setInterval(draw, 5 * 60e3); } else tchip.textContent = 'Traffic'; };
+  }
 
   /* ---------- fireworks ---------- */
   const PAL = ['#ff5a4a', '#ffd257', '#7fd0ff', '#8dff9a', '#ff8ad8', '#ffffff', '#ffb04a', '#b79bff'];

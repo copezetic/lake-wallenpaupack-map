@@ -1,7 +1,7 @@
 /* Lake Wallenpaupack map — the sky: live weather, night, fireworks, Santa, and the events list.
    © 2026 DeWitt Hutchins. All rights reserved.
    Test switches: ?wx=snow|rain|storm|fog|cloudy|clear  ?night=1  ?fx=fireworks|santa */
-const TRAFFIC_KEY = '';      // TomTom key, restricted to this site's address; empty = no traffic layer
+const TRAFFIC_KEY = '4eOfmF8XexLCSPsE5iGLfHHYVkbRUriY';      // TomTom key, restricted to this site's address; empty = no traffic layer
 export function initSky(c){
   const {THREE, scene, camera, M, D, openSheet, flyTo, esc, chips, maxH, getCamD, panel, tiles} = c;
   const Q = new URLSearchParams(location.search);

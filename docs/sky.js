@@ -23,6 +23,8 @@ export function initSky(c){
 #panel .wxnow{font:600 34px var(--serif);margin:2px 0 2px}
 #panel .wxrow{display:grid;grid-template-columns:62px 46px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid rgba(141,154,151,.55);font:500 16px var(--serif)}
 #panel .wxrow small{color:var(--ink-soft);font-size:14px}
+#panel .wxrow.cond{grid-template-columns:118px 1fr}
+#panel .wxrow.cond>span:first-child{font:700 11px var(--sc);letter-spacing:.12em;color:var(--ink-soft);align-self:center}
 #panel .wxalert{border-left:3px solid #b5562f;padding:2px 0 2px 10px;margin:10px 0}
 #panel .ev{display:grid;grid-template-columns:64px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid rgba(141,154,151,.55)}
 #panel .ev .when{font:700 11px var(--sc);letter-spacing:.12em;color:#7a3b2e;text-align:center;line-height:1.25}
@@ -100,9 +102,52 @@ export function initSky(c){
       `<div class="wxnow">${W.temp != null ? W.temp + '°F' : ''}</div><p>${esc(W.text)}${W.wind ? ` · wind ${esc(W.from || '')} ${W.wind} mph` : ''}</p>` +
       W.alerts.map(a => `<div class="wxalert"><b>${esc(a.event)}</b><br><span class="fine" style="margin:0">${esc(a.headline || '')}</span></div>`).join('') +
       `<div class="sec">Next hours</div>` + W.periods.map(p => `<div class="wxrow"><span>${hr(p.startTime)}</span><b>${p.temperature}°</b><span>${esc(p.shortForecast)} <small>${esc(p.windDirection)} ${esc(p.windSpeed)}</small></span></div>`).join('') +
-      `<button class="tog" id="wxTog">${animate ? 'Turn weather effects off' : 'Turn weather effects on'}</button>
+`<div class="sec">Sun and moon</div>${skyRows()}<div id="cond">${condHTML()}</div>` +
+            `<button class="tog" id="wxTog">${animate ? 'Turn weather effects off' : 'Turn weather effects on'}</button>
        <p class="fine">Hourly forecast and alerts from the U.S. National Weather Service for the middle of the lake. The rain, snow, clouds and night shading on the map follow it; they are an illustration, not a radar picture.</p>`);
     panel.querySelector('#wxTog').onclick = () => { animate = !animate; store.set('lake-wx', animate ? 'on' : 'off'); apply(); weatherSheet(); };
+    loadCond().then(() => { const el = panel.querySelector('#cond'); if (el) el.innerHTML = condHTML(); });
+  }
+
+  /* sun, moon, and the river below the dam (U.S. Geological Survey gauges, public domain) */
+  const clock = d => d ? d.toLocaleTimeString('en-US', {timeZone: 'America/New_York', hour: 'numeric', minute: '2-digit'}) : '—';
+  function sunTimes(){
+    const t0 = Date.now() - lakeDate().h * 36e5; let up = null, down = null, prev = sunAlt(new Date(t0));
+    for (let m = 2; m <= 1440; m += 2){ const a = sunAlt(new Date(t0 + m * 6e4));
+      if (prev < -.83 && a >= -.83) up = new Date(t0 + m * 6e4); if (prev >= -.83 && a < -.83) down = new Date(t0 + m * 6e4); prev = a; }
+    return {up, down};
+  }
+  function moon(){
+    const P = 29.530588853, age = (((Date.now() / 864e5 - 10962.76) % P) + P) % P, f = age / P;
+    const names = ['New moon', 'Waxing crescent', 'First quarter', 'Waxing gibbous', 'Full moon', 'Waning gibbous', 'Last quarter', 'Waning crescent'];
+    return {name: names[Math.round(f * 8) % 8], lit: Math.round((1 - Math.cos(2 * Math.PI * f)) * 50), toFull: ((P / 2 - age) + P) % P};
+  }
+  const row = (k, v, sm) => `<div class="wxrow cond"><span>${k}</span><span><b>${v}</b>${sm ? ` <small>${sm}</small>` : ''}</span></div>`;
+  function skyRows(){
+    const s = sunTimes(), m = moon(), len = s.up && s.down ? (s.down - s.up) / 6e4 : 0, d = Math.round(m.toFull);
+    return row('Sunrise', clock(s.up)) + row('Sunset', clock(s.down), len ? `${Math.floor(len / 60)} h ${Math.round(len % 60)} min of daylight` : '') +
+      row('Moon', m.name, `${m.lit}% lit${d > 0 && d < 15 && m.name !== 'Full moon' ? ` · full in ${d} day${d === 1 ? '' : 's'}` : ''}`);
+  }
+  let COND = null, condAt = 0;
+  async function loadCond(){
+    if (COND && Date.now() - condAt < 9e5) return;
+    try {
+      const j = await fetch('https://waterservices.usgs.gov/nwis/iv/?format=json&sites=01431500,01432055&parameterCd=00010,00060').then(r => r.json());
+      const out = {};
+      for (const t of j.value.timeSeries){ const v = t.values[0].value.at(-1); if (!v || +v.value < -900) continue;
+        (out[t.sourceInfo.siteCode[0].value] ||= {})[t.variable.variableCode[0].value] = {v: +v.value, t: new Date(v.dateTime)}; }
+      COND = out; condAt = Date.now();
+    } catch(e){ COND = COND || {}; }
+  }
+  function condHTML(){
+    const head = '<div class="sec">Water</div>', link = `<p class="fine">Lake level, and when the power plant is running, are posted by the dam's operator at <a href="https://www.safewaters.com/" target="_blank" rel="noopener">safewaters.com</a>.</p>`;
+    if (!COND) return head + '<p class="fine">Reading the river gauges…</p>' + link;
+    const g = (s, c) => COND[s] && COND[s][c], f = c => Math.round(c * 9 / 5 + 32), cfs = n => Math.round(n).toLocaleString('en-US');
+    const hT = g('01431500', '00010'), hQ = g('01431500', '00060'), bQ = g('01432055', '00060'), bT = g('01432055', '00010');
+    const rows = (hT ? row('River temp', `${f(hT.v)}°F`, 'Lackawaxen at Hawley') : '') + (hQ ? row('River flow', `${cfs(hQ.v)} cfs`, 'Lackawaxen at Hawley') : '') +
+      (bQ ? row('Below the plant', `${cfs(bQ.v)} cfs`, `Lackawaxen near Baoba${bT ? ` · ${f(bT.v)}°F` : ''}`) : '');
+    const at = hT || hQ || bQ;
+    return head + (rows ? rows + `<p class="fine">River readings from U.S. Geological Survey gauges${at ? `, last at ${clock(at.t)}` : ''}; provisional. These are the river, not the lake: there is no public gauge for the lake's own water temperature.</p>` : '<p class="fine">The river gauges are not answering just now.</p>') + link;
   }
 
   /* rain and snow fall across the screen, leaning with the wind as seen from where you are looking */

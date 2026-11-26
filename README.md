@@ -60,3 +60,10 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - **Fireworks**: after dark on July 4, or on the date of any event in `events.json` marked `"fx": "fireworks"`. Test with `?fx=fireworks`. The launch point is not published by the organiser; the spot in `events.json` is open water off the high school viewing area.
 - **Santa**: all day December 24 and until 7 am on the 25th, circling the lake. Test with `?fx=santa`.
 - **Events**: `docs/events.json`, kept by hand from the organisers' own pages. Each entry has a source link; events without an announced date carry `usual` and `last` instead of `d0`.
+
+### Traffic, conditions and share links
+
+- **Traffic** (off until the Traffic chip is tapped): TomTom raster flow tiles, masked to the main roads. The key sits at the top of `docs/sky.js`; it is locked to `copezetic.github.io` in the TomTom dashboard (checked 2026-11-25: other sites get 403), so a custom domain must be added to that whitelist.
+- **Sun, moon and river** rows in the weather sheet: sun and moon are computed in the page; river temperature and flow come from U.S. Geological Survey gauges 01431500 (Hawley) and 01432055 (near Baoba, below the power plant).
+- **Lake level is linked, not shown.** Brookfield's safewaters.com terms forbid automated copying and republishing, so the sheet only links there.
+- **Share links**: `?p=<place id>` opens a place, `?c=<community-slug>` a community.

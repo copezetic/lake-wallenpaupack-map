@@ -271,7 +271,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=3';
+import { initSky } from './sky.js?v=4';
 
 const EX = 2.0;            // vertical exaggeration
 const DEPTH = 260;         // thickness of the earth block under the lowest point
@@ -661,13 +661,20 @@ function openPlace(p){
     ${p.photo && p.photoCredit ? `<div class="cred">Photo: ${esc(p.photoCredit)}</div>` : ''}<p>${esc(p.blurb || '')}</p>
     ${p.facts?.length ? `<dl>${p.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>` : ''}
     <div class="acts">${p.outside ? '' : '<button class="btn pri" id="goRoute">Route on this map</button>'}${p.url ? `<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.urlLabel || 'Website')}</a>` : ''}
-    <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a></div>`;
+    <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a><button class="btn" id="goShare">Share</button></div>`;
+  panel.querySelector('#goShare').onclick = () => share(p.name, '?p=' + encodeURIComponent(p.id));
   panel.classList.remove('route'); const gr = panel.querySelector('#goRoute'); if (gr) gr.onclick = () => routeTo(p);
   panel.querySelector('.x').onclick = dismiss;
   if (!back) back = view();
   placeOpen = true;
   panel.classList.add('open'); panel.scrollTop = 0;
   flyTo(p.x + (small ? 0 : 120), p.z + (small ? 140 : 0), 1500);
+}
+function share(title, query){                       // hand the link to the phone's share sheet, or copy it
+  const url = location.origin + location.pathname + query;
+  if (navigator.share) navigator.share({title: title + ' · Lake Wallenpaupack', url}).catch(() => {});
+  else if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => say('Link copied.'), () => say(url));
+  else say(url);
 }
 function openSheet(kick, title, html){
   for (const el of pinEls.values()) el.classList.remove('sel');
@@ -815,14 +822,16 @@ function isolate(t, fly = true){
     : (t.in ? `Part of ${esc(t.in)}. ` : '') + 'There is no outline for this one yet, so this shows the area around its marker on the shore.';
   openSheet('Community', t.n, `<p>Showing only ${esc(t.n)}. The rest of the map is faded back.</p><p class="fine">${note}</p>
     ${here.length ? `<div class="sec">Places here</div><div class="plist">${here.map(p => `<button data-poi="${p.id}">${esc(p.name)}<small>${esc(p.kind || '')}</small></button>`).join('')}</div>` : ''}
-    <button class="wide" id="isoOff">Show the whole lake</button>`);
+    <button class="wide" id="isoOff">Show the whole lake</button><button class="wide" id="isoShare">Share this community</button>`);
   document.getElementById('isoOff').onclick = () => isolate(null);
+  document.getElementById('isoShare').onclick = () => share(t.n, '?c=' + slugOf(t.n));
   if (fly) flyTo((x0 + x1) / 2, (z0 + z1) / 2, Math.max(1500, Math.hypot(x1 - x0, z1 - z0) * 1.9));
 }
 document.getElementById('bComs').onclick = () => {
   openSheet('Around the lake', 'Communities', `<p>Pick one to see it on its own.</p><div class="clist">${COMS.map((t, i) => `<button data-com="${i}">${esc(t.n)}</button>`).join('')}</div>`);
   panel.querySelectorAll('button[data-com]').forEach(b => b.onclick = () => isolate(COMS[+b.dataset.com]));
 };
+{ const id = new URLSearchParams(location.search).get('p'), p = id && D.pois.find(p => p.id === id); if (p) setTimeout(() => openPlace(p), 600); }   // ?p=<id> opens on that place
 { const c = new URLSearchParams(location.search).get('c'), t = c && COMS.find(t => slugOf(t.n) === c); if (t) setTimeout(() => isolate(t), 600); }   // ?c=indian-rocks opens on that community
 
 /* ---------------- where am I ---------------- */

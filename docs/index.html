@@ -90,6 +90,16 @@ body.aerial #credit,body.aerial #hint{background:rgba(247,242,230,.95);padding:5
 .lb.town{font:700 12.5px var(--sc);letter-spacing:.16em;color:#4a3a2a;text-shadow:0 0 3px #f3ecd9,0 0 3px #f3ecd9,0 0 6px #f3ecd9;pointer-events:none}
 .lb.town.t1{font-size:15px;color:#2b2118}
 .lb.town.com{font-size:11px;letter-spacing:.1em}
+.lb.town.pick{pointer-events:auto;cursor:pointer}
+.lb.town.pick:hover,.lb.town.only{color:#7a3b2e}
+.lb.town.only{font-size:14px}
+#isoChip{display:none;background:var(--ink);color:var(--card);border-color:var(--ink)}
+#isoChip b{font-weight:700;margin-left:4px}
+#panel .clist{display:grid;grid-template-columns:1fr 1fr;gap:0 14px;margin-top:6px}
+#panel .clist button,#panel .plist button{all:unset;display:block;cursor:pointer;padding:7px 0;border-bottom:1px solid rgba(141,154,151,.55);font:500 16.5px var(--serif);color:var(--ink)}
+#panel .clist button:hover,#panel .plist button:hover{color:#7a3b2e}
+#panel .plist small{font:600 10.5px var(--sc);letter-spacing:.12em;color:var(--ink-soft);margin-left:6px}
+#panel .wide{font:700 12px var(--sc);letter-spacing:.14em;color:var(--card);background:var(--ink);border:1px solid var(--ink);padding:9px 12px 8px;cursor:pointer;margin-top:14px}
 .lb.town.isl{font:italic 600 13px var(--serif);letter-spacing:.02em;color:#2f5560}
 .lake{font:italic 600 19px var(--serif);color:#3d5a63;letter-spacing:.04em;transform-origin:0 0;
   text-shadow:0 0 4px #dfe6dc,0 0 4px #dfe6dc,0 0 8px #dfe6dc}
@@ -227,6 +237,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
         <input id="q" type="search" placeholder="Find a street or place…" autocomplete="off" spellcheck="false" aria-label="Find a street or place">
         <div id="results" role="listbox"></div>
       </div>
+      <button class="hbtn" id="bComs">Communities</button>
       <button class="hbtn" id="bInfo">About</button>
     </div>
   </div>
@@ -522,6 +533,7 @@ async function wakeTile(t){
   t.tex = paint(t.x0, t.z0, t.x1, t.z1, TPX, true); t.tex.repeat.set(NT, NT); t.tex.offset.set(-t.i, t.j + 1 - NT);
   t.mesh.material.map = t.tex; t.mesh.material.needsUpdate = true;
   let blds = []; try { blds = await (await fetch(`tiles/b_${t.i}_${t.j}.json`)).json(); } catch(e){}
+  if (iso) blds = blds.filter(b => inIso(b.p[0][0], b.p[0][1], 40));
   if (t.state === 1){ t.group = new THREE.Group(); const hm = housesMesh(blds); if (hm) t.group.add(hm);
     life.dress(t, blds); tileGroup.add(t.group); t.state = 2; }
   tileBusy = false;
@@ -579,7 +591,7 @@ canvas.addEventListener('wheel', () => { fly = null; }, {passive: true});
 
 /* ---------------- labels & pins ---------------- */
 const layer = document.getElementById('labels'), items = [];
-let camD = 1e9;
+let camD = 1e9, iso = null;      // iso: the one community being shown on its own, if any
 function addLabel(el, x, z, lift = 0, anchor = 'bottom'){ layer.appendChild(el); const it = {el, v: new THREE.Vector3(x, Y(x, z) + lift, z), anchor, w: 0, h: 0}; items.push(it); return it; }
 for (const l of D.lakes){
   const el = document.createElement('div'); el.className = 'lb lake' + (l.a > 5e6 ? ' big' : ''); el.textContent = l.n;
@@ -587,7 +599,8 @@ for (const l of D.lakes){
 }
 for (const t of D.towns){
   const el = document.createElement('div'); el.className = 'lb town' + (t.k === 'town' ? ' t1' : t.k === 'island' ? ' isl' : t.k === 'community' ? ' com' : ''); el.textContent = t.n;
-  addLabel(el, t.x, t.z, 4, 'center').maxD = t.k === 'town' ? 0 : t.k === 'hamlet' ? 20000 : 7500;
+  const it = addLabel(el, t.x, t.z, 4, 'center'); it.town = t; it.maxD = t.k === 'town' ? 0 : t.k === 'hamlet' ? 20000 : 7500;
+  if (t.k === 'community' || t.a){ el.classList.add('pick'); el.addEventListener('click', e => { e.stopPropagation(); isolate(t); }); }
 }
 const pinEls = new Map();
 for (const p of D.pois){
@@ -608,6 +621,7 @@ function layout(){
   const w = canvas.clientWidth, h = canvas.clientHeight;
   for (const it of items){
     it.shown = false;
+    if (iso && it.isoOut){ it.el.style.visibility = 'hidden'; continue; }
     if (it.maxD && camD > it.maxD && !it.el.classList.contains('sel')){ it.el.style.visibility = 'hidden'; continue; }
     v.copy(it.v).project(camera);
     if (v.z > 1 || v.x < -1.15 || v.x > 1.15 || v.y < -1.2 || v.y > 1.2){ it.el.style.visibility = 'hidden'; continue; }
@@ -709,7 +723,7 @@ for (const r of D.roads){
 const index = [...D.pois.map(p => ({n: p.name, kind: 'Place', p})),
   ...[...streets.values()].sort((a, b) => a.n.localeCompare(b.n)).map(s => ({n: s.n, kind: 'Street', s}))];
 for (const l of D.lakes) index.push({n: l.n, kind: 'Lake', at: [l.x, l.z, Math.max(1800, Math.sqrt(l.a) * 3.2)]});
-for (const t of D.towns) index.push({n: t.n, kind: t.k === 'island' ? 'Island' : 'Community', at: [t.x, t.z, t.k === 'town' || t.k === 'hamlet' ? 3400 : 1900]});
+for (const t of D.towns) index.push({n: t.n, kind: t.k === 'island' ? 'Island' : 'Community', t, at: [t.x, t.z, t.k === 'town' || t.k === 'hamlet' ? 3400 : 1900]});
 const q = document.getElementById('q'), results = document.getElementById('results'); let cur = -1, shown = [];
 function hideResults(){ results.style.display = 'none'; cur = -1; }
 function showResults(){
@@ -724,6 +738,7 @@ function pick(e){
   hideResults(); q.blur(); q.value = e.n;
   if (e.p) return openPlace(e.p);
   closePanel();
+  if (e.t && (e.t.k === 'community' || e.t.a)) return isolate(e.t);
   if (e.at){ markFound(e.n, e.at[0], e.at[1]); return flyTo(e.at[0], e.at[1], e.at[2]); }
   // midpoint of the longest piece, and a zoom that takes in the whole street
   let best = null, bl = -1, x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
@@ -742,6 +757,71 @@ q.addEventListener('keydown', e => {
 });
 results.addEventListener('pointerdown', e => { const b = e.target.closest('button[data-i]'); if (b){ e.preventDefault(); pick(shown[+b.dataset.i]); } });
 canvas.addEventListener('pointerdown', hideResults);
+
+/* ---------------- one community on its own ---------------- */
+// Pick a community and the rest of the map fades back: only its ground, houses, trees and places stay.
+const slugOf = n => n.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const COMS = D.towns.filter(t => t.k === 'community' || t.a).sort((a, b) => a.n.localeCompare(b.n));
+const MS = small ? 1024 : 2048, mc = document.createElement('canvas'); mc.width = mc.height = MS;
+const mx = mc.getContext('2d'), maskTex = new THREE.CanvasTexture(mc); maskTex.colorSpace = mapTex.colorSpace;
+const isoG = new THREE.Group(), isoLines = new THREE.Group(); isoG.visible = false; isoG.add(isoLines); scene.add(isoG);
+{ const mm = new THREE.MeshBasicMaterial({map: maskTex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3});
+  for (const t of tiles){ const m = new THREE.Mesh(t.mesh.geometry, mm); m.renderOrder = 2; isoG.add(m); } }
+let isoRings = null;
+const areaOf = t => t.a || [Array.from({length: 40}, (_, i) => [t.x + Math.cos(i / 40 * 6.2832) * 380, t.z + Math.sin(i / 40 * 6.2832) * 380])];
+function inIso(x, z, pad = 0){
+  let inside = false, near = false;
+  for (const r of isoRings) for (let i = 0, j = r.length - 1; i < r.length; j = i++){
+    const a = r[i], b = r[j];
+    if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
+    if (pad && !near){ const dx = b[0] - a[0], dz = b[1] - a[1], u = Math.max(0, Math.min(1, ((x - a[0]) * dx + (z - a[1]) * dz) / (dx * dx + dz * dz || 1)));
+      near = Math.hypot(a[0] + u * dx - x, a[1] + u * dz - z) < pad; }
+  }
+  return inside || near;
+}
+const isoChip = document.createElement('button'); isoChip.className = 'chip'; isoChip.id = 'isoChip'; isoChip.onclick = () => isolate(null); chips.prepend(isoChip);
+function isolate(t, fly = true){
+  iso = t; isoRings = t ? areaOf(t) : null;
+  for (const o of [...isoLines.children]){ isoLines.remove(o); o.geometry.dispose(); }
+  for (const it of items){ it.isoOut = !!t && (it.town ? it.town !== t && it.town.in !== t.n : it.poi ? !inIso(it.poi.x, it.poi.z, 150) : false);
+    if (it.town) it.el.classList.toggle('only', it.town === t); it.w = 0; }
+  for (const tl of tiles) if (tl.state === 2) sleepTile(tl);                   // houses and trees are rebuilt for the new view
+  isoG.visible = !!t; isoChip.style.display = t ? 'inline-flex' : 'none';
+  const u = new URL(location.href); t ? u.searchParams.set('c', slugOf(t.n)) : u.searchParams.delete('c'); history.replaceState(null, '', u);
+  if (!t){ closePanel(); return; }
+  isoChip.innerHTML = `Only <b></b>&nbsp; ×`; isoChip.querySelector('b').textContent = t.n;
+  const PX = x => (x - M.xmin) / (M.xmax - M.xmin) * MS, PZ = z => (z - M.zmin) / (M.zmax - M.zmin) * MS;
+  const trace = () => { mx.beginPath(); for (const r of isoRings){ r.forEach((p, i) => i ? mx.lineTo(PX(p[0]), PZ(p[1])) : mx.moveTo(PX(p[0]), PZ(p[1]))); mx.closePath(); } };
+  mx.globalCompositeOperation = 'source-over'; mx.clearRect(0, 0, MS, MS); mx.fillStyle = 'rgba(243,237,222,.8)'; mx.fillRect(0, 0, MS, MS);
+  mx.globalCompositeOperation = 'destination-out'; mx.lineJoin = 'round';
+  for (const [w, a] of [[30, .22], [18, .4], [8, .6]]){ trace(); mx.lineWidth = w * MS / 2048; mx.strokeStyle = `rgba(0,0,0,${a})`; mx.stroke(); }
+  trace(); mx.fillStyle = '#000'; mx.fill(); maskTex.needsUpdate = true;
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  for (const r of isoRings){
+    const pts = [];
+    for (let i = 0; i <= r.length; i++){ const a = r[i % r.length], b = r[(i + 1) % r.length], n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 35));
+      for (let k = 0; k < n; k++){ const x = a[0] + (b[0] - a[0]) * k / n, z = a[1] + (b[1] - a[1]) * k / n; pts.push(x, Y(x, z) + 3, z); } }
+    for (const p of r){ x0 = Math.min(x0, p[0]); x1 = Math.max(x1, p[0]); z0 = Math.min(z0, p[1]); z1 = Math.max(z1, p[1]); }
+    if (!t.a) continue;                                                        // no outline to draw when all we have is a marker
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+    const ln = new THREE.Line(g, t.src === 'census' ? new THREE.LineBasicMaterial({color: 0x7a3b2e}) : new THREE.LineDashedMaterial({color: 0x7a3b2e, dashSize: 40, gapSize: 28}));
+    ln.computeLineDistances(); ln.renderOrder = 3; isoLines.add(ln);
+  }
+  const here = D.pois.filter(p => inIso(p.x, p.z, 150)).sort((a, b) => a.name.localeCompare(b.name));
+  const note = t.src === 'census' ? 'Outline: U.S. Census Bureau.'
+    : t.src === 'streets' ? 'The dashed outline is a rough guide drawn from the streets nearest this name. It is not a surveyed boundary.'
+    : (t.in ? `Part of ${esc(t.in)}. ` : '') + 'There is no outline for this one yet, so this shows the area around its marker on the shore.';
+  openSheet('Community', t.n, `<p>Showing only ${esc(t.n)}. The rest of the map is faded back.</p><p class="fine">${note}</p>
+    ${here.length ? `<div class="sec">Places here</div><div class="plist">${here.map(p => `<button data-poi="${p.id}">${esc(p.name)}<small>${esc(p.kind || '')}</small></button>`).join('')}</div>` : ''}
+    <button class="wide" id="isoOff">Show the whole lake</button>`);
+  document.getElementById('isoOff').onclick = () => isolate(null);
+  if (fly) flyTo((x0 + x1) / 2, (z0 + z1) / 2, Math.max(1500, Math.hypot(x1 - x0, z1 - z0) * 1.9));
+}
+document.getElementById('bComs').onclick = () => {
+  openSheet('Around the lake', 'Communities', `<p>Pick one to see it on its own.</p><div class="clist">${COMS.map((t, i) => `<button data-com="${i}">${esc(t.n)}</button>`).join('')}</div>`);
+  panel.querySelectorAll('button[data-com]').forEach(b => b.onclick = () => isolate(COMS[+b.dataset.com]));
+};
+{ const c = new URLSearchParams(location.search).get('c'), t = c && COMS.find(t => slugOf(t.n) === c); if (t) setTimeout(() => isolate(t), 600); }   // ?c=indian-rocks opens on that community
 
 /* ---------------- where am I ---------------- */
 const toastEl = document.getElementById('toast'); let toastT = 0;
@@ -969,7 +1049,7 @@ const life = (() => {
     x.lineWidth = 9 / MP; for (const b of blds){ x.beginPath(); path(b.p, true); x.fill(); x.stroke(); }
     const data = x.getImageData(0, 0, mw, mh).data;
     const at = (px, pz) => { const i = Math.floor(X(px)), j = Math.floor(Z(pz)); return i < 0 || j < 0 || i >= mw || j >= mh ? -1 : (j * mw + i) * 4; };
-    const open = (px, pz) => { const o = at(px, pz); return o >= 0 && data[o] < 40 && data[o + 2] < 40; };
+    const open = (px, pz) => { const o = at(px, pz); return o >= 0 && data[o] < 40 && data[o + 2] < 40 && (!iso || inIso(px, pz, 40)); };
     const dry = (px, pz) => { const o = at(px, pz); return o >= 0 && data[o] < 40 && inside(px, pz); };
     // trees
     const spots = [[], []], STEP = small ? 27 : 21;

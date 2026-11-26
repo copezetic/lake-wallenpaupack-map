@@ -302,6 +302,52 @@ for t_ in sorted(towns, key=lambda t_: order[t_['k']]):
     if not any(slug(u['n']) == slug(t_['n']) and math.hypot(u['x'] - t_['x'], u['z'] - t_['z']) < 1200 for u in uniq): uniq.append(t_)
 towns = uniq
 
+# ---- community areas, for showing one community on its own
+# Census outlines where they exist; otherwise the streets nearest the name, which is only a rough guide.
+def rings(g): return [[[round(v[0]), round(v[1])] for v in q.exterior.coords[:-1]] for q in getattr(g, 'geoms', [g]) if not q.is_empty]
+census = []
+if os.path.exists(p('census_places.geojson')):
+    for f in json.load(open(p('census_places.geojson')))['features']:
+        g = shape(f['geometry']); g = g if isinstance(g, Polygon) else max(g.geoms, key=lambda q: q.area)
+        census.append((f['properties']['BASENAME'], Polygon(ring_xz(g.exterior.coords)).buffer(0)))
+for name, g in census:
+    own = [t_ for t_ in towns if slug(t_['n']) == slug(name)]
+    for t_ in own[:1]: t_['a'] = rings(g.intersection(bxz).simplify(6)); t_['src'] = 'census'
+    for t_ in towns:
+        if t_ not in own and t_['k'] == 'community' and g.contains(Point(t_['x'], t_['z'])): t_['in'] = name
+taken = unary_union([g for _, g in census]) if census else Polygon()
+thru = unary_union([LineString(r['p']) for r in roads if r['k'] != 'street']).buffer(14)
+segs = []
+for r in roads:
+    if r['k'] != 'street': continue
+    g = LineString(r['p']).difference(thru).difference(taken)
+    for ln in getattr(g, 'geoms', [g]):
+        if ln.is_empty or ln.length < 8: continue
+        n = max(1, round(ln.length / 60))
+        segs += [LineString([ln.interpolate(i / n, normalized=True), ln.interpolate((i + 1) / n, normalized=True)]) for i in range(n)]
+net = unary_union([q.buffer(3) for q in segs]); comps = list(getattr(net, 'geoms', [net]))
+coms = [t_ for t_ in towns if t_['k'] == 'community' and 'a' not in t_ and 'in' not in t_]
+claims = {}
+for ci, c in enumerate(coms):
+    pt = Point(c['x'], c['z'])
+    for k, g in enumerate(comps):
+        if g.distance(pt) < 380: claims.setdefault(k, []).append(ci)
+mine = {}
+for q in segs:
+    m_ = q.centroid; k = min(range(len(comps)), key=lambda k: comps[k].distance(m_)) if comps else None
+    cl = claims.get(k)
+    if not cl: continue
+    ci = min(cl, key=lambda i: math.hypot(coms[i]['x'] - m_.x, coms[i]['z'] - m_.y))
+    if math.hypot(coms[ci]['x'] - m_.x, coms[ci]['z'] - m_.y) < (1600 if len(cl) == 1 else 1100): mine.setdefault(ci, []).append(q)
+for ci, c in enumerate(coms):
+    if ci not in mine: continue
+    g = unary_union([q.buffer(75) for q in mine[ci]]).buffer(45).buffer(-70).simplify(8)
+    parts = sorted(getattr(g, 'geoms', [g]), key=lambda q: -q.area); pt = Point(c['x'], c['z'])
+    parts = [q for q in parts if q.area > 12000 and (q.distance(pt) < 500 or q.area > .25 * parts[0].area)][:3]
+    if parts: c['a'] = rings(unary_union(parts)); c['src'] = 'streets'
+print('community areas:', sum(t_.get('src') == 'census' for t_ in towns), 'census,', sum(t_.get('src') == 'streets' for t_ in towns), 'from streets,',
+      sum('in' in t_ for t_ in towns), 'inside another,', sum(t_['k'] == 'community' and 'a' not in t_ and 'in' not in t_ for t_ in towns), 'none')
+
 # ---- buildings, one file per tile
 tiles = {}
 if os.path.exists(p('buildings.geojsonl')):

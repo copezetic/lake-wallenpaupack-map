@@ -35,11 +35,17 @@ County Office of Community Planning's 2012 map "Lake Wallenpaupack Developments 
 Landmarks" and georeferenced against shared landmarks (about 100 m error); each sits where
 the development meets the shore, not at its centre.
 
+Community areas (used when a visitor picks one community to see on its own, or opens
+`?c=indian-rocks`) come from `data/census_places.geojson` where the Census Bureau draws an
+outline (five communities), and otherwise from the streets nearest the name, which is only a
+rough guide. Names that sit inside another community's outline get no area of their own.
+
 ## Data
 
 Map data © OpenStreetMap contributors (ODbL). Buildings: Overture Maps Foundation.
 Terrain: USGS elevation data via Mapzen Terrarium tiles.
 Community names: Pike County Office of Community Planning / LWWMD, 2012.
+Community outlines: U.S. Census Bureau (TIGERweb, census designated places).
 
 ## Copyright
 

@@ -33,3 +33,8 @@ fixes go in `NAME_FIX` in `build.py`.
 
 Map data © OpenStreetMap contributors (ODbL). Buildings: Overture Maps Foundation.
 Terrain: USGS elevation data via Mapzen Terrarium tiles.
+
+## Copyright
+
+© 2026 DeWitt Hutchins. All rights reserved. See `LICENSE`. The code, design, models and
+artwork are not open source; the map data keeps its own licences, listed above.

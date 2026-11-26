@@ -133,7 +133,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
 
 /* ---------- footer bits ---------- */
 #hint{position:fixed;right:20px;bottom:14px;z-index:4;font:italic 500 15px var(--serif);color:var(--ink-soft);pointer-events:none}
-#credit{position:fixed;left:20px;bottom:12px;z-index:4;font:500 12.5px var(--serif);color:var(--ink-soft);max-width:56vw;line-height:1.3}
+#credit{position:fixed;left:86px;bottom:12px;z-index:4;font:500 12.5px var(--serif);color:var(--ink-soft);max-width:calc(56vw - 70px);line-height:1.3}
 #credit a{color:inherit}
 #locate{position:fixed;left:20px;bottom:122px;z-index:4;width:54px;height:54px;border-radius:50%;border:1px solid var(--ink);
   background:var(--card);cursor:pointer;display:grid;place-items:center;padding:0;color:var(--ink)}
@@ -190,6 +190,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
   body.aerial.sheet #credit{visibility:hidden}
   #hint{display:none}
   #credit{left:12px;right:12px;bottom:8px;max-width:none;font-size:11px}
+  #credit .long{display:none}
   #compass{left:12px;bottom:calc(44px + var(--lift,0px));width:46px;height:46px}
   #locate{left:12px;bottom:calc(98px + var(--lift,0px));width:46px;height:46px}
   #zoom{left:12px;bottom:calc(154px + var(--lift,0px));width:46px}
@@ -242,7 +243,8 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
   <g id="needle"><path d="M30 6 L35 30 L30 27 L25 30 Z" fill="#7a3b2e"/><path d="M30 54 L35 30 L30 33 L25 30 Z" fill="#22303a" opacity=".55"/>
   <text x="30" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#22303a" dy="-1"></text></g></svg>
 </button>
-<div id="credit">An independent map — not an official publication of any community or business shown. Early draft: places come from public data and may be wrong or missing.
+<div id="credit"><b>© 2026 DeWitt Hutchins. All rights reserved.</b> <a href="#" id="bLegal">Legal notice</a><br>
+  <span class="long">An independent map — not an official publication of any community or business shown. Early draft: places come from public data and may be wrong or missing.</span>
   Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Overture Maps, USGS.</div>
 <div id="hint">Drag to move · right-drag or two fingers to turn · scroll or pinch to zoom · tap a pin · zoom in for houses, trees, boats and wildlife</div>
 <div id="toast"></div>
@@ -658,11 +660,16 @@ function openSheet(kick, title, html){
   panel.querySelectorAll('button[data-poi]').forEach(b => b.onclick = () => openPlace(D.pois.find(p => p.id === b.dataset.poi)));
   panel.classList.add('open'); panel.scrollTop = 0;
 }
+const LEGAL = `<div class="sec">Copyright</div><p>© 2026 DeWitt Hutchins. All rights reserved. The design, 3D model, artwork, animations, logo, text and software of this map are original work protected by copyright. No part of it may be copied, reproduced, republished, framed, scraped, adapted or used to build a similar product, in whole or in part, without written permission.</p>
+   <p>The underlying geographic data belongs to its sources and stays under their licences: © OpenStreetMap contributors (Open Database License), Overture Maps Foundation, and USGS elevation data. Nothing here limits your rights to that data from those sources.</p>
+   <div class="sec">Disclaimer</div><p>This map is provided "as is", for general information only, with no warranty of any kind. It is not a survey, a nautical chart or a navigation aid, and must not be relied on for boating, driving, property lines or emergencies. Places, names, locations and routes may be wrong, out of date or missing. Use it at your own risk; the publisher is not liable for any loss or injury arising from its use.</p>
+   <p>An independent publication. It is not affiliated with, sponsored by or endorsed by any community, association, utility, government body or business shown. All names and trademarks belong to their owners and appear only to identify places.</p>`;
+document.getElementById('bLegal').onclick = e => { e.preventDefault(); openSheet('Legal', 'Copyright and disclaimer', LEGAL); };
 document.getElementById('bInfo').onclick = () => openSheet('About', 'The whole lake in 3D',
   `<p>Lake Wallenpaupack and everything around it on one model: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
    <div class="sec">An early draft</div><p>The places on this map come from public map data and nobody has checked them yet. If something is wrong, missing or in the wrong spot, that is expected at this stage.</p>
    <div class="sec">Where the data comes from</div><p>Roads, water and places: OpenStreetMap contributors. Buildings: Overture Maps. Terrain: USGS elevation data.</p>
-   <p class="fine">An independent map. Not an official publication of any community, association or business shown.</p>`);
+   <p class="fine">An independent map. Not an official publication of any community, association or business shown.</p>` + LEGAL);
 let back = null, placeOpen = false;      // the view you had before opening a place card
 function view(){ const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target)); return {x: controls.target.x, z: controls.target.z, d: s.radius, az: s.theta}; }
 function closePanel(){ clearRoute(); panel.classList.remove('open', 'route'); for (const el of pinEls.values()) el.classList.remove('sel'); back = null; placeOpen = false; }

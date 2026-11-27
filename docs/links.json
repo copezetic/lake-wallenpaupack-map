@@ -1,0 +1,4 @@
+{
+ "_note": "Booking and ordering links the owners have given us. places: place id -> {reserve: url, order: url}. A place with neither still gets a Call button and search links to OpenTable, DoorDash, Uber Eats and Grubhub.",
+ "places": {}
+}

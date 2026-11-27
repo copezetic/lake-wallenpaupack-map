@@ -440,14 +440,14 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     const tick = (id, label) => `<label style="display:block;margin:6px 0 0;font-size:15.5px"><input id="cl_${id}" type="checkbox"> ${label}</label>`;
     openSheet('Claim or correct', p.name,
       `<p>Run or own this place? Tell us what is right. Nothing is published until it has been checked.</p>` +
-      f('who', 'Your name and role', 'Pat Smith, owner') + f('reach', 'Phone or email', '') + f('site', 'Website', 'https://') +
+      f('who', 'Your name and role', 'Pat Smith, owner') + f('reach', 'Phone or email', '') + f('site', 'Website', 'https://') + f('resv', 'Reservations link (OpenTable, Resy, your own)', 'https://') + f('order', 'Online ordering or delivery link', 'https://') +
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Opening hours<textarea id="cl_hours" rows="3" placeholder="Mon–Thu 11–9, Fri–Sat 11–10, closed Sun; closed January" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>` +
       tick('dock', 'Customers can arrive by boat') + tick('fuel', 'Fuel dock') + tick('pump', 'Pump-out') + tick('dog', 'Dog friendly') + tick('kid', 'Good for kids') + tick('late', 'Open after 9 pm') + tick('gone', 'This place has closed or moved') + tick('feat', 'Tell me about a featured pin') +
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Anything else<textarea id="cl_note" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>
        <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Send by email</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a><button class="btn" id="clEmbed">Map for your website</button></div>` +
       (CT.email || CT.form ? '' : `<p><b>${esc(BZ.soon || 'Sending opens soon.')}</b> You can copy your details for now.</p>`) +
       `<p class="fine">${CT.email ? 'Send opens your own email app with the details filled in; attach a photo there if you would like one shown. ' : ''}Only send a photo you took or have the right to share.</p>`);
-    const v = id => panel.querySelector('#cl_' + id), text = () => [`Place: ${p.name} (${p.kind || ''})`, `Map link: ${here}?p=${p.id}`, `From: ${v('who').value}`, `Reach me at: ${v('reach').value}`, `Website: ${v('site').value}`, `Hours: ${v('hours').value}`,
+    const v = id => panel.querySelector('#cl_' + id), text = () => [`Place: ${p.name} (${p.kind || ''})`, `Map link: ${here}?p=${p.id}`, `From: ${v('who').value}`, `Reach me at: ${v('reach').value}`, `Website: ${v('site').value}`, `Reservations link: ${v('resv').value}`, `Ordering link: ${v('order').value}`, `Hours: ${v('hours').value}`,
       `Arrive by boat: ${v('dock').checked ? 'yes' : '-'}`, `Fuel dock: ${v('fuel').checked ? 'yes' : '-'}`, `Pump-out: ${v('pump').checked ? 'yes' : '-'}`, `Dog friendly: ${v('dog').checked ? 'yes' : '-'}`, `Good for kids: ${v('kid').checked ? 'yes' : '-'}`, `Open after 9 pm: ${v('late').checked ? 'yes' : '-'}`, `Closed or moved: ${v('gone').checked ? 'yes' : '-'}`, `Featured pin: ${v('feat').checked ? 'please tell me more' : '-'}`, `Notes: ${v('note').value}`].join('\n');
     const copy = () => navigator.clipboard ? navigator.clipboard.writeText(text()).then(() => say('Details copied.'), () => say('Could not copy.')) : say('Could not copy.');
     panel.querySelector('#clCopy').onclick = copy; panel.querySelector('#clEmbed').onclick = () => embedSheet(p);
@@ -459,6 +459,16 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   if (BZ.counter && BZ.counter.goatcounter && !DEMO && !Q.has('tour')){     // visitor counting stays off until a site code is set in business.json
     const sc = document.createElement('script'); sc.async = true; sc.src = 'https://gc.zgo.at/count.js'; sc.dataset.goatcounter = `https://${BZ.counter.goatcounter}.goatcounter.com/count`; document.head.appendChild(sc);
   }
+
+  /* ---------- eating out: real booking and ordering links where the owner has given them (links.json), otherwise a search of the usual apps ---------- */
+  const LK = ((await getJSON('links.json')) || {}).places || {};
+  if (c.hooks) c.hooks.food = p => {
+    const k = LK[p.id] || {}, ph = (p.facts || []).find(f => f[0] === 'Phone'), town = ((p.facts || []).find(f => f[0] === 'Address') || ['', ''])[1].split(', ').pop(), q = encodeURIComponent(p.name), qt = encodeURIComponent(p.name + (town ? ' ' + town + ' PA' : ''));
+    const a = (href, label, pri) => `<a class="btn${pri ? ' pri' : ''}" href="${esc(href)}" target="_blank" rel="noopener" style="flex:0 1 auto">${label}</a>`;
+    const own = (k.reserve ? a(k.reserve, 'Reserve a table', 1) : '') + (k.order ? a(k.order, 'Order online', !k.reserve) : '');
+    return `<div class="sec" style="margin-top:10px">Book or order</div><div class="acts" style="margin-top:6px">${own}${ph ? `<a class="btn" href="tel:${esc(ph[1].replace(/[^0-9+]/g, ''))}" style="flex:0 1 auto">Call</a>` : ''}</div>
+      <p class="fine" style="margin:6px 0 2px">${own ? 'Or look' : 'Look'} for it on ${k.reserve ? '' : `<a href="https://www.opentable.com/s?term=${qt}" target="_blank" rel="noopener">OpenTable</a> · `}<a href="https://www.doordash.com/search/store/${q}/" target="_blank" rel="noopener">DoorDash</a> · <a href="https://www.ubereats.com/search?q=${q}" target="_blank" rel="noopener">Uber Eats</a> · <a href="https://www.grubhub.com/search?queryText=${q}" target="_blank" rel="noopener">Grubhub</a>. These search each service by name; we don't know which ones this place uses.</p>`; };
+  { const open = panel.classList.contains('open') && D.pois.find(p => p.cat === 'food' && pinEls.get(p.id) && pinEls.get(p.id).classList.contains('sel')); if (open && !panel.querySelector('#clSend, #cl_who')) openPlace(open); }   // a card opened from a link before this loaded gets its buttons now
 
   /* ---------- waterfalls: a pin and a small moving cascade where the creek drops (falls.json) ---------- */
   const added = new Set(((SP && SP.sponsors) || []).filter(s => s.add).map(s => s.poi));

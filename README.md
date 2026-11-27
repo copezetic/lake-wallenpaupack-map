@@ -20,13 +20,13 @@ business shown.
     python fetch_dem.py                      # terrain for the detailed map
     python fetch_far.py                      # coarse terrain for the faded country beyond it
     python fetch_osm.py                      # roads, water, places, piers
-    overturemaps download --bbox=-75.375,41.295,-75.150,41.605 -f geojsonseq -t building -o buildings.geojsonl
-    overturemaps download --bbox=-75.375,41.295,-75.150,41.605 -f geojsonseq -t place -o places_overture.geojsonl
+    overturemaps download --bbox=-75.375,41.250,-75.150,41.605 -f geojsonseq -t building -o buildings.geojsonl
+    overturemaps download --bbox=-75.375,41.250,-75.150,41.605 -f geojsonseq -t place -o places_overture.geojsonl
     python build.py                          # writes docs/lake-data.json and docs/tiles/
 
 Needs Python with `numpy`, `shapely`, `pillow` and `overturemaps`.
 
-The detailed map runs from Greentown and the interstate in the south to Honesdale in the north
+The detailed map runs from Promised Land State Park and the interstate in the south to Honesdale in the north
 (`area.json`; the `--bbox` above must match it). It has no edge: `fetch_far.py` pulls coarse
 terrain for about 85 km around, and the viewer draws that as pale relief that fades into the
 page. The build eases the detailed heights onto the coarse ones over the last 350 m so the two
@@ -116,3 +116,4 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - `docs/parks.json` — closer looks. The animal park is hand-kept (`hand: true`); golf courses, marinas and campgrounds are rebuilt by `data/build_looks.py` from OSM.
 - Sponsors can carry an `offer` {text, until}; the Boating sheet has a trip measurer (`?measure`).
 - `docs/falls.json` — waterfalls: a pin plus an illustrated moving cascade along the creek line (`?falls` flies to it).
+- `docs/links.json` — owners' own reservation and ordering links for food places; without one a card shows Call plus search links to OpenTable, DoorDash, Uber Eats and Grubhub. Interstates (ref "I nn") are drawn bolder and named by the viewer.

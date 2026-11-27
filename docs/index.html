@@ -284,7 +284,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=6';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=6';
+import { initExtras, openNow } from './extras.js?v=7';
 
 const EX = 2.0;            // vertical exaggeration
 const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
@@ -342,6 +342,7 @@ const bbOf = pts => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const q
 for (const r of D.roads){ r.bb = bbOf(r.p); r.len = 0; for (let i = 1; i < r.p.length; i++) r.len += Math.hypot(r.p[i][0]-r.p[i-1][0], r.p[i][1]-r.p[i-1][1]); }
 for (const w of D.water) w.bb = bbOf(w.o);
 for (const f of D.features) f.bb = bbOf(f.p);
+for (const r of D.roads) if (r.ref && /^I \d/.test(r.ref)){ r.ih = true; if (!r.n) r.n = 'Interstate ' + r.ref.slice(2); }   // the interstate is drawn bolder and named
 D.trails = D.trails || []; for (const t of D.trails) t.bb = bbOf(t.p);
 const pierBB = D.piers.map(bbOf);
 const hits = (bb, x0, z0, x1, z1, pad = 0) => bb[0] < x1 + pad && bb[2] > x0 - pad && bb[1] < z1 + pad && bb[3] > z0 - pad;
@@ -406,6 +407,8 @@ function paint(x0, z0, x1, z1, TW, detail){
   for (const k of order) for (const r of mine) if (r.k === k){ line(r.p);
     g.strokeStyle = WID[k]*S < 2.2 ? (k === 'street' ? 'rgba(246,239,220,.85)' : '#fbf4de') : k === 'hwy' ? '#f8e9bd' : k === 'main' ? '#f6efdc' : '#efe7d2';
     g.lineWidth = Math.max(MINW[k], WID[k]*S); g.stroke(); }
+  for (const r of mine) if (r.ih){ line(r.p); g.strokeStyle = 'rgba(92,58,24,.8)'; g.lineWidth = Math.max(3.6, 17*S + Math.max(1.6, 2*S)); g.stroke(); }
+  for (const r of mine) if (r.ih){ line(r.p); g.strokeStyle = '#eeb866'; g.lineWidth = Math.max(2.4, 17*S); g.stroke(); }
   // trails: dotted brown lines, drawn only once they are wide enough to read
   if (2.4 * S >= .7){ g.strokeStyle = detail ? 'rgba(128,74,36,.9)' : 'rgba(128,74,36,.6)'; g.lineWidth = Math.max(1, 2.4 * S); g.setLineDash(detail ? [7 * S, 6 * S] : [3, 3]);
     for (const t of D.trails) if (on(t.bb)){ line(t.p); g.stroke(); } g.setLineDash([]); }
@@ -658,6 +661,7 @@ function openPlace(p){
     ${p.photo && p.photoCredit ? `<div class="cred">Photo: ${esc(p.photoCredit)}</div>` : ''}${p.sponsor && p.sponsor.offer && !(p.sponsor.offer.until && p.sponsor.offer.until < new Date().toISOString().slice(0, 10)) ? `<div class="offer"><b>Offer</b>${esc(p.sponsor.offer.text)}${p.sponsor.offer.until ? ` <small>Until ${esc(new Date(p.sponsor.offer.until + 'T12:00:00').toLocaleDateString('en-US', {month: 'short', day: 'numeric'}))}.</small>` : ''}</div>` : ''}<p>${esc(p.blurb || '')}</p>
     ${p.facts?.length ? `<dl>${p.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>` : ''}
     ${p.park ? `<button class="wide" id="goPark" style="margin:0 0 4px">${esc(p.park.button || 'A closer look')}</button>` : ''}
+    ${p.cat === 'food' && hooks.food ? hooks.food(p) : ''}
     <div class="acts">${p.outside ? '' : '<button class="btn pri" id="goRoute">Route on this map</button>'}${p.url ? `<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.urlLabel || 'Website')}</a>` : ''}
     <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a><button class="btn" id="goShare">Share</button></div>
     <p class="fine"><a href="#" id="goClaim" style="color:inherit">Run this place? Claim or correct it</a></p>`;

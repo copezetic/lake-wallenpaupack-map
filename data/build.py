@@ -135,6 +135,9 @@ for w in ways.values():
     if len(pts) < 4 or w['nodes'][0] != w['nodes'][-1]: continue
     g = Polygon(pts).buffer(0)
     if not g.intersects(bbox): continue
+    if t.get('leisure') == 'golf_course':                              # the grounds of a golf course, painted as open green
+        for q in polys_out(g, 2000): features.append({'k': 'golf', 'p': q['o'], **({'n': t['name']} if t.get('name') else {})})
+        continue
     if t.get('natural') == 'water':
         if w['id'] in used: continue
         for q in polys_out(g):
@@ -196,6 +199,7 @@ CAT = [  # (category, test on tags, kind label, major?)
     ('water', lambda t: t.get('waterway') == 'dam' and 'Wallenpaupack' in t.get('name', ''), 'Dam', True),   # the small pond dams are not worth a pin
     ('food', lambda t: t.get('amenity') in ('restaurant', 'bar', 'pub', 'cafe', 'fast_food', 'ice_cream'), None, False),
     ('stay', lambda t: t.get('tourism') in ('hotel', 'motel', 'guest_house', 'hostel', 'chalet', 'resort', 'camp_site', 'caravan_site'), None, False),
+    ('nature', lambda t: t.get('leisure') == 'golf_course', 'Golf course', True),
     ('nature', lambda t: t.get('leisure') in ('park', 'nature_reserve') or t.get('boundary') in ('protected_area', 'national_park')
         or t.get('tourism') in ('viewpoint', 'picnic_site', 'attraction', 'museum', 'information') or t.get('leisure') == 'golf_course', None, False),
     ('shops', lambda t: 'shop' in t or t.get('amenity') in ('fuel', 'marketplace', 'pharmacy', 'post_office', 'library'), None, False),
@@ -256,7 +260,7 @@ def ov_cat(tax):
     if h[0] == 'food_and_drink': return 'food', False
     if h[0] == 'lodging': return (None if 'private_lodging' in h else ('stay', False))
     if pr in ('park', 'historic_site', 'museum', 'golf_course', 'hiking_trail', 'nature_reserve', 'state_park', 'campground', 'ski_resort', 'amusement_park', 'art_gallery', 'winery', 'brewery', 'farm') \
-       or h[0] in ('attractions_and_activities', 'arts_and_entertainment'): return 'nature', False
+       or h[0] in ('attractions_and_activities', 'arts_and_entertainment'): return 'nature', pr in ('golf_course', 'winery', 'ski_resort', 'amusement_park')
     if h[0] == 'shopping' or pr == 'gas_station': return 'shops', False
     return None
 if os.path.exists(p('places_overture.geojsonl')):

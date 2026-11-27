@@ -233,5 +233,72 @@
   "id": "ov-77bb25c6-54c",
   "drop": true,
   "_why": "not a real shop name; Dutch's Market is at this spot"
+ },
+ {
+  "id": "ov-51e97e16-ead",
+  "drop": true,
+  "was": "The Lodge at Woodloch",
+  "why": "placed in Hawley by its mailing address; the real one is ov-b892634a-b5d"
+ },
+ {
+  "id": "golf-course-785127806",
+  "drop": true,
+  "was": "Golf course",
+  "why": "unnamed double of Cricket Hill Golf Club"
+ },
+ {
+  "id": "ov-a945d85f-db6",
+  "drop": true,
+  "was": "Woodloch Fireplace",
+  "why": "a room inside The Lodge at Woodloch"
+ },
+ {
+  "id": "ov-bd59b245-e5b",
+  "drop": true,
+  "was": "Woodloch Dining Room",
+  "why": "inside Woodloch Pines Resort"
+ },
+ {
+  "id": "ov-f6ec1159-0d1",
+  "patch": {
+   "major": true
+  }
+ },
+ {
+  "id": "woodloch-pines-resort-5739918293",
+  "patch": {
+   "major": true,
+   "kind": "Resort",
+   "cat": "stay"
+  }
+ },
+ {
+  "id": "ov-b892634a-b5d",
+  "patch": {
+   "major": true,
+   "name": "The Lodge at Woodloch",
+   "kind": "Spa resort"
+  }
+ },
+ {
+  "id": "ov-dc14792f-492",
+  "patch": {
+   "name": "Davis R. Chant Realtors",
+   "kind": "Real estate office",
+   "cat": "shops",
+   "url": "http://www.chantre.com",
+   "facts": [
+    [
+     "Address",
+     "2483 Route 6, Hawley"
+    ],
+    [
+     "Phone",
+     "570-226-4518"
+    ]
+   ]
+  },
+  "was": "Nemanie Village (listed as a hotel)",
+  "why": "corrected by the brokerage, 2026-11-27: this is their office; Nemanie Village is a community they developed"
  }
 ]

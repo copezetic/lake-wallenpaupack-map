@@ -1,17 +1,22 @@
 // Ordinary browsing caches visited files. Explicit downloads commit only after every asset succeeds.
-const CACHE='wallymap-runtime-v2', OFFLINE='wallymap-offline-v2', STATUS='__offline_status__';
+const CACHE='wallymap-runtime-v3', OFFLINE='wallymap-offline-v2', STATUS='__offline_status__';
 const KEEP=u=>u.origin===location.origin || ['cdn.jsdelivr.net','fonts.googleapis.com','fonts.gstatic.com'].includes(u.hostname);
 const keyFor=u=>u.origin===location.origin?u.origin+u.pathname:u.href;
 self.addEventListener('install',()=>self.skipWaiting());
-self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('wallymap-runtime-')&&k!==CACHE)await caches.delete(k);await self.clients.claim();})()));
+// A versioned file (extras.js?v=16) is cached under its full address, so a slow network can only ever fall back to the SAME
+// version. The copy filed under the bare path is used only when the network fails outright (offline).
+const fullKey=u=>u.origin===location.origin?u.origin+u.pathname+u.search:u.href;
 self.addEventListener('fetch',e=>{
  const u=new URL(e.request.url);if(e.request.method!=='GET'||!KEEP(u))return;
  e.respondWith((async()=>{
-  const cache=await caches.open(CACHE),offline=await caches.open(OFFLINE),key=keyFor(u);
-  const saved=await cache.match(key)||await offline.match(key);
-  const net=fetch(e.request).then(async r=>{if(r.ok||r.type==='opaque')await cache.put(key,r.clone());if(!r.ok&&r.type!=='opaque'&&saved)return saved;return r;});
-  if(!saved)return net;
-  return Promise.race([net.catch(()=>saved),new Promise(resolve=>setTimeout(()=>resolve(saved),3500))]);
+  const cache=await caches.open(CACHE),offline=await caches.open(OFFLINE),full=fullKey(u),bare=keyFor(u),versioned=full!==bare;
+  const same=await cache.match(full);
+  const any=async()=>same||await cache.match(bare)||await offline.match(bare);
+  const net=fetch(e.request).then(async r=>{if(r.ok||r.type==='opaque'){await cache.put(full,r.clone());if(versioned)await cache.put(bare,r.clone());}else{const s=await any();if(s)return s;}return r;});
+  const safe=net.catch(async()=>(await any())||Response.error());
+  if(!same||!versioned&&e.request.mode==='navigate')return safe;          // pages always try the network first, with no timer
+  return Promise.race([safe,new Promise(resolve=>setTimeout(()=>resolve(same),3500))]);
  })());
 });
 let job=null;

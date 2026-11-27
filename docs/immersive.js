@@ -10,8 +10,7 @@ export async function initImmersive(c){
   const RD = await fetch('rides.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : {}).catch(() => ({}));
   const store = {get: k => { try { return localStorage.getItem(k); } catch(e){ return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch(e){} }};
   const css = document.createElement('style');
-  css.textContent = `#lights{position:absolute;inset:0;pointer-events:none}
-body.riding header .tools,body.riding #chips,body.riding #zoom,body.riding #locate,body.riding #compass,body.riding #hint,body.riding #credit .long,body.riding #panel{display:none!important}
+  css.textContent = `body.riding header .tools,body.riding #chips,body.riding #zoom,body.riding #locate,body.riding #compass,body.riding #hint,body.riding #credit .long,body.riding #panel{display:none!important}
 body.riding #labels .pin.minor,body.riding #labels .lb.town.com{display:none}
 #rideBar{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9;display:none;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;max-width:94vw;
   background:rgba(247,242,230,.94);border:1px solid var(--ink);padding:8px 10px;box-shadow:5px 5px 0 rgba(34,48,58,.16)}
@@ -140,17 +139,31 @@ body.riding #rideBar{display:flex}
     m.renderOrder = 1; m.frustumCulled = false; scene.add(m); return m;
   }
 
-  /* ---------- lights at night: a warm dot on the houses near you once it is dark (and coloured strings in winter) ---------- */
-  const lights = document.createElement('canvas'); lights.id = 'lights'; const nightEl = document.getElementById('night'); if (nightEl) nightEl.after(lights); else canvas.after(lights);
-  const lg = lights.getContext('2d'), v3 = new THREE.Vector3(), XMAS = ['255,214,130', '232,72,60', '96,190,110', '255,214,130', '110,160,240'];
+  /* ---------- lights at night: glowing points on the houses near you once it is dark (coloured strings in winter).
+     They are part of the 3D scene, so they move with the houses and are hidden by trees and hills like everything else. ---------- */
+  const glow = (() => { const cv = document.createElement('canvas'); cv.width = cv.height = 32; const g = cv.getContext('2d'), gr = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.45, 'rgba(255,255,255,.85)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 32, 32); return new THREE.CanvasTexture(cv); })();
+  const lightMat = new THREE.PointsMaterial({size: 5 * Math.min(2, devicePixelRatio || 1), sizeAttenuation: false, map: glow, transparent: true, depthWrite: false, vertexColors: true, opacity: 0});
+  const lightGrp = new THREE.Group(); lightGrp.visible = false; scene.add(lightGrp); const lit = new Map();
+  const WARM = [1, .86, .52], XMAS = [[1, .86, .52], [.95, .3, .25], [.4, .8, .45], [1, .86, .52], [.45, .65, 1]];
+  /* night itself is drawn in the scene too (it used to be a tinted sheet laid over the picture, which would have dulled the lights): the whole view is darkened, then the lights are drawn on top of that */
+  const nightEl = document.getElementById('night'), pageBg = new THREE.Color(getComputedStyle(document.body).backgroundColor), NIGHT = new THREE.Color('#101a3a'), WHITE = new THREE.Color('#ffffff');
+  const dusk = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({uniforms: {tint: {value: new THREE.Color('#ffffff')}}, depthTest: false, depthWrite: false, transparent: true, blending: THREE.MultiplyBlending,
+    vertexShader: 'void main(){ gl_Position = vec4(position.xy, 0., 1.); }', fragmentShader: 'uniform vec3 tint; void main(){ gl_FragColor = vec4(tint, 1.); }'}));
+  dusk.frustumCulled = false; dusk.renderOrder = 5; dusk.visible = false; scene.add(dusk);
   function drawLights(dk){
-    const W = canvas.clientWidth, H = canvas.clientHeight; if (lights.width !== W || lights.height !== H){ lights.width = W; lights.height = H; }
-    lg.clearRect(0, 0, W, H); if (dk < .3) return; const winter = c.season() === 'winter', A = Math.min(1, (dk - .3) / .4); let n = 0;
-    for (const t of tiles){ if (t.state !== 2 || !t.blds) continue;
-      if (t._litFor !== t.blds){ t._litFor = t.blds; t._lit = t.blds.filter((b, i) => i % 5 !== 0 && b.p.length > 2).map(b => { const q = b.p[0]; return [q[0], Y(q[0], q[1]) + 5, q[1]]; }); }
-      for (let i = 0; i < t._lit.length && n < 2600; i++){ const q = t._lit[i]; v3.set(q[0], q[1], q[2]).project(camera); if (v3.z > 1 || v3.x < -1 || v3.x > 1 || v3.y < -1 || v3.y > 1) continue;
-        const x = (v3.x + 1) / 2 * W, y = (1 - v3.y) / 2 * H, col = winter ? XMAS[i % XMAS.length] : '255,214,130'; n++;
-        lg.fillStyle = `rgba(${col},${(.85 * A).toFixed(2)})`; lg.fillRect(x - 1, y - 1, 2.4, 2.4); lg.fillStyle = `rgba(${col},${(.16 * A).toFixed(2)})`; lg.fillRect(x - 3, y - 3, 6.4, 6.4); } }
+    const op = nightEl ? parseFloat(nightEl.style.opacity) || 0 : 0;
+    if (nightEl && op > 0){ nightEl.style.visibility = 'hidden'; scene.background = pageBg; dusk.visible = true; dusk.material.uniforms.tint.value.copy(WHITE).lerp(NIGHT, op); }
+    else { if (nightEl) nightEl.style.visibility = ''; scene.background = null; dusk.visible = false; }
+    const A = dk < .3 ? 0 : Math.min(1, (dk - .3) / .4); lightMat.opacity = A * .9; lightGrp.visible = A > 0; if (!A) return;
+    const winter = c.season() === 'winter';
+    for (const [t, pts] of lit) if (t.state !== 2 || pts.userData.blds !== t.blds || pts.userData.winter !== winter){ lightGrp.remove(pts); pts.geometry.dispose(); lit.delete(t); }
+    for (const t of tiles){ if (t.state !== 2 || !t.blds || lit.has(t)) continue; const pos = [], col = []; let n = 0;
+      t.blds.forEach((b, i) => { const p = b.p; if (i % 5 === 0 || p.length < 3) return; let cx = 0, cz = 0, lo = Infinity; for (const q of p){ cx += q[0] / p.length; cz += q[1] / p.length; lo = Math.min(lo, Y(q[0], q[1])); }
+        for (const k of [0, Math.floor(p.length / 2)]){ const q = p[k], dx = q[0] - cx, dz = q[1] - cz, d = Math.hypot(dx, dz) || 1, cc = winter ? XMAS[(n++) % XMAS.length] : WARM;
+          pos.push(q[0] + dx / d * 1.1, lo + 3.4, q[1] + dz / d * 1.1); col.push(cc[0], cc[1], cc[2]); } });
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+      const pts = new THREE.Points(geo, lightMat); pts.renderOrder = 6; pts.userData = {blds: t.blds, winter}; lightGrp.add(pts); lit.set(t, pts); }
   }
 
   /* ---------- sound, made here: water, wind, rain, an engine, a train, and a loon at dusk ---------- */
@@ -224,6 +237,5 @@ body.riding #rideBar{display:flex}
       if (ride) rideFrame(dt);
       else if (rail){ const show = camD < 9000; veh('train').visible = show; if (show){ railS += railDir * 26 * dt; if (railS > rail.L - 90){ railS = rail.L - 90; railDir = -1; } if (railS < 90){ railS = 90; railDir = 1; } setTrain(rail, railS); } }
       if (skin && skin.visible){ const u = skin.material.uniforms; u.t.value = now / 1000; u.dark.value = dk; u.near.value = Math.max(0, Math.min(1, 1.25 - camD / 9000)); u.cloud.value = .35 + .65 * ((sky.W && sky.W.cover) || 0); }
-      camera.updateMatrixWorld();                     // the lights are placed with this frame's camera, not the last one drawn, or they trail behind when you move
       drawLights(dk); audio.frame(now, camD, dk); } };
 }

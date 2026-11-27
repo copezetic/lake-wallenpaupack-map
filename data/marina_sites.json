@@ -10,10 +10,10 @@
   "poi": "ov-f20104a7-0cd",
   "lat": 41.3812,
   "lon": -75.247,
-  "bright": 190,
+  "bright": 165,
   "open": 2,
-  "minL": 18,
-  "minA": 40
+  "minL": 12,
+  "minA": 20
  },
  {
   "id": "pirates-cove-marina",

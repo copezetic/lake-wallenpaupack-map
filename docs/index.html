@@ -307,7 +307,7 @@ const EMBED = new URLSearchParams(location.search).has('embed');   // a small co
 if (EMBED){ document.body.classList.add('embed'); const a = document.createElement('a'); a.id = 'full'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open the full map ↗';
   const q = new URLSearchParams(location.search); q.delete('embed'); a.href = location.pathname + (q.toString() ? '?' + q : ''); document.body.appendChild(a); }
 
-const [D, PATCH] = await Promise.all([fetch('lake-data.json', { cache: 'no-cache' }).then(r => r.json()), fetch('patches.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)]);
+const [D, PATCH, DOCKS] = await Promise.all([fetch('lake-data.json', { cache: 'no-cache' }).then(r => r.json()), fetch('patches.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null), fetch('docks.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)]);
 const M = D.meta, XS = M.xmax - M.xmin, ZS = M.zmax - M.zmin;
 
 /* ---------------- elevation ---------------- */
@@ -363,6 +363,8 @@ for (const f of D.features) f.bb = bbOf(f.p);
 for (const r of D.roads) if (r.ref && /^I \d/.test(r.ref)){ r.ih = true; if (!r.n) r.n = 'Interstate ' + r.ref.slice(2); }   // the interstate is drawn bolder and named
 D.trails = D.trails || []; for (const t of D.trails) t.bb = bbOf(t.p);
 const pierBB = D.piers.map(bbOf);
+/* docks traced from public aerial photography (data/trace_lake.py), kept in lat/lon */
+const docks = ((DOCKS && DOCKS.docks) || []).map(r => r.map(q => [(q[1] - D.meta.lon0) * D.meta.kx, -(q[0] - D.meta.lat0) * D.meta.kz])), dockBB = docks.map(bbOf);
 const hits = (bb, x0, z0, x1, z1, pad = 0) => bb[0] < x1 + pad && bb[2] > x0 - pad && bb[1] < z1 + pad && bb[3] > z0 - pad;
 const along = (r, d) => { let acc = 0; for (let i = 1; i < r.p.length; i++){ const sl = Math.hypot(r.p[i][0]-r.p[i-1][0], r.p[i][1]-r.p[i-1][1]);
   if (acc + sl >= d && sl > 0){ const t = (d - acc) / sl; return [r.p[i-1][0] + (r.p[i][0]-r.p[i-1][0])*t, r.p[i-1][1] + (r.p[i][1]-r.p[i-1][1])*t]; } acc += sl; } return r.p[r.p.length-1]; };
@@ -418,6 +420,7 @@ function paint(x0, z0, x1, z1, TW, detail){
   }
   // docks and piers
   D.piers.forEach((p, i) => { if (!on(pierBB[i])) return; line(p); g.strokeStyle = '#a8946f'; g.lineWidth = Math.max(.8, 2.6*S); g.stroke(); });
+  if (detail){ g.beginPath(); docks.forEach((p, i) => { if (on(dockBB[i])) ring(p); }); g.fillStyle = '#d9cdb0'; g.fill(); g.strokeStyle = '#8a7858'; g.lineWidth = Math.max(.5, .35*S); g.stroke(); }
   // roads: casing first, then the pale fill
   const WID = {hwy:13, main:10, street:7}, MINW = {hwy:2.4, main:1.7, street:.9}, order = ['street','main','hwy'];
   const mine = D.roads.filter(r => on(r.bb));

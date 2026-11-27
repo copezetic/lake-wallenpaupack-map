@@ -60,6 +60,7 @@ NAV = [('marinas', 'Marinas'), ('public-access', 'Public beaches and boat launch
        ('places-to-stay', 'Places to stay'), ('things-to-do', 'Things to do'), ('hiking-and-outdoors', 'Hiking and outdoors'), ('fishing', 'Fishing'), ('boating-rules', 'Boating rules'),
        ('history', 'History'), ('events', 'Events'), ('beer-wine-trail', 'Beer and wine trail')]
 if os.path.exists('../docs/market.json'): NAV.append(('real-estate', 'Real estate market'))
+NAV += [('boat-rentals', 'Boat rentals and tours'), ('waterfront-dining', 'By the water'), ('communities', 'Lake communities'), ('towns', 'Towns')]
 PARKS = {p['poi']: p for p in J('parks')['parks']}
 for p in PAGED:
     f = dict(p.get('facts', [])); tw = town(p); near = sorted((q for q in PAGED if q is not p), key=lambda q: math.hypot(q['x'] - p['x'], q['z'] - p['z']))[:6]
@@ -115,11 +116,12 @@ for old_slug, target in DETAILS.get('pageAliases', {}).items():
         page('place/'+old_slug+'.html', 'Updated place listing | WallyMap', 'This place listing has moved or changed.', '<h1>Updated place listing</h1><p>This old listing has been replaced by '+plink(target)+'.</p><a class="btn" href="/?p='+e(target)+'">Open the current map pin</a>')
 if os.path.exists('../docs/market.json'):
     exec(open('seo_market.py').read())
+exec(open('seo_more.py').read())
 page('guide/index.html', 'Guides to Lake Wallenpaupack | WallyMap', 'Guides to Lake Wallenpaupack: marinas, public beaches and launches, dock and dine, restaurants, places to stay, fishing, boating rules, history and events.',
      '<h1>Guides to Lake Wallenpaupack</h1><p>Plain lists drawn from the 3D map, for when you want to read rather than explore.</p><a class="btn" href="/">Open the 3D map</a><ul class="l">' + ''.join(f'<li><a href="/guide/{s}.html">{e(t)}</a></li>' for s, t in NAV) + '</ul>', kick='WallyMap')
 # drop pages for places that no longer exist
 live = set(URLS)
-for f in glob.glob('../docs/place/*.html') + glob.glob('../docs/guide/*.html'):
+for f in glob.glob('../docs/place/*.html') + glob.glob('../docs/guide/*.html') + glob.glob('../docs/community/*.html') + glob.glob('../docs/town/*.html'):
     if f[len('../docs/'):] not in live: os.remove(f)
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + f'<url><loc>{SITE}/</loc><lastmod>{TODAY}</lastmod></url>\n' + ''.join(f'<url><loc>{SITE}/{u.replace("guide/index.html", "guide/")}</loc><lastmod>{TODAY}</lastmod></url>\n' for u in URLS) + '</urlset>\n'
 open('../docs/sitemap.xml', 'w').write(sm); open('../docs/robots.txt', 'w').write(f'User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n')

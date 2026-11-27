@@ -32,11 +32,21 @@ body.riding #rideBar{display:flex}
     let k = 1; const L = cum[cum.length - 1];
     const at = s => { s = Math.max(0, Math.min(L, s)); if (cum[k-1] > s) k = 1; while (k < p.length - 1 && cum[k] < s) k++; const f = (s - cum[k-1]) / (cum[k] - cum[k-1] || 1); return [p[k-1][0] + (p[k][0] - p[k-1][0]) * f, p[k-1][1] + (p[k][1] - p[k-1][1]) * f]; };
     return {id, n, kind, L, at}; };
-  const ROUTES = [];
+  const ROUTES = [], findRoute = id => ROUTES.find(r => r.id === id) || SPOTS.find(r => r.id === id);
   if (RD.boat) ROUTES.push({...route(RD.boat.p, RD.boat.n, 'boat', 'boat'), sub: 'From the dam to Ledgedale, down the middle of the lake', speed: 60});
   for (const d of RD.drives || []) ROUTES.push({...route(d.p, d.n, d.id, 'car'), sub: d.id === '507' ? 'From Route 6 at the dam to Greentown' : 'Along the Lackawaxen and the old canal', speed: 55});
-  if (RD.rail) ROUTES.push({...route(RD.rail.p, RD.rail.n, 'train', 'train'), sub: 'The excursion railroad\'s track from Honesdale through Hawley', speed: 42});
+  if (RD.rail){ const full = route(RD.rail.p, RD.rail.n, 'train', 'train'), depot = D.pois.find(p => p.id === 'ov-3549c7a4-e87') || D.towns.find(t => t.n === 'Hawley');
+    let sh = full.L; if (depot){ let bd = 1e9; for (let q = 0; q <= full.L; q += 20){ const [x, z] = full.at(q), d = Math.hypot(x - depot.x, z - depot.z); if (d < bd){ bd = d; sh = q; } } }
+    const part = (a, b) => ({L: b - a, at: q => full.at(a + Math.max(0, Math.min(b - a, q)))});                // the track is one line from Honesdale east past Hawley; the train and the rail bikes each use their own stretch
+    ROUTES.push({...part(0, sh), id: 'train', n: 'The Stourbridge Line', kind: 'train', sub: 'The excursion train\'s run from Honesdale down the Lackawaxen to Hawley', speed: 42});
+    const out = Math.min(full.L - sh, 8047); if (out > 1500) ROUTES.push({...part(sh, sh + out), id: 'railbike', n: 'Rail bike along the Lackawaxen', kind: 'bike', sub: 'Pedal the track east from Hawley depot to the turnaround', speed: 15}); }
   const miles = m => (m / 1609.34).toFixed(1) + ' mi';
+  /* fishing: the boat sits at a spot on the lake's centreline and you cast from it. A game, with the lake's real species. */
+  const boatR = ROUTES.find(r => r.id === 'boat');
+  const SPOTS = boatR ? [['fish-dam', 'Near the dam', .06], ['fish-mid', 'The middle of the lake', .46], ['fish-up', 'The upper lake, toward Ledgedale', .86]].map(([id, n, f]) => ({...boatR, id, n: 'Fishing · ' + n, spot: n, fixed: boatR.L * f})) : [];
+  const FISH = [['Yellow perch', 6, 12, 22, '#c9a43a'], ['Bluegill', 5, 9, 20, '#5c7a8a'], ['Smallmouth bass', 10, 18, 16, '#7a6a3a'], ['Largemouth bass', 11, 19, 10, '#5a6b3a'], ['Rock bass', 6, 10, 8, '#6b5a3a'], ['Chain pickerel', 14, 24, 7, '#6f8a4a'],
+    ['Black crappie', 8, 13, 6, '#8d8a84'], ['Walleye', 14, 24, 5, '#a08a4a'], ['Channel catfish', 14, 26, 3, '#5a5a66'], ['Striped bass', 20, 36, 2, '#9aa3ad'], ['Brown trout', 12, 20, 1, '#a0703a'], ['Northern pike', 20, 34, 1, '#5c7a4f']];
+  const pickFish = () => { let t = Math.random() * FISH.reduce((a, f) => a + f[3], 0); for (const f of FISH){ t -= f[3]; if (t <= 0) return f; } return FISH[0]; };
 
   /* ---------- the things you ride ---------- */
   function boatModel(){ const g = new THREE.Group(); g.add(bx(9, 1.4, 3.2, '#f4f1ea', 0, .8, 0), bx(3, 1.2, 2.6, '#f4f1ea', 5.2, .9, 0), bx(9.2, .3, 3.4, '#8a3b30', 0, 1.6, 0), bx(2.4, 1.3, 2.4, '#33506f', .6, 2.3, 0), bx(.3, 1.6, 2.6, '#cfe0e2', 1.9, 2.5, 0), bx(1.2, 1.4, 1.2, '#2f3d46', -4.6, 1.2, 0));
@@ -47,14 +57,18 @@ body.riding #rideBar{display:flex}
     if (loco) g.add(bx(15, 3.2, 3.4, '#22303a', 0, 3.2, 0), bx(5, 2.6, 3.6, '#7a3b2e', -5, 5.9, 0), bx(1, 2.2, 1, '#22303a', 4.5, 5.8, 0), bx(1.8, 1.2, 3.6, '#c2622d', 7.9, 2, 0));
     else g.add(bx(17, 4.2, 3.4, col, 0, 3.7, 0), bx(17.4, .5, 3.7, '#f3ecd9', 0, 6, 0), bx(15.5, 1.3, 3.5, '#f3ecd9', 0, 4.4, 0));
     for (const x of [-5, 5]) g.add(bx(3.4, 1.4, 3.6, '#2a2522', x, .8, 0)); return g; }
+  function bikeModel(){ const g = new THREE.Group(); g.add(bx(6.4, .35, 3.6, '#2f3d46', 0, 1.1, 0), bx(.3, 1.6, 3.4, '#c2622d', 2.9, 1.9, 0));
+    for (const [x, z] of [[2.2, 1.9], [2.2, -1.9], [-2.2, 1.9], [-2.2, -1.9]]) g.add(bx(1.5, 1.5, .3, '#22303a', x, .75, z));
+    for (const [z, col] of [[.95, '#3f7f8c'], [-.95, '#e0a52c']]) g.add(bx(1.2, .5, 1.1, '#8a3b30', -.9, 1.6, z), bx(.9, 1.7, 1, col, -1.2, 2.6, z), bx(.75, .75, .75, '#e2c9a8', -1.1, 3.8, z), bx(1.9, .45, .5, col, -.1, 2, z));
+    return g; }
   const VEH = {};
   const veh = kind => { if (!VEH[kind]){ const g = new THREE.Group(); g.visible = false;
       if (kind === 'train'){ g.userData.cars = [carriage('', true), carriage('#3f5a4a'), carriage('#3f5a4a'), carriage('#7a3b2e')]; g.userData.cars.forEach(o => g.add(o)); }
-      else g.add(kind === 'boat' ? boatModel() : carModel());
+      else g.add(kind === 'boat' ? boatModel() : kind === 'bike' ? bikeModel() : carModel());
       scene.add(g); VEH[kind] = g; } return VEH[kind]; };
   const hd = (r, s) => { const a = r.at(s - 4), b = r.at(s + 4); return Math.atan2(-(b[1] - a[1]), b[0] - a[0]); };
   const setTrain = (r, s) => { const g = veh('train'); g.userData.cars.forEach((o, i) => { const q = s - i * 20, [x, z] = r.at(q); o.position.set(x, Y(x, z) + .4, z); o.rotation.y = hd(r, q); }); };
-  const setVeh = (r, s) => { if (r.kind === 'train') return setTrain(r, s); const g = veh(r.kind), [x, z] = r.at(s); g.position.set(x, Y(x, z) + (r.kind === 'boat' ? .6 : .5), z); g.rotation.y = hd(r, s); };
+  const setVeh = (r, s) => { if (r.kind === 'train') return setTrain(r, s); const g = veh(r.kind), [x, z] = r.at(s); g.position.set(x, Y(x, z) + (r.kind === 'boat' ? .6 : r.kind === 'bike' ? .9 : .5), z); g.rotation.y = hd(r, s); };
   /* the train keeps running on its own when nobody is riding it */
   const rail = ROUTES.find(r => r.kind === 'train'); let railS = rail ? rail.L * .3 : 0, railDir = 1;
 
@@ -63,9 +77,17 @@ body.riding #rideBar{display:flex}
   let ride = null, last = 0;
   const cam = new THREE.Vector3(), look = new THREE.Vector3(), tmp = new THREE.Vector3();
   function drawBar(){ if (!ride) return; const r = ride.r;
+    if (ride.fish){ const f = ride.fish;
+      bar.innerHTML = `<b>${esc(r.n)}</b><small style="min-width:0">${f.n ? f.n + ' caught' : ''}</small><span style="font:500 16px var(--serif);flex-basis:100%;text-align:center">${esc(f.msg)}</span>
+        <button id="fCast" class="pri">${f.st === 'bite' ? 'Reel in!' : f.st === 'wait' ? 'Waiting…' : 'Cast'}</button><button id="rdLook" aria-pressed="${!!ride.gyro}">Tilt to look</button><button id="rdEnd">End</button>`;
+      bar.querySelector('#fCast').onclick = () => { if (f.st === 'idle'){ f.st = 'wait'; f.t = 3 + Math.random() * 7; f.msg = 'Line out. Watch the float.'; }
+        else if (f.st === 'bite'){ const k = pickFish(), len = k[1] + Math.random() * (k[2] - k[1]); f.n++; f.st = 'land'; f.t = 1.6; f.col = k[4]; f.msg = `${k[0]}, about ${len.toFixed(1)} inches. Back it goes.`; if (!f.best || len > f.best[1]) f.best = [k[0], len]; }
+        else if (f.st === 'wait'){ f.st = 'idle'; f.msg = 'Reeled in early. Cast again.'; }
+        drawBar(); };
+    } else {
     bar.innerHTML = `<b>${esc(r.n)}</b><small id="rdProg"></small><button id="rdPause" aria-pressed="${ride.paused}">${ride.paused ? 'Go' : 'Pause'}</button>` +
       [1, 2, 4].map(m => `<button data-m="${m}" aria-pressed="${ride.mult === m}">${m}×</button>`).join('') + `<button id="rdLook" aria-pressed="${!!ride.gyro}">Tilt to look</button><button id="rdEnd" class="pri">End</button>`;
-    bar.querySelector('#rdPause').onclick = () => { ride.paused = !ride.paused; drawBar(); };
+    bar.querySelector('#rdPause').onclick = () => { ride.paused = !ride.paused; drawBar(); }; }
     bar.querySelectorAll('button[data-m]').forEach(b => b.onclick = () => { ride.mult = +b.dataset.m; drawBar(); });
     bar.querySelector('#rdEnd').onclick = () => endRide();
     bar.querySelector('#rdLook').onclick = async () => { if (ride.gyro){ ride.gyro = null; drawBar(); return; }
@@ -77,19 +99,21 @@ body.riding #rideBar{display:flex}
   { let dn = null; canvas.addEventListener('pointerdown', e => { if (ride) dn = [e.clientX, e.clientY, ride.yaw, ride.pitch]; });
     addEventListener('pointermove', e => { if (!ride || !dn || ride.gyro) return; ride.yaw = dn[2] + (e.clientX - dn[0]) * .006; ride.pitch = Math.max(-.5, Math.min(.6, dn[3] + (e.clientY - dn[1]) * .004)); });
     addEventListener('pointerup', () => dn = null); }
-  function startRide(id, from){ const r = ROUTES.find(r => r.id === id); if (!r) return; if (from == null) from = r.kind === 'train' ? 90 : 0; if (ride) endRide(true);
+  function startRide(id, from){ const r = findRoute(id); if (!r) return; if (from == null) from = r.fixed != null ? r.fixed : r.kind === 'train' ? 90 : 0; if (ride) endRide(true);
     c.stopFly(); panel.classList.remove('open');
-    ride = {r, s: from, mult: 1, paused: false, yaw: 0, pitch: 0, fov: camera.fov, near: camera.near, far: camera.far, first: true};
+    ride = {r, s: from, mult: 1, paused: false, yaw: 0, pitch: 0, fov: camera.fov, near: camera.near, far: camera.far, first: true, fish: r.fixed != null ? {st: 'idle', t: 0, n: 0, msg: 'Cast your line.', best: null} : null};
     camera.fov = 50; camera.near = 4; camera.far = 70000; camera.updateProjectionMatrix(); controls.enabled = false;
     document.body.classList.add('riding'); veh(r.kind).visible = true; drawBar(); audio.sync(); }
   function endRide(quiet){ if (!ride) return; const r = ride.r, [x, z] = r.at(ride.s);
     camera.fov = ride.fov; camera.near = ride.near; camera.far = ride.far; camera.updateProjectionMatrix(); controls.enabled = true;
-    document.body.classList.remove('riding'); if (r.kind !== 'train') veh(r.kind).visible = false; ride = null; audio.sync();
+    if (ride.fish && ride.fish.n) say(`${ride.fish.n} caught and released. Biggest: ${ride.fish.best[0]}, ${ride.fish.best[1].toFixed(1)} in.`);
+    tackle.visible = false; document.body.classList.remove('riding'); if (r.kind !== 'train') veh(r.kind).visible = false; ride = null; audio.sync();
     if (!quiet){ controls.target.set(x, Y(x, z), z); camera.position.set(x + 500, Y(x, z) + 1500, z + 1600); flyTo(x, z, 3000); } }
   addEventListener('keydown', e => { if (ride && e.key === 'Escape') endRide(); });
-  const DIST = {boat: [48, 15], car: [40, 14], train: [112, 30]};
+  const DIST = {boat: [48, 15], car: [40, 14], train: [112, 30], bike: [30, 11]};
   function rideFrame(dt){ const r = ride.r;
-    if (!ride.paused) ride.s += r.speed * ride.mult * dt;
+    if (!ride.paused && !ride.fish) ride.s += r.speed * ride.mult * dt;
+    if (ride.fish) fishFrame(dt);
     if (ride.s >= r.L){ ride.s = r.L; say('End of the line.'); return endRide(); }
     setVeh(r, ride.s);
     const [x, z] = r.at(ride.s), h = hd(r, ride.s) , [back, up] = DIST[r.kind], a = h + Math.PI + ride.yaw, y0 = Y(x, z);
@@ -98,11 +122,27 @@ body.riding #rideBar{display:flex}
     const ahead = r.at(ride.s + 90); look.set(ahead[0] + (ride.yaw ? (x - ahead[0]) * Math.min(1, Math.abs(ride.yaw) / 1.2) : 0), y0 + 5 - ride.pitch * 30, ahead[1] + (ride.yaw ? (z - ahead[1]) * Math.min(1, Math.abs(ride.yaw) / 1.2) : 0));
     const far = r.at(ride.s + 520); controls.target.set(far[0], Y(far[0], far[1]), far[1]);         // the map dresses the ground ahead of you
     camera.position.copy(cam); camera.lookAt(look);
-    const pr = bar.querySelector('#rdProg'); if (pr) pr.textContent = `${miles(ride.s)} of ${miles(r.L)}`;
+    if (ride.fish) return; const pr = bar.querySelector('#rdProg'); if (pr) pr.textContent = `${miles(ride.s)} of ${miles(r.L)}`;
   }
+  /* the float, the line and the fish that comes up */
+  const tackle = new THREE.Group(); tackle.visible = false; scene.add(tackle);
+  const floatM = new THREE.Group(); floatM.add(new THREE.Mesh(new THREE.SphereGeometry(.9, 10, 8), M3('#d8402c')), bx(.25, 1.6, .25, '#f4f1ea', 0, 1.1, 0)); tackle.add(floatM);
+  const lineG = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, 0], 3)), lineM = new THREE.Line(lineG, new THREE.LineBasicMaterial({color: '#22303a'})); lineM.frustumCulled = false; tackle.add(lineM);
+  const fishM = new THREE.Group(); const fb = bx(3.4, 1.1, .5, '#7a6a3a'), ft = bx(.9, 1.3, .2, '#7a6a3a', -2, 0, 0); fishM.add(fb, ft); fishM.visible = false; tackle.add(fishM);
+  function fishFrame(dt){ const f = ride.fish, r = ride.r, [x, z] = r.at(ride.s), h = hd(r, ride.s), wy = Y(x, z) + .6, fx = x + Math.cos(h) * 30, fz = z - Math.sin(h) * 30, now = performance.now() / 1000;
+    tackle.visible = f.st !== 'idle'; fishM.visible = f.st === 'land';
+    let dip = Math.sin(now * 2.2) * .12;
+    if (f.st === 'wait'){ f.t -= dt; if (f.t <= 0){ f.st = 'bite'; f.t = 2.2; f.msg = 'A bite!'; drawBar(); } }
+    else if (f.st === 'bite'){ dip = -1.1 + Math.sin(now * 18) * .25; f.t -= dt; if (f.t <= 0){ f.st = 'idle'; f.msg = 'It got away. Cast again.'; drawBar(); } }
+    else if (f.st === 'land'){ f.t -= dt; const k = 1 - Math.max(0, f.t) / 1.6; fb.material = ft.material = M3(f.col); fishM.position.set(fx + (x - fx) * k, wy + Math.sin(k * Math.PI) * 9, fz + (z - fz) * k); fishM.rotation.set(0, h + Math.PI, Math.sin(k * 9) * .5);
+      if (f.t <= 0){ f.st = 'idle'; f.msg += ' Cast again.'; drawBar(); } }
+    floatM.position.set(fx, wy + .3 + dip, fz); const P = lineG.attributes.position; P.setXYZ(0, x + Math.cos(h) * 6, wy + 5.5, z - Math.sin(h) * 6); P.setXYZ(1, fx, wy + 1.4 + dip, fz); P.needsUpdate = true; }
   function rideSheet(){
     openSheet('Go for a ride', 'Ride the map', `<p>See the lake from down in it. Drag to look around; the bar at the bottom pauses, speeds up or ends the ride.</p>
       <div class="rides">${ROUTES.map(r => `<button data-r="${esc(r.id)}">${esc(r.n)}<small>${esc(r.sub)} · ${miles(r.L)}</small></button>`).join('')}</div>
+      ${SPOTS.length ? `<div class="sec">Go fishing</div><div class="rides">${SPOTS.map(r => `<button data-r="${esc(r.id)}">${esc(r.spot)}<small>Anchor up and cast a line</small></button>`).join('')}</div>
+      <p class="fine">Fishing here is a game. The fish are the species the Fish and Boat Commission lists for the lake, but the sizes and your luck are made up, and everything goes back. Real seasons and limits are under Fishing.</p>` : ''}
+      <p class="fine">The rail bikes are a real outing: Pennsylvania Rail Bike runs them from Hawley depot, Memorial Day weekend to Halloween, about five miles out along the river and back. The turnaround here is placed at five miles, as their site describes it.</p>
       <p class="fine">Rides follow the map's own lines and run faster than life. They are a way to look around, not directions: the boat keeps to the middle of the lake and ignores other boats, buoys and no-wake areas.</p>`);
     panel.querySelectorAll('button[data-r]').forEach(b => b.onclick = () => startRide(b.dataset.r));
   }
@@ -186,7 +226,7 @@ body.riding #rideBar{display:flex}
       frame(now, camD, dk){ if (!on || !ctx) return; const k = Math.max(0, Math.min(1, 1 - camD / 9000)), W = sky.W || {}, wet = W.kind === 'rain' || W.kind === 'storm', kind = ride && ride.r.kind, moving = ride && !ride.paused;
         set(N.water, kind === 'car' || kind === 'train' ? .01 : .02 + .07 * k); set(N.wind, .03 + .05 * (1 - k) + (W.wind > 15 ? .04 : 0)); set(N.rain, wet ? .09 : 0);
         N.motor.g.gain.setTargetAtTime(kind === 'boat' && moving ? .1 : 0, ctx.currentTime, .4); N.motor.o.frequency.setTargetAtTime(52 + (ride ? ride.mult * 9 : 0), ctx.currentTime, .5);
-        set(N.road, kind === 'car' && moving ? .22 : kind === 'train' && moving ? .14 : 0); N.chuffLfo.gain.setTargetAtTime(kind === 'train' && moving ? .1 : 0, ctx.currentTime, .3);
+        set(N.road, kind === 'car' && moving ? .22 : kind === 'train' && moving ? .14 : kind === 'bike' && moving ? .07 : 0); N.chuffLfo.gain.setTargetAtTime(kind === 'train' && moving ? .1 : 0, ctx.currentTime, .3);
         if (dk > .25 && dk < .95 && !wet && c.season() !== 'winter' && now > loonAt){ if (loonAt) loon(); loonAt = now + 22000 + Math.random() * 30000; } } }; })();
   let chipS = null; if (window.AudioContext || window.webkitAudioContext) chipS = addChip('Sound', () => audio.toggle().then(on => say(on ? 'Sound on. Made in your browser; nothing is recorded.' : 'Sound off.')));
 

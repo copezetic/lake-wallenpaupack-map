@@ -23,7 +23,8 @@ PK = json.load(open('../docs/parks.json')); PK['parks'] = [p for p in PK['parks'
 for mid, m in MARINAS.items():
     s = SITES[mid]; t = json.load(open(f'aerial/{mid}.json')); bb = t['bbox']; poi = POI[s['poi']]
     mpp = 2 * s.get('half', 300) / 2000
-    ll = lambda x, y: [round(bb[3] - y / 2000 * (bb[3] - bb[1]), 6), round(bb[0] + x / 2000 * (bb[2] - bb[0]), 6)]
+    lc, hf = (bb[1] + bb[3]) / 2, (bb[2] - bb[0]) / 2; tb = (bb[0], lc - hf, bb[2], lc + hf)   # the photo really covers a square in degrees, taller than asked for
+    ll = lambda x, y: [round(tb[3] - y / 2000 * (tb[3] - tb[1]), 6), round(tb[0] + x / 2000 * (tb[2] - tb[0]), 6)]
     px = lambda la, lo: ((lo - bb[0]) / (bb[2] - bb[0]) * 2000, (bb[3] - la) / (bb[3] - bb[1]) * 2000)
     (x0, y0), (x1, y1) = m['zone']; docks = []
     for d in t['docks']:
@@ -31,7 +32,7 @@ for mid, m in MARINAS.items():
         if x0 <= c.x <= x1 and y0 <= c.y <= y1: docks.append(q)
     for sp in m.get('spines', []): docks.append(list(LineString(sp).buffer(4.5 / mpp, cap_style=2).exterior.coords))
     if not docks: print('NO DOCKS', mid); continue
-    yards = m['yards']; pp = px(poi['dlat'], poi['dlon'])
+    yards = m['yards']; pp = ((poi['dlon'] - tb[0]) / (tb[2] - tb[0]) * 2000, (tb[3] - poi['dlat']) / (tb[3] - tb[1]) * 2000)
     hull = MultiPoint([p for r in docks + yards for p in r] + [pp]).convex_hull.buffer(25 / mpp).simplify(4 / mpp)
     dc = MultiPoint([p for r in docks for p in r]).centroid
     pts = [{'n': 'Docks', 'll': ll(dc.x, dc.y)}] + [{'n': 'Boat yard', 'll': ll(*Polygon(y).centroid.coords[0])} for y in yards]

@@ -445,6 +445,13 @@ for i in range(NTX):
         b = tiles.get((i, j), []); nb += len(b)
         json.dump(b, open(os.path.join(site, 'tiles', f'b_{i}_{j}.json'), 'w'), separators=(',', ':'))
 
+# the lake's shoreline comes from lidar when fetch_shore.py has run: far sharper than the volunteer outline
+if os.path.exists('lake_shore.json'):
+    SH = json.load(open('lake_shore.json')); xz_ = lambda r: [[round((q[1] - lon0) * KX, 1), round(-(q[0] - lat0) * KZ, 1)] for q in r]
+    big = max((w for w in water if w.get('n') == 'Lake Wallenpaupack'), key=lambda w: len(w['o']), default=None)
+    if big:                                  # lidar flattens most islands into the lake, so the mapped islands are kept as well
+        isl = [xz_(r) for r in SH['islands']]; got = [Polygon(r) for r in isl]
+        big['o'] = xz_(SH['outer']); big['h'] = isl + [h for h in big['h'] if not any(Polygon(h).intersects(g) for g in got)]
 out = {'meta': {'W': W, 'S': S, 'E': E, 'N': N, 'lat0': lat0, 'lon0': lon0, 'kx': KX, 'kz': KZ, 'emin': emin,
                 'demW': int(dem.shape[1]), 'demH': int(dem.shape[0]), 'xmin': xmin, 'xmax': xmax, 'zmin': zmin, 'zmax': zmax, 'ntx': NTX, 'ntz': NTZ},
        'dem': dem_b64, 'boundary': boundary, 'lakes': lakes, 'water': water, 'roads': roads, 'features': features,

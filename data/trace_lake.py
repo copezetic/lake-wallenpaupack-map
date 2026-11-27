@@ -37,7 +37,9 @@ def photo(i, j, b):
 def trace(i, j, b, check=False):
     f = photo(i, j, b)
     if not f: return None, 0
-    im = Image.open(f).convert('RGB'); a = np.asarray(im).astype(np.float32)
+    im = Image.open(f).convert('RGB')
+    # the service widens the latitude range until the request is square in degrees: the tile we asked for is the middle kx/kz of the rows
+    cut = PX * (1 - M['kx'] / M['kz']) / 2; im = im.resize((PX, PX), Image.BICUBIC, box=(0, cut, PX, PX - cut)); a = np.asarray(im).astype(np.float32)
     mk = Image.new('L', (PX, PX), 0); d = ImageDraw.Draw(mk); P = lambda r: [((x - b[0]) / m, (z - b[1]) / m) for x, z in r]
     cl = LAKE.intersection(box(*b).buffer(5))
     for g in (cl.geoms if hasattr(cl, 'geoms') else [cl]):

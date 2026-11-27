@@ -51,5 +51,22 @@
       "Directions to a specific lot for emergency services and contractors"
     ],
     "fine": "An independent map, not affiliated with any community or association shown. Private community maps are made with the association, not without it."
+  },
+  "realtors": {
+    "title": "For real estate agents",
+    "intro": "Buyers want to see where a home sits on the lake: which cove, how far from a marina, what is nearby. The map already answers that, and it carries housing market figures for the area. For agents and brokers, more is on the way.",
+    "now": [
+      "Housing market figures for Pike and Wayne counties and the ZIP codes around the lake, updated monthly",
+      "A page for each of the 78 lake communities, with the nearest marinas, launches and places to eat",
+      "A link that opens the map at a specific house, to send to buyers",
+      "A map of any location to embed on your own listing pages"
+    ],
+    "coming": [
+      "Your listings and open houses as pins on the map",
+      "Every home for sale around the lake, updated daily from a licensed MLS feed, with a broker partner",
+      "A featured agent on the market and community pages",
+      "Market figures for each lake community"
+    ],
+    "fine": "An independent map, not affiliated with any brokerage, association or MLS. Listings will appear only under a proper data licence; none are copied from listing websites."
   }
 }

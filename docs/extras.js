@@ -449,11 +449,11 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   const here = location.origin + location.pathname;
   const cardLink = p => `card.html?p=${encodeURIComponent(p.id)}&n=${encodeURIComponent(p.name)}`;
   const UL = l => `<ul style="margin:4px 0 0;padding-left:20px;font-size:16px;line-height:1.4">${l.map(f => `<li>${esc(f)}</li>`).join('')}</ul>`;
-  function comSheet(){                                                  // what the map offers lake communities and their associations
-    const C = BZ.communities || {}, mail = CT.email ? `<a class="btn pri" href="mailto:${esc(CT.email)}?subject=${encodeURIComponent('Lake Wallenpaupack map: our community')}">Email ${esc(CT.email)}</a>` : '';
-    openSheet('For communities', C.title || 'For lake communities', (BZ.purpose ? `<p>${esc(BZ.purpose)}</p>` : '') + (C.intro ? `<p>${esc(C.intro)}</p>` : '') +
+  function comSheet(key = 'communities'){                               // what the map offers lake communities and their associations, or real estate agents
+    const RE = key === 'realtors', C = BZ[key] || {}, mail = CT.email ? `<a class="btn pri" href="mailto:${esc(CT.email)}?subject=${encodeURIComponent(RE ? 'Lake Wallenpaupack map: real estate' : 'Lake Wallenpaupack map: our community')}">Email ${esc(CT.email)}</a>` : '';
+    openSheet(RE ? 'For agents' : 'For communities', C.title || 'For lake communities', (BZ.purpose ? `<p>${esc(BZ.purpose)}</p>` : '') + (C.intro ? `<p>${esc(C.intro)}</p>` : '') +
       ((C.now || []).length ? `<div class="sec">Available now</div>${UL(C.now)}` : '') + ((C.coming || []).length ? `<div class="sec">Coming</div>${UL(C.coming)}` : '') +
-      `<div class="acts">${mail}<a class="btn" href="/guide/communities.html">All lake communities</a><a class="btn" href="?host">Make a guest link</a></div>` + `<p class="fine">${esc(C.fine || '')}</p>`);
+      `<div class="acts">${mail}${RE ? '<a class="btn" href="/guide/real-estate.html">Market figures</a>' : ''}<a class="btn" href="/guide/communities.html">All lake communities</a><a class="btn" href="?host">Make a ${RE ? 'house' : 'guest'} link</a></div>` + `<p class="fine">${esc(C.fine || '')}</p>`);
   }
   function bizSheet(){
     const mail = CT.email ? `<a class="btn pri" href="mailto:${esc(CT.email)}?subject=${encodeURIComponent('Lake Wallenpaupack map: featured pin')}">Email ${esc(CT.email)}</a>` : '';
@@ -467,10 +467,11 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       (mail || form ? '' : `<p><b>${esc(BZ.soon || 'Enquiries open soon.')}</b></p>`) +
       ((BZ.now || []).length ? `<div class="sec">Available now</div>${UL(BZ.now)}` : '') + ((BZ.coming || []).length ? `<div class="sec">Coming</div>${UL(BZ.coming)}` : '') +
       (BZ.communities ? `<p style="margin-top:12px"><a href="#" id="bzCom">Run a homeowners or property owners association? See what is planned for lake communities →</a></p>` : '') +
+      (BZ.realtors ? `<p style="margin-top:6px"><a href="#" id="bzRe">A real estate agent or broker? See what is planned for agents →</a></p>` : '') +
       `<div class="sec">Free tools</div><div class="acts"><a class="btn" href="?host">Guest link for rental hosts</a><button class="btn" id="bzEmbed">Map for your website</button></div>` +
       (DEMO ? '<p class="fine">Sample view: the contact and price shown here are placeholders.</p>' : '') +
       `<p class="fine">${esc(BZ.fine || '')}</p>`);
-    panel.querySelector('#bzEmbed').onclick = () => embedSheet(null); { const l = panel.querySelector('#bzCom'); if (l) l.onclick = e => { e.preventDefault(); comSheet(); }; }
+    panel.querySelector('#bzEmbed').onclick = () => embedSheet(null); { const l = panel.querySelector('#bzCom'); if (l) l.onclick = e => { e.preventDefault(); comSheet(); }; } { const l = panel.querySelector('#bzRe'); if (l) l.onclick = e => { e.preventDefault(); comSheet('realtors'); }; }
   }
   function embedSheet(p){                                // a small copy of the map for a business's own website
     const src = `${here}?embed${p ? '&p=' + encodeURIComponent(p.id) : ''}`, code = `<iframe src="${src}" title="Map of Lake Wallenpaupack" width="100%" height="420" style="border:1px solid #22303a" loading="lazy"></iframe>`;
@@ -501,7 +502,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   }
   if (c.hooks){ c.hooks.claim = claimSheet; c.hooks.biz = bizSheet; }
   if (Q.has('business')) setTimeout(bizSheet, 800);
-  if (c.hooks) c.hooks.com = comSheet; if (Q.has('hoa')) setTimeout(comSheet, 800);
+  if (c.hooks) c.hooks.com = comSheet; if (Q.has('hoa')) setTimeout(() => comSheet(), 800); if (Q.has('realtors') || Q.has('agents')) setTimeout(() => comSheet('realtors'), 800);
   if (BZ.counter && BZ.counter.goatcounter && !DEMO && !Q.has('tour')){     // visitor counting stays off until a site code is set in business.json
     const sc = document.createElement('script'); sc.async = true; sc.src = 'https://gc.zgo.at/count.js'; sc.dataset.goatcounter = `https://${BZ.counter.goatcounter}.goatcounter.com/count`; document.head.appendChild(sc);
   }

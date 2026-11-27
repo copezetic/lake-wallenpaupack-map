@@ -305,7 +305,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       const S = Math.min(6, 4096 / Math.max(x1 - x0, z1 - z0)), cv = document.createElement('canvas'); cv.width = Math.ceil((x1 - x0) * S); cv.height = Math.ceil((z1 - z0) * S);
       const g = cv.getContext('2d'), tr = ll => { const [x, z] = xz(ll); return [(x - x0) * S, (z - z0) * S]; }, trace = (pts, close) => { g.beginPath(); pts.forEach((ll, i) => { const [a, b] = tr(ll); i ? g.lineTo(a, b) : g.moveTo(a, b); }); if (close) g.closePath(); };
       g.lineJoin = g.lineCap = 'round';
-      trace(pk.boundary, true); g.fillStyle = 'rgba(214,224,180,.5)'; g.fill();
+      if (!pk.water){ trace(pk.boundary, true); g.fillStyle = 'rgba(214,224,180,.5)'; g.fill(); }
       for (const r of pk.parking || []){ trace(r, true); g.fillStyle = '#d9d2c2'; g.fill(); }
       for (const r of pk.fairways || []){ trace(r, true); g.fillStyle = '#b9d08a'; g.fill(); }
       for (const r of pk.greens || []){ trace(r, true); g.fillStyle = '#8fc070'; g.fill(); g.strokeStyle = '#5c8a4a'; g.lineWidth = Math.max(1, .3 * S); g.stroke(); }
@@ -314,6 +314,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       for (const r of pk.ponds || []){ trace(r, true); g.fillStyle = '#9fbcc0'; g.fill(); }
       for (const r of pk.pitches || []){ trace(r, true); g.fillStyle = 'rgba(190,170,120,.55)'; g.fill(); g.strokeStyle = '#8a7350'; g.lineWidth = Math.max(1, .25 * S); g.stroke(); }
       for (const l of pk.holes || []){ trace(l); g.setLineDash([3 * S, 3 * S]); g.strokeStyle = 'rgba(60,80,50,.6)'; g.lineWidth = Math.max(1, .5 * S); g.stroke(); g.setLineDash([]); }
+      for (const r of pk.docks || []){ trace(r, true); g.fillStyle = '#e9dfc6'; g.fill(); g.strokeStyle = '#7d6a4a'; g.lineWidth = Math.max(1, .3 * S); g.stroke(); }
       for (const l of pk.piers || []){ trace(l); g.strokeStyle = '#8a7350'; g.lineWidth = 2.4 * S; g.stroke(); }
       for (const l of pk.drives || []){ trace(l); g.strokeStyle = '#e6dfcf'; g.lineWidth = 4.5 * S; g.stroke(); }
       for (const l of pk.paths || []){ trace(l); g.strokeStyle = '#8a7350'; g.lineWidth = 3.6 * S; g.stroke(); g.strokeStyle = '#ecdcb4'; g.lineWidth = 2.8 * S; g.stroke(); }

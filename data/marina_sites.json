@@ -1,0 +1,54 @@
+[
+ {
+  "id": "lighthouse-harbor-marina",
+  "poi": "ov-7e6442a5-7ca",
+  "lat": 41.3712,
+  "lon": -75.2575
+ },
+ {
+  "id": "pine-crest-marina",
+  "poi": "ov-f20104a7-0cd",
+  "lat": 41.3812,
+  "lon": -75.247,
+  "bright": 190,
+  "open": 2,
+  "minL": 18,
+  "minA": 40
+ },
+ {
+  "id": "pirates-cove-marina",
+  "poi": "ov-5e7a6b9e-48e",
+  "lat": 41.4388,
+  "lon": -75.1748
+ },
+ {
+  "id": "seeleys-marina",
+  "poi": "ov-3a5da991-716",
+  "lat": 41.4295,
+  "lon": -75.1813
+ },
+ {
+  "id": "the-boat-shop",
+  "poi": "ov-36290fa7-b5b",
+  "lat": 41.4233,
+  "lon": -75.2043
+ },
+ {
+  "id": "1st-klas-marina",
+  "poi": "ov-d0966c87-9bc",
+  "lat": 41.4175,
+  "lon": -75.2057
+ },
+ {
+  "id": "walts-landing",
+  "poi": "ov-4865edc7-64f",
+  "lat": 41.4597,
+  "lon": -75.1991
+ },
+ {
+  "id": "driftwood-cove-marina",
+  "poi": "ov-f8a6f73c-19d",
+  "lat": 41.3776,
+  "lon": -75.3094
+ }
+]

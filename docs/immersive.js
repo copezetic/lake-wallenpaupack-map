@@ -224,5 +224,6 @@ body.riding #rideBar{display:flex}
       if (ride) rideFrame(dt);
       else if (rail){ const show = camD < 9000; veh('train').visible = show; if (show){ railS += railDir * 26 * dt; if (railS > rail.L - 90){ railS = rail.L - 90; railDir = -1; } if (railS < 90){ railS = 90; railDir = 1; } setTrain(rail, railS); } }
       if (skin && skin.visible){ const u = skin.material.uniforms; u.t.value = now / 1000; u.dark.value = dk; u.near.value = Math.max(0, Math.min(1, 1.25 - camD / 9000)); u.cloud.value = .35 + .65 * ((sky.W && sky.W.cover) || 0); }
+      camera.updateMatrixWorld();                     // the lights are placed with this frame's camera, not the last one drawn, or they trail behind when you move
       drawLights(dk); audio.frame(now, camD, dk); } };
 }

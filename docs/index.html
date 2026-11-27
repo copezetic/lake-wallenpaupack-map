@@ -300,7 +300,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=8';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=11';
+import { initExtras, openNow } from './extras.js?v=12';
 import { initVisitor } from './visitor.js';
 import { searchEntries, applyPlaceDetails } from './discovery.js';
 import { initImmersive } from './immersive.js?v=4';
@@ -1323,6 +1323,7 @@ function frame(now){
 requestAnimationFrame(frame);
 { const ld = document.getElementById('load'); ld.classList.add('done'); setTimeout(() => ld.remove(), 900); }
 window.__lake = {sky, life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
+hooks.scene = {sky, setSeason};   // the tour's later shots change the hour
 if (!EMBED && !LITE) initImmersive({THREE, scene, camera, controls, canvas, renderer, D, M, Y, terrain, tiles, flyTo, panel, openSheet, esc, chips, say, addLabel, items, sky, setSeason, season: () => SEASON, getCamD: () => camD, stopFly: () => { fly = null; }, small}).then(o => Object.assign(imm, o)).catch(e => console.error(e));
 if(!EMBED) initVisitor({D,CATS,hooks,panel,esc,closePanel,openSheet,openPlace,flyTo,say,share,pinEls,LITE,hidden,getOrigin:()=>me || [controls.target.x,controls.target.z],hasLocation:()=>!!me,setSearchIds:ids=>{for(const [id,el] of pinEls)el.classList.toggle('search-off',!!ids&&!ids.has(id));}});
 if ('serviceWorker' in navigator && !new URLSearchParams(location.search).has('tour')) navigator.serviceWorker.register('sw.js').catch(() => {});   // keeps the last-loaded map for weak signal

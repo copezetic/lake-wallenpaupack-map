@@ -552,6 +552,18 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
         {x: biz.x, z: biz.z, d: [3800, 1700], az: [-.7, -.15], pol: [.9, 1.1], s: 7, b: biz.name, t: 'On the map of Lake Wallenpaupack'},
         {x: biz.x, z: biz.z, d: [1700, 1150], az: [-.15, .45], pol: [1.1, 1.16], s: 8, b: T.bizTitle || 'Your pin, featured', t: T.bizLine || 'Always on the map · first in your town guide · your photo and link'},
         {...end, s: 6}];
+    } else if (Q.get('tour') === 'promo'){                              // ?tour=promo: the first half of the short social video
+      const [px_, pz_] = toXZ(41.439944, -75.176635), [sx_, sz_] = toXZ(41.3822, -75.2492), hw = town('Hawley');
+      shots = [{...intro, s: 5, t: 'The whole lake in 3D'},
+        {x: px_, z: pz_, d: [1500, 620], az: [-.5, .35], pol: [.95, 1.1], s: 7, b: 'Marinas and docks', t: 'Traced from aerial photographs'},
+        {x: sx_, z: sz_, d: [1500, 800], az: [2.6, 3.3], pol: [1.0, 1.12], s: 6, b: 'Every cove and community', t: '78 lake communities by name'},
+        hw && {x: hw.x, z: hw.z, d: [3400, 2300], az: [-.5, .2], pol: [.95, 1.1], s: 6, b: 'The towns around it', t: `${near(hw)} places to eat, shop and stay in Hawley`}].filter(Boolean);
+    } else if (Q.get('tour') === 'promo2'){                             // ?tour=promo2&season=fall&hour=14: the second half, fall colour then night
+      const sc = c.hooks.scene || {}, [nx_, nz_] = toXZ(41.4760, -75.1822);
+      const [fx_, fz_] = toXZ(41.3822, -75.2492);
+      shots = [{x: fx_, z: fz_, d: [1500, 900], az: [3.4, 2.7], pol: [1.0, 1.12], s: 6, b: 'Through the seasons', t: 'Fall colour, winter ice, spring green'},
+        {x: nx_, z: nz_, d: [1000, 700], az: [-.4, .3], pol: [1.02, 1.14], s: 6, b: 'And after dark', t: 'The lights come on', on: () => sc.sky && sc.sky.setClock(21)},
+        {...end, s: 6, b: 'wallymap.com', t: 'Free · works on your phone', on: () => sc.sky && sc.sky.setClock(14)}];
     } else if (tw){                                                    // ?tour=hawley: a short clip for one town
       shots = [{...intro, d: [30000, 24000], s: 5, t: 'The whole lake in 3D'},
         {x: tw.x, z: tw.z, d: [3800, 2900], az: [-.6, -.1], pol: [.9, 1.08], s: 9, b: tw.n, t: `${near(tw)} places to eat, shop and stay`},
@@ -571,7 +583,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       let t = (now - t0) / 1000; if (t < 0) t = 0; if (t >= total){ if (Q.has('loop')) { t0 = now; t = 0; } else t = total - .001; }
       let i = 0, acc = 0; while (i < shots.length - 1 && t >= acc + shots[i].s){ acc += shots[i].s; i++; }
       const s = shots[i], k = ease(Math.min(1, (t - acc) / s.s)), L = a => a[0] + (a[1] - a[0]) * k;
-      if (i !== cur){ cur = i; cap.classList.remove('on'); setTimeout(() => { cap.firstChild.textContent = s.b; cap.lastChild.textContent = s.t; cap.classList.add('on'); }, cur ? 700 : 0); }
+      if (i !== cur){ cur = i; if (shots[i].on) shots[i].on(); cap.classList.remove('on'); setTimeout(() => { cap.firstChild.textContent = s.b; cap.lastChild.textContent = s.t; cap.classList.add('on'); }, cur ? 700 : 0); }
       if (t - acc > s.s - 1 && i < shots.length - 1) cap.classList.remove('on');
       c.stopFly(); place(v.set(s.x, Y(s.x, s.z), s.z), L(s.az), L(s.pol), L(s.d) * zf);
       requestAnimationFrame(step);

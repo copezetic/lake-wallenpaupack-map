@@ -1,0 +1,10 @@
+{
+  "_note": "Where to check and report power cuts. Links only: the utility's terms do not allow its outage data to be collected or republished, so nothing is pulled from its site. To show live outages on the map itself, the utility's written permission or a data feed is needed.",
+  "intro": "Storms take the power out around the lake fairly often. PPL Electric Utilities serves most homes here. Its own outage map shows where the power is out and when it expects to restore it.",
+  "utilities": [
+    {"n": "PPL Electric Utilities", "map": "https://omap.prod.pplweb.com/omap", "report": "https://www.pplelectric.com/site/outages-and-issues", "phone": "1-800-342-5775", "note": "Call or report online even if you think a neighbour already has: reports help crews find the fault."}
+  ],
+  "tips": ["Stay well away from any downed wire and treat it as live. Call 911, then the utility.", "Run a generator outdoors only, away from windows and doors.", "On a well? No power usually means no water. Keep some drinking water set aside in storm season."],
+  "fine": "Not every home around the lake is a PPL customer: check your own bill. This page links to the utility; it does not show outage data itself.",
+  "updated": "2026-11-27"
+}

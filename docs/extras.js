@@ -374,6 +374,17 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<p class="fine">Listing figures: <a href="${esc(MK.source_url)}" target="_blank" rel="noopener">${esc(MK.source)}</a>. They describe homes listed for sale (asking prices), not recorded sale prices, and cover whole counties and ZIP codes, not just lakefront. ZIP codes with few listings swing widely. Seasonal shares: U.S. Census Bureau, American Community Survey. General information only, not an appraisal or advice.</p>`);
     addChip('Market', marketSheet); if (Q.has('market')) setTimeout(marketSheet, 800);
   }
+  /* power cuts: where to check and report them. Links only (outages.json says why) */
+  const OUT = await getJSON('outages.json');
+  if (OUT && (OUT.utilities || []).length && !c.EMBED){
+    const outSheet = () => openSheet('Power', 'Power outages', (OUT.intro ? `<p>${esc(OUT.intro)}</p>` : '') +
+      OUT.utilities.map(u => `<div class="sec">${esc(u.n)}</div>${u.note ? `<p>${esc(u.note)}</p>` : ''}<div class="acts">` +
+        (u.map ? `<a class="btn pri" href="${esc(u.map)}" target="_blank" rel="noopener">Live outage map</a>` : '') + (u.report ? `<a class="btn" href="${esc(u.report)}" target="_blank" rel="noopener">Report an outage</a>` : '') +
+        (u.phone ? `<a class="btn" href="tel:${esc(u.phone.replace(/[^0-9+]/g, ''))}">Call ${esc(u.phone)}</a>` : '') + `</div>`).join('') +
+      ((OUT.tips || []).length ? `<div class="sec">While it is out</div><ul style="margin:4px 0 0;padding-left:20px;font-size:16px;line-height:1.4">${OUT.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '') +
+      `<p class="fine">${esc(OUT.fine || '')}${OUT.updated ? ' Checked ' + esc(OUT.updated) + '.' : ''}</p>`);
+    addChip('Power outages', outSheet); if (Q.has('outages') || Q.has('power')) setTimeout(outSheet, 800);
+  }
   const ES = await getJSON('essentials.json');
   if (ES && ((ES.groups || []).some(g => g.items.length) || (ES.here || []).length)){
     const GOT = (ES.groups || []).some(g => g.items.length);

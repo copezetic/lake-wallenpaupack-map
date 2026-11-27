@@ -48,6 +48,7 @@ export async function initExtras(c){
 .pin.feat .tag{font-weight:700;border-width:2px;border-color:#7a3b2e;padding:2px 10px 3px;font-size:16px}.pin.feat .dot{width:12px;height:12px;border-color:#7a3b2e}.pin.feat .stem{height:22px;background:#7a3b2e}
 .pin.sale .tag{background:#7a3b2e;color:var(--card);border-color:#7a3b2e;font-weight:700;font-size:13.5px}.pin.sale .stem{height:18px;background:#7a3b2e}.pin.sale .dot{background:#7a3b2e}
 body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.tour #compass,body.tour #hint,body.tour #panel,body.tour #credit .long,body.tour #bLegal{display:none!important}
+.lb.pk{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink);background:rgba(247,242,230,.92);border:1px solid var(--ink);padding:2px 6px 1px;pointer-events:none}.lb.pk.an{font:italic 600 13px var(--serif);letter-spacing:0;border-color:#7a3b2e;color:#5a2a20}
 #tourCap{position:fixed;left:0;right:0;bottom:11%;z-index:8;text-align:center;pointer-events:none;opacity:0;transition:opacity .9s}
 #tourCap.on{opacity:1}@media (orientation:portrait){#tourCap{bottom:17%}}#tourCap b{display:inline-block;max-width:88vw;font:600 clamp(30px,4.6vw,64px)/1.05 var(--serif);color:var(--ink);background:rgba(247,242,230,.9);padding:.18em .5em .22em;box-shadow:6px 6px 0 rgba(34,48,58,.16);border:1px solid var(--ink)}
 #tourCap span{display:block;margin:.7em auto 0;width:fit-content;max-width:86vw;font:700 clamp(12px,1.25vw,17px) var(--sc);letter-spacing:.16em;color:var(--card);background:var(--ink);padding:.55em 1em .45em}`;
@@ -211,6 +212,101 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       if (!old || !old.visible) toggle(true); else label();
     });
     if (Q.has('old')) setTimeout(() => chip.click(), 800);
+  }
+
+  /* ---------- a closer look at one place: its paths, buildings and facilities from open map data, and, for an animal park, figures of the animals it says it keeps ---------- */
+  const PK = await getJSON('parks.json');
+  for (const pk of (PK && PK.parks) || []){
+    const poi = D.pois.find(p => p.id === pk.poi); if (!poi) continue;
+    const xz = ll => toXZ(ll[0], ll[1]), bnd = pk.boundary.map(xz);
+    const inRing = (r, x, z) => { let c = false; for (let i = 0, j = r.length - 1; i < r.length; j = i++){ const a = r[i], b = r[j]; if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) c = !c; } return c; };
+    const roofs = (pk.buildings || []).map(r => r.map(xz)), within = (x, z) => inRing(bnd, x, z) && !roofs.some(r => inRing(r, x, z) || r.some(q => Math.hypot(q[0] - x, q[1] - z) < 5));
+    const mat = new Map(), M3 = col => mat.get(col) || mat.set(col, new THREE.MeshLambertMaterial({color: col})).get(col);
+    const bx = (w, h, d, col, x, y, z, rz = 0) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M3(col)); m.position.set(x, y, z); m.rotation.z = rz; return m; };
+    const quad = (o = {}) => { const {L = 1.8, H = .8, W = .6, leg = 1, neck = .8, na = -.6, col = '#a9794f', lcol = col, head = .6, tail = .4, mane, ears, hump} = o, g = new THREE.Group(), top = leg + H;
+      g.add(bx(L, H, W, col, 0, leg + H / 2, 0)); for (const [x, z] of [[.38, .3], [.38, -.3], [-.38, .3], [-.38, -.3]]) g.add(bx(L * .1 + .06, leg, W * .26, lcol, x * L, leg / 2, z * W));
+      const nx = L / 2 - .1 - Math.sin(na) * neck / 2, ny = top - .15 + Math.cos(na) * neck / 2; g.add(bx(H * .46, neck, W * .62, col, nx, ny, 0, na));
+      const hx = L / 2 - .1 - Math.sin(na) * neck + head * .3, hy = top - .15 + Math.cos(na) * neck; g.add(bx(head, head * .58, W * .7, col, hx, hy, 0));
+      if (mane) g.add(bx(head * .9, head * 1.25, W * 1.25, mane, hx - head * .55, hy - .05, 0)); if (ears) for (const sd of [1, -1]) g.add(bx(.1, ears, .16, col, hx - head * .3, hy + head * .3 + ears / 2, sd * W * .3));
+      if (hump) g.add(bx(L * .4, hump, W * .7, col, 0, top + hump / 2, 0)); if (tail) g.add(bx(.1, tail, .1, lcol, -L / 2 - .04, top - tail / 2, 0)); return g; };
+    const FIG = {                                                      // simple block figures; only for animals the park itself lists
+      giraffe: () => quad({L: 2.2, H: 1, W: .7, leg: 1.9, neck: 2.3, na: -.35, col: '#d7a34a', lcol: '#c08f3c', head: .6, ears: .22, tail: .9}),
+      lion: () => quad({L: 2, H: .8, W: .7, leg: .75, neck: .5, col: '#c9a25a', mane: '#8a5a2b', head: .55, tail: .9}),
+      tiger: () => quad({L: 2.1, H: .8, W: .7, leg: .75, neck: .45, col: '#d9822b', lcol: '#2a2522', head: .55, tail: 1}),
+      leopard: () => quad({L: 1.6, H: .6, W: .5, leg: .6, neck: .4, col: '#d2ab5c', head: .45, tail: .9}),
+      snowleopard: () => quad({L: 1.6, H: .6, W: .5, leg: .6, neck: .4, col: '#d8d4c8', head: .45, tail: 1.1}),
+      bear: () => quad({L: 2, H: 1.1, W: 1, leg: .7, neck: .4, na: -1.1, col: '#2a2522', head: .7, tail: 0, ears: .18}),
+      wolf: () => quad({L: 1.4, H: .55, W: .42, leg: .7, neck: .45, col: '#8d8a84', head: .45, tail: .6, ears: .16}),
+      fox: () => quad({L: .9, H: .35, W: .3, leg: .4, neck: .3, col: '#c8642c', head: .32, tail: .55, ears: .14}),
+      camel: () => quad({L: 2.3, H: .9, W: .7, leg: 1.4, neck: 1.3, na: -.3, col: '#c2a06a', head: .55, tail: .5, hump: .45}),
+      llama: () => quad({L: 1.5, H: .7, W: .5, leg: .9, neck: 1, na: -.15, col: '#e4dccb', head: .4, tail: .2, ears: .2}),
+      alpaca: () => quad({L: 1.3, H: .7, W: .5, leg: .7, neck: .8, na: -.15, col: '#b08a62', head: .38, tail: .2, ears: .16}),
+      deer: () => quad({L: 1.6, H: .65, W: .5, leg: .95, neck: .8, col: '#a9794f', head: .5, tail: .25, ears: .2}),
+      goat: () => quad({L: 1, H: .5, W: .4, leg: .5, neck: .4, col: '#e9e2d2', head: .35, tail: .15, ears: .14}),
+      sheep: () => quad({L: 1.1, H: .65, W: .6, leg: .45, neck: .3, col: '#efe9dc', lcol: '#3a3531', head: .35, tail: 0}),
+      pig: () => quad({L: 1.2, H: .6, W: .55, leg: .3, neck: .2, na: -1.3, col: '#d9a59a', head: .4, tail: .15}),
+      donkey: () => quad({L: 1.5, H: .65, W: .5, leg: .85, neck: .7, col: '#8f8780', head: .5, tail: .6, ears: .3}),
+      zebra: () => quad({L: 1.9, H: .8, W: .6, leg: 1, neck: .8, col: '#eeeae0', lcol: '#2a2522', head: .55, tail: .6, mane: '#2a2522'}),
+      capybara: () => quad({L: 1.1, H: .55, W: .5, leg: .3, neck: .2, na: -1.2, col: '#8a6a45', head: .42, tail: 0}),
+      porcupine: () => quad({L: .8, H: .5, W: .5, leg: .2, neck: .15, na: -1.3, col: '#4a4038', head: .28, tail: .3}),
+      otter: () => quad({L: .9, H: .25, W: .25, leg: .15, neck: .25, col: '#5a4332', head: .25, tail: .5}),
+      alligator: () => { const g = new THREE.Group(), C = '#4d5a3a'; g.add(bx(1.8, .3, .6, C, 0, .25, 0), bx(1.4, .18, .3, C, -1.5, .2, 0), bx(.9, .2, .4, C, 1.3, .22, 0)); return g; },
+      tortoise: () => { const g = new THREE.Group(); const sh = new THREE.Mesh(new THREE.SphereGeometry(.55, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2), M3('#6b5a3a')); sh.position.y = .15; g.add(sh, bx(.3, .2, .22, '#8a8053', .62, .25, 0)); return g; },
+      monkey: (col = '#6b4a2e') => { const g = new THREE.Group(); g.add(bx(.4, .6, .35, col, 0, .55, 0), bx(.32, .3, .3, col, .05, 1.02, 0), bx(.16, .16, .2, '#e2c9a8', .2, 1, 0), bx(.12, .5, .1, col, .02, .4, .22), bx(.12, .5, .1, col, .02, .4, -.22), bx(.08, .08, .7, col, -.2, .3, 0), bx(.08, .7, .08, col, -.28, .5, 0)); return g; },
+      lemur: () => { const g = FIG.monkey('#8d8a84'); g.add(bx(.1, 1, .1, '#2a2522', -.32, .95, 0)); return g; },
+      kangaroo: () => { const g = new THREE.Group(), C = '#b58a5c'; g.add(bx(.5, 1, .45, C, 0, .9, 0, -.3), bx(.3, .3, .26, C, .3, 1.55, 0), bx(.08, .3, .1, C, .25, 1.82, .1), bx(.08, .3, .1, C, .25, 1.82, -.1), bx(.5, .14, .14, C, .2, .08, .2), bx(.5, .14, .14, C, .2, .08, -.2), bx(1.1, .16, .16, C, -.75, .3, 0, .35)); return g; },
+      bird: (col = '#c8452c', wing = '#33506f') => { const g = new THREE.Group(); g.add(bx(.1, 1.4, .1, '#7d5a3c', 0, .7, 0), bx(.7, .07, .07, '#7d5a3c', 0, 1.4, 0), bx(.25, .42, .25, col, 0, 1.68, 0), bx(.2, .2, .2, col, .06, 1.98, 0), bx(.14, .08, .08, '#e7dcc3', .2, 1.96, 0), bx(.08, .4, .28, wing, -.12, 1.62, 0), bx(.08, .5, .1, wing, -.14, 1.3, 0, .25)); return g; },
+      owl: () => FIG.bird('#8a6a45', '#5a4332'), eagle: () => FIG.bird('#4a3a2a', '#2a2522'), macaw: () => FIG.bird('#c8452c', '#33506f'), parrot: () => FIG.bird('#5c8a3a', '#e0a52c'),
+      emu: () => { const g = new THREE.Group(), C = '#5a4a3a'; g.add(bx(.9, .7, .6, C, 0, 1.25, 0), bx(.1, .9, .1, '#8a8053', .1, .45, .15), bx(.1, .9, .1, '#8a8053', .1, .45, -.15), bx(.14, .9, .14, C, .5, 1.95, 0, -.2), bx(.26, .16, .16, C, .66, 2.4, 0)); return g; },
+      peacock: () => { const g = FIG.bird('#2f6f8c', '#3f7f5a'); g.children.slice(0, 2).forEach(m => m.visible = false); g.children.slice(2).forEach(m => m.position.y -= 1.1); g.add(bx(.08, 1, 1.2, '#3f7f5a', -.4, .9, 0, .3)); return g; }
+    };
+    let grp = null;
+    const build = () => {
+      grp = new THREE.Group();
+      let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const [x, z] of bnd){ x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+      x0 -= 15; x1 += 15; z0 -= 15; z1 += 15;
+      const S = Math.min(6, 4096 / Math.max(x1 - x0, z1 - z0)), cv = document.createElement('canvas'); cv.width = Math.ceil((x1 - x0) * S); cv.height = Math.ceil((z1 - z0) * S);
+      const g = cv.getContext('2d'), tr = ll => { const [x, z] = xz(ll); return [(x - x0) * S, (z - z0) * S]; }, trace = (pts, close) => { g.beginPath(); pts.forEach((ll, i) => { const [a, b] = tr(ll); i ? g.lineTo(a, b) : g.moveTo(a, b); }); if (close) g.closePath(); };
+      g.lineJoin = g.lineCap = 'round';
+      trace(pk.boundary, true); g.fillStyle = 'rgba(214,224,180,.5)'; g.fill();
+      for (const r of pk.parking || []){ trace(r, true); g.fillStyle = '#d9d2c2'; g.fill(); }
+      for (const l of pk.drives || []){ trace(l); g.strokeStyle = '#e6dfcf'; g.lineWidth = 4.5 * S; g.stroke(); }
+      for (const l of pk.paths || []){ trace(l); g.strokeStyle = '#8a7350'; g.lineWidth = 3.6 * S; g.stroke(); g.strokeStyle = '#ecdcb4'; g.lineWidth = 2.8 * S; g.stroke(); }
+      for (const r of pk.buildings || []){ trace(r, true); g.fillStyle = '#b9a98c'; g.fill(); g.strokeStyle = '#5a4a3a'; g.lineWidth = Math.max(1, .35 * S); g.stroke(); }
+      trace(pk.boundary, true); g.setLineDash([5 * S, 4 * S]); g.strokeStyle = '#7a3b2e'; g.lineWidth = 1.1 * S; g.stroke(); g.setLineDash([]);
+      const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+      const geo = new THREE.PlaneGeometry(x1 - x0, z1 - z0, 60, 60).rotateX(-Math.PI / 2).translate((x0 + x1) / 2, 0, (z0 + z1) / 2), P = geo.attributes.position;
+      for (let i = 0; i < P.count; i++) P.setY(i, Y(P.getX(i), P.getZ(i)) + .7);
+      const plane = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5})); plane.renderOrder = 3; grp.add(plane);
+      grp.add(new THREE.HemisphereLight('#ffffff', '#8a8370', 2.4));
+      const tag = (text, x, z, cls, lift) => { const el = document.createElement('div'); el.className = 'lb pk ' + cls; el.textContent = text; const it = addLabel(el, x, z, lift, 'center'); it.maxD = cls === 'an' ? 1100 : 2600; return it; };
+      for (const q of pk.pts || []){ const [x, z] = xz(q.ll); tag(q.n, x, z, 'fa', 5); }
+      /* the figures stand beside the footpaths, evenly spaced: decoration, not a plan of the enclosures */
+      const segs = []; let total = 0; for (const l of pk.paths || []){ const q = l.map(xz); for (let i = 1; i < q.length; i++){ const d = Math.hypot(q[i][0] - q[i-1][0], q[i][1] - q[i-1][1]); segs.push([q[i-1], q[i], d]); total += d; } }
+      const figs = (pk.figures || []).filter(f => FIG[f.fig]); const SC = pk.figScale || 2.6;
+      figs.forEach((f, i) => { let t = (i + .5) / figs.length * total, sg = segs[0]; for (const s2 of segs){ if (t <= s2[2]){ sg = s2; break; } t -= s2[2]; }
+        const k = sg[2] ? t / sg[2] : 0, dx = (sg[1][0] - sg[0][0]) / (sg[2] || 1), dz = (sg[1][1] - sg[0][1]) / (sg[2] || 1); let side = i % 2 ? 1 : -1, off = 8 + SC * 1.5;
+        let x = sg[0][0] + (sg[1][0] - sg[0][0]) * k - dz * side * off, z = sg[0][1] + (sg[1][1] - sg[0][1]) * k + dx * side * off;
+        if (!within(x, z)){ side = -side; x = sg[0][0] + (sg[1][0] - sg[0][0]) * k - dz * side * off; z = sg[0][1] + (sg[1][1] - sg[0][1]) * k + dx * side * off; }
+        const m = FIG[f.fig](); m.scale.setScalar(SC); m.position.set(x, Y(x, z) + .8, z); m.rotation.y = Math.atan2(dz * side, -dx * side) + Math.PI / 2 + (i * 2.4 % 1.2 - .6); grp.add(m);
+        tag(f.n, x, z, 'an', SC * (f.tall || 2.4) + 3); });
+      scene.add(grp);
+    };
+    const parkSheet = () => {
+      if (!grp) build();
+      const A = pk.animals || [];
+      openSheet(pk.kick || 'A closer look', poi.name,
+        (pk.intro ? `<p>${esc(pk.intro)}</p>` : '') +
+        (A.length ? `<div class="sec">Animals the park lists</div>` + A.map(gp => `<p style="margin:6px 0 0"><b>${esc(gp.t)}</b><br>${esc(gp.list.join(' · '))}</p>`).join('') : '') +
+        (pk.things && pk.things.length ? `<div class="sec">Things to do</div>` + pk.things.map(t => `<div class="gi"><h3>${esc(t.n)}</h3><p>${esc(t.note || '')}</p></div>`).join('') : '') +
+        (pk.visit ? `<div class="sec">Visiting</div><p>${esc(pk.visit)}</p>` : '') +
+        `<div class="acts">${pk.url ? `<a class="btn pri" href="${esc(pk.url)}" target="_blank" rel="noopener">Park's website</a>` : ''}<button class="btn" id="pkPlace">Directions</button><button class="btn" id="pkShare">Share</button></div>
+         <p class="fine">${esc(pk.fine || '')}${pk.updated ? ' Checked ' + esc(pk.updated) + '.' : ''}</p>`);
+      panel.querySelector('#pkPlace').onclick = () => openPlace(poi); panel.querySelector('#pkShare').onclick = () => share(poi.name, '?park=' + encodeURIComponent(pk.id));
+      const c0 = bnd.reduce((a, q) => [a[0] + q[0] / bnd.length, a[1] + q[1] / bnd.length], [0, 0]), at = pk.focus ? xz(pk.focus) : c0; flyTo(at[0], at[1], pk.viewD || 520);
+    };
+    poi.park = pk; if (c.hooks) (c.hooks.parks = c.hooks.parks || {})[poi.id] = parkSheet;
+    if (Q.get('park') === pk.id) setTimeout(parkSheet, 900);
   }
 
   /* ---------- day plans: the publisher's own picks; hidden until plans.json says approved (preview with ?plans=preview) ---------- */

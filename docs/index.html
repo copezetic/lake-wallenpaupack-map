@@ -281,7 +281,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=6';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=2';
+import { initExtras, openNow } from './extras.js?v=3';
 
 const EX = 2.0;            // vertical exaggeration
 const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
@@ -651,9 +651,11 @@ function openPlace(p){
     <div class="kick"><i></i>${esc(p.kind || CATS[p.cat].label)}${p.sponsor ? ' · Sponsored' : ''}</div><h2>${esc(p.name)}</h2>${(o => o ? `<p style="margin:-4px 0 8px;font:700 11.5px var(--sc);letter-spacing:.13em;color:${o.open ? '#3f6b3a' : '#7a3b2e'}">${esc(o.text)}</p>` : '')(openNow(p))}
     ${p.photo && p.photoCredit ? `<div class="cred">Photo: ${esc(p.photoCredit)}</div>` : ''}<p>${esc(p.blurb || '')}</p>
     ${p.facts?.length ? `<dl>${p.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>` : ''}
+    ${p.park ? '<button class="wide" id="goPark" style="margin:0 0 4px">See inside the park</button>' : ''}
     <div class="acts">${p.outside ? '' : '<button class="btn pri" id="goRoute">Route on this map</button>'}${p.url ? `<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.urlLabel || 'Website')}</a>` : ''}
     <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a><button class="btn" id="goShare">Share</button></div>
     <p class="fine"><a href="#" id="goClaim" style="color:inherit">Run this place? Claim or correct it</a></p>`;
+  if (p.park) panel.querySelector('#goPark').onclick = () => hooks.parks[p.id]();
   panel.querySelector('#goClaim').onclick = e => { e.preventDefault(); hooks.claim ? hooks.claim(p) : say('One moment…'); };
   panel.querySelector('#goShare').onclick = () => share(p.name, '?p=' + encodeURIComponent(p.id));
   panel.classList.remove('route'); const gr = panel.querySelector('#goRoute'); if (gr) gr.onclick = () => routeTo(p);

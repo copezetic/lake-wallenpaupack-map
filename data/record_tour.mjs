@@ -1,7 +1,7 @@
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
-const [,, url, out, secsArg, mode] = process.argv;
-const FPS = 30, DT = 1000 / FPS, W = 1920, H = 1080;
+const [,, url, out, secsArg, wArg, hArg, mode] = process.argv;   // node record_tour.mjs <url> <out.mp4> <seconds> [width height]
+const FPS = 30, DT = 1000 / FPS, W = +wArg || 1920, H = +hArg || 1080;
 const browser = await chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=metal', '--enable-gpu', '--ignore-gpu-blocklist', '--hide-scrollbars'] });
 const page = await browser.newPage({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
 page.on('pageerror', e => console.log('pageerror', e.message));

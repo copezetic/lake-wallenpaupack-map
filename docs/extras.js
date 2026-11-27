@@ -48,7 +48,7 @@ export async function initExtras(c){
 .pin.feat .tag{font-weight:700;border-width:2px;border-color:#7a3b2e;padding:2px 10px 3px;font-size:16px}.pin.feat .dot{width:12px;height:12px;border-color:#7a3b2e}.pin.feat .stem{height:22px;background:#7a3b2e}
 .pin.sale .tag{background:#7a3b2e;color:var(--card);border-color:#7a3b2e;font-weight:700;font-size:13.5px}.pin.sale .stem{height:18px;background:#7a3b2e}.pin.sale .dot{background:#7a3b2e}
 body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.tour #compass,body.tour #hint,body.tour #panel,body.tour #credit .long,body.tour #bLegal{display:none!important}
-.lb.pk{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink);background:rgba(247,242,230,.92);border:1px solid var(--ink);padding:2px 6px 1px;pointer-events:none}.lb.pk.hm{border-color:#5a4a8c;color:#3d2f6b;font-style:italic;letter-spacing:.04em;font-family:var(--serif);font-size:12.5px}.lb.mdot{width:10px;height:10px;border-radius:50%;background:#b0351f;border:2px solid #fff;pointer-events:none}
+.lb.pk{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink);background:rgba(247,242,230,.92);border:1px solid var(--ink);padding:2px 6px 1px;pointer-events:none}.lb.pk.hm{border-color:#5a4a8c;color:#3d2f6b;font-style:italic;letter-spacing:.04em;font-family:var(--serif);font-size:12.5px}.measuring .pin{pointer-events:none}.lb.mdot{width:10px;height:10px;border-radius:50%;background:#b0351f;border:2px solid #fff;pointer-events:none}
 .lb.pk.an{font:italic 600 13px var(--serif);letter-spacing:0;border-color:#7a3b2e;color:#5a2a20}
 #tourCap{position:fixed;left:0;right:0;bottom:11%;z-index:8;text-align:center;pointer-events:none;opacity:0;transition:opacity .9s}
 #tourCap.on{opacity:1}@media (orientation:portrait){#tourCap{bottom:17%}}#tourCap b{display:inline-block;max-width:88vw;font:600 clamp(30px,4.6vw,64px)/1.05 var(--serif);color:var(--ink);background:rgba(247,242,230,.9);padding:.18em .5em .22em;box-shadow:6px 6px 0 rgba(34,48,58,.16);border:1px solid var(--ink)}
@@ -176,12 +176,12 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
         <p class="fine">A straight-line estimate on this map, not a chart: it ignores no-wake areas, shallows and other boats.</p>`);
       panel.querySelector('#mUndo').onclick = () => { pts.pop(); undot(); draw(); sheet(); };
       panel.querySelector('#mClear').onclick = () => { pts.length = 0; while (tags.length) undot(); draw(); sheet(); };
-      panel.querySelector('#mDone').onclick = () => { on = false; pts.length = 0; while (tags.length) undot(); draw(); panel.querySelector('.x').click(); }; };
+      panel.querySelector('#mDone').onclick = () => { on = false; document.body.classList.remove('measuring'); pts.length = 0; while (tags.length) undot(); draw(); panel.querySelector('.x').click(); }; };
     if (canvas && terrain){ canvas.addEventListener('pointerdown', e => dn = [e.clientX, e.clientY]);
       canvas.addEventListener('pointerup', e => { if (!on || !dn || Math.hypot(e.clientX - dn[0], e.clientY - dn[1]) > 6) return;
         const r = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
         const hit = ray.intersectObject(terrain, true)[0]; if (!hit) return; pts.push(hit.point.clone()); dot(hit.point); draw(); sheet(); }); }
-    return {start(){ on = true; sheet(); }};
+    return {start(){ on = true; document.body.classList.add('measuring'); sheet(); }};
   })();
   if (Q.has('measure')) setTimeout(() => measure.start(), 800);
   if (BO){

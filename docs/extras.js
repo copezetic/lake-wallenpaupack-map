@@ -358,6 +358,22 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   }
 
   /* ---------- essentials and getting here (built by data/fetch_essentials.py from OpenStreetMap) ---------- */
+  /* the housing market: listing statistics for the counties and ZIP codes around the lake (market.json, built by data/build_market.py) */
+  const MK = await getJSON('market.json');
+  if (MK && MK.counties && MK.counties.length && !c.EMBED){
+    const usd = v => v == null ? '—' : '$' + Math.round(v).toLocaleString('en-US'), n0 = v => v == null ? '—' : Math.round(v).toLocaleString('en-US'), yy = v => v == null ? '' : ` <span style="opacity:.7">${v >= 0 ? '+' : '−'}${Math.abs(Math.round(v * 100))}%</span>`;
+    const mon = new Date(+MK.month.slice(0, 4), +MK.month.slice(4) - 1, 1).toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+    const tb = (rows) => `<div style="overflow-x:auto"><table style="border-collapse:collapse;width:100%;font-size:14px;margin-top:6px"><tr style="opacity:.7;font-size:12px"><td></td><td style="text-align:right;padding:4px 6px">Asking price</td><td style="text-align:right;padding:4px 6px">For sale</td><td style="text-align:right;padding:4px 0 4px 6px">Days listed</td></tr>${rows}</table></div>`;
+    const tr = (n, x) => `<tr style="border-top:1px solid rgba(128,128,128,.3)"><td style="padding:6px 6px 6px 0"><b>${esc(n)}</b></td><td style="text-align:right;padding:6px">${usd(x.price)}${yy(x.price_yy)}</td><td style="text-align:right;padding:6px">${n0(x.active)}${yy(x.active_yy)}</td><td style="text-align:right;padding:6px 0 6px 6px">${n0(x.days)}</td></tr>`;
+    const marketSheet = () => openSheet('The housing market', mon,
+      `<p>Median asking prices, homes for sale and how long a typical listing has been on the market. Percentages compare with the same month a year ago.</p>` +
+      `<div class="sec">Counties</div>` + tb(MK.counties.map(x => tr(x.n, x)).join('')) +
+      `<div class="sec">Around the lake, by ZIP code</div>` + tb(MK.zips.map(x => tr(`${x.n} ${x.zip}`, x)).join('')) +
+      ((MK.seasonal || []).length ? `<div class="sec">A second-home market</div>` + MK.seasonal.map(x => `<p style="margin:6px 0 0"><b>${esc(x.n)}</b><br>${x.share.toFixed(1)}% of housing units are kept for seasonal or occasional use</p>`).join('') : '') +
+      `<p style="margin-top:14px"><a href="/guide/real-estate.html">Every year since 2016 →</a></p>` +
+      `<p class="fine">Listing figures: <a href="${esc(MK.source_url)}" target="_blank" rel="noopener">${esc(MK.source)}</a>. They describe homes listed for sale (asking prices), not recorded sale prices, and cover whole counties and ZIP codes, not just lakefront. ZIP codes with few listings swing widely. Seasonal shares: U.S. Census Bureau, American Community Survey. General information only, not an appraisal or advice.</p>`);
+    addChip('Market', marketSheet); if (Q.has('market')) setTimeout(marketSheet, 800);
+  }
   const ES = await getJSON('essentials.json');
   if (ES && ((ES.groups || []).some(g => g.items.length) || (ES.here || []).length)){
     const GOT = (ES.groups || []).some(g => g.items.length);

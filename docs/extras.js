@@ -379,21 +379,21 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     const town = n => TOWNS.find(t => t.n === n), near = t => D.pois.filter(p => inTown(t, p)).length;
     const marina = D.pois.find(p => /Lighthouse Harbor/.test(p.name)) || D.pois.find(p => p.kind === 'Marina');
     const [lx, lz] = toXZ(41.4115, -75.248), [mx, mz] = toXZ(41.432, -75.212);
-    const zf = innerHeight > innerWidth ? 1.55 : 1;                   // an upright (phone-shaped) recording stands further back
+    const zf = innerHeight > innerWidth ? 1.35 : 1;                   // an upright (phone-shaped) recording stands further back
     const intro = {x: lx, z: lz, d: [34000, 23000], az: [-.3, .05], pol: [.72, .86], s: 11, b: 'Lake Wallenpaupack', t: 'The whole lake, and the towns around it, in 3D'};
     const end = {x: lx, z: lz, d: [20000, 30000], az: [-.1, -.35], pol: [.9, .78], s: 11, b: T.endTitle || 'Put your business on the map', t: T.endLine || 'Featured pins, photos and listings for local businesses'};
     const tw = Q.get('tour') && town(TOWNS.map(t => t.n).find(n => n.toLowerCase() === Q.get('tour').toLowerCase())), biz = Q.get('biz') && D.pois.find(p => p.id === Q.get('biz'));
     let shots;
     if (biz){                                                          // ?tour&biz=<place id>: a short clip that flies to one business, shown as a featured pin
-      const el = pinEls.get(biz.id), it = itemOf(biz); if (el){ el.classList.remove('minor'); el.classList.add('feat'); } if (it){ it.maxD = 0; it.w = 0; }
+      const el = pinEls.get(biz.id), it = itemOf(biz); if (el){ el.classList.remove('minor'); el.classList.add('feat', 'sel'); } if (it){ it.maxD = 0; it.w = 0; } biz.major = true;
       shots = [{...intro, d: [30000, 24000], s: 5, t: 'The whole lake in 3D'},
-        {x: biz.x, z: biz.z, d: [5200, 1700], az: [-.7, -.15], pol: [.9, 1.1], s: 7, b: biz.name, t: 'On the map of Lake Wallenpaupack'},
+        {x: biz.x, z: biz.z, d: [3800, 1700], az: [-.7, -.15], pol: [.9, 1.1], s: 7, b: biz.name, t: 'On the map of Lake Wallenpaupack'},
         {x: biz.x, z: biz.z, d: [1700, 1150], az: [-.15, .45], pol: [1.1, 1.16], s: 8, b: T.bizTitle || 'Your pin, featured', t: T.bizLine || 'Always on the map · first in your town guide · your photo and link'},
         {...end, s: 6}];
     } else if (tw){                                                    // ?tour=hawley: a short clip for one town
       shots = [{...intro, d: [30000, 24000], s: 5, t: 'The whole lake in 3D'},
-        {x: tw.x, z: tw.z, d: [6000, 3200], az: [-.6, -.1], pol: [.9, 1.08], s: 9, b: tw.n, t: `${near(tw)} places to eat, shop and stay`},
-        {x: tw.x, z: tw.z, d: [3200, 2000], az: [-.1, .5], pol: [1.08, 1.14], s: 8, b: 'Every shop, table and bed', t: 'Tap any pin for directions and details'},
+        {x: tw.x, z: tw.z, d: [3800, 2900], az: [-.6, -.1], pol: [.9, 1.08], s: 9, b: tw.n, t: `${near(tw)} places to eat, shop and stay`},
+        {x: tw.x, z: tw.z, d: [2900, 1900], az: [-.1, .5], pol: [1.08, 1.14], s: 8, b: 'Every shop, table and bed', t: 'Tap any pin for directions and details'},
         {...end, s: 6}];
     } else shots = [intro,
       {x: mx, z: mz, d: [9500, 6800], az: [.5, 1.05], pol: [1.0, 1.1], s: 10, b: 'Every cove, road and community', t: `${D.roads.length.toLocaleString()} roads · ${D.towns.length} towns and communities`},

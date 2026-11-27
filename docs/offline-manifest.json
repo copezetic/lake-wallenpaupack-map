@@ -1,6 +1,6 @@
 {
-  "version": "46762d6e77ef8c9c",
-  "bytes": 21214915,
+  "version": "9e44e6f588667044",
+  "bytes": 21322421,
   "files": [
     "./",
     "access.json",
@@ -120,6 +120,7 @@
     "guide/restaurants.html",
     "guide/things-to-do.html",
     "guide/towns.html",
+    "guide/utilities-and-services.html",
     "guide/waterfront-dining.html",
     "historic.jpg",
     "historic.json",
@@ -592,6 +593,7 @@
     "place-details.json",
     "plans.json",
     "rides.json",
+    "services.json",
     "sky.js",
     "sponsors.json",
     "tags.json",

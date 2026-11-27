@@ -60,7 +60,7 @@ NAV = [('marinas', 'Marinas'), ('public-access', 'Public beaches and boat launch
        ('places-to-stay', 'Places to stay'), ('things-to-do', 'Things to do'), ('hiking-and-outdoors', 'Hiking and outdoors'), ('fishing', 'Fishing'), ('boating-rules', 'Boating rules'),
        ('history', 'History'), ('events', 'Events'), ('beer-wine-trail', 'Beer and wine trail')]
 if os.path.exists('../docs/market.json'): NAV.append(('real-estate', 'Real estate market'))
-NAV += [('groceries-beer-and-liquor', 'Groceries, beer and liquor'), ('boat-rentals', 'Boat rentals and tours'), ('waterfront-dining', 'By the water'), ('communities', 'Lake communities'), ('towns', 'Towns')]
+NAV += [('groceries-beer-and-liquor', 'Groceries, beer and liquor'), ('utilities-and-services', 'Utilities and services'), ('boat-rentals', 'Boat rentals and tours'), ('waterfront-dining', 'By the water'), ('communities', 'Lake communities'), ('towns', 'Towns')]
 PARKS = {p['poi']: p for p in J('parks')['parks']}
 for p in PAGED:
     f = dict(p.get('facts', [])); tw = town(p); near = sorted((q for q in PAGED if q is not p), key=lambda q: math.hypot(q['x'] - p['x'], q['z'] - p['z']))[:6]

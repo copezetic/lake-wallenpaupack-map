@@ -395,7 +395,23 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
         (u.phone ? `<a class="btn" href="tel:${esc(u.phone.replace(/[^0-9+]/g, ''))}">Call ${esc(u.phone)}</a>` : '') + `</div>`).join('') +
       ((PWR.tips || []).length ? `<div class="sec">While it is out</div><ul style="margin:4px 0 0;padding-left:20px;font-size:16px;line-height:1.4">${PWR.tips.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '') +
       `<p class="fine">${esc(PWR.fine || '')}${PWR.updated ? ' Checked ' + esc(PWR.updated) + '.' : ''}</p>`);
-    addChip('Power outages', outSheet); if (Q.has('outages') || Q.has('power')) setTimeout(outSheet, 800);
+    if (Q.has('outages') || Q.has('power')) setTimeout(outSheet, 800);
+    /* utilities and services: power first, then trades and emergency services from services.json (a directory, not pins) */
+    const SV = await getJSON('services.json'), SG = (SV && SV.groups) || [];
+    const grpSheet = i => { const g = SG[i]; if (!g) return;
+      openSheet('Utilities & services', g.t, `<p><a href="#" id="svBack">← All services</a></p>` + (g.t === 'Emergency services' ? `<p><b>In an emergency, call 911.</b> These are stations and clinics, not dispatch numbers.</p>` : '') +
+        g.items.map((it, k) => `<div style="padding:9px 0;border-bottom:1px solid rgba(141,154,151,.55)"><b style="font:600 17px var(--serif)">${esc(it.n)}</b>${it.a ? `<br><span style="opacity:.75;font-size:14.5px">${esc(it.a)}</span>` : ''}<div class="acts" style="margin-top:6px">` +
+          (it.ph ? `<a class="btn" href="tel:${esc(it.ph.replace(/[^0-9+]/g, ''))}">Call ${esc(it.ph)}</a>` : '') + (it.url ? `<a class="btn" href="${esc(it.url)}" target="_blank" rel="noopener nofollow">Website</a>` : '') + `<button class="btn" data-svm="${k}">On the map</button></div></div>`).join('') +
+        `<p class="fine">${esc(SV.fine || '')}</p>`);
+      panel.querySelector('#svBack').onclick = e => { e.preventDefault(); svcSheet(); };
+      panel.querySelectorAll('button[data-svm]').forEach(b => b.onclick = () => { const it = g.items[+b.dataset.svm], [x, z] = toXZ(it.lat, it.lon); flyTo(x, z, 1500); say(it.n); }); };
+    const svcSheet = () => { openSheet('Who to call', 'Utilities & services',
+        `<div class="sec">Power</div><p>${esc(PWR.utilities[0].n)} serves most homes here. <a href="#" id="svPwr">Outage map, reporting and what to do →</a></p>` +
+        (SG.length ? `<div class="sec">Services</div><p>${esc(SV.intro || '')}</p><div class="plist">${SG.map((g, i) => `<button data-svg="${i}"><b>${esc(g.t)}</b> <small>${g.items.length}</small></button>`).join('')}</div>` : '') +
+        `<p class="fine">${esc((SV && SV.fine) || '')}</p>`);
+      panel.querySelector('#svPwr').onclick = e => { e.preventDefault(); outSheet(); };
+      panel.querySelectorAll('button[data-svg]').forEach(b => b.onclick = () => grpSheet(+b.dataset.svg)); };
+    addChip('Utilities & services', svcSheet); if (Q.has('services')) setTimeout(svcSheet, 800);
   }
   const ES = await getJSON('essentials.json');
   if (ES && ((ES.groups || []).some(g => g.items.length) || (ES.here || []).length)){

@@ -56,3 +56,11 @@ _ST = [('Grocery store', 'Grocery stores'), ('Beer distributor', 'Beer distribut
 def stl(k): return '<ul class="l">' + ''.join(f'<li><b>{e(p["name"])}</b> · <a href="/?p={e(p["id"])}">on the map</a><small>{e(dict(p.get("facts", [])).get("Address", ""))}{" · " + e(dict(p.get("facts", [])).get("Phone", "")) if dict(p.get("facts", [])).get("Phone") else ""}</small></li>' for p in sorted(POIS, key=lambda p: p["name"]) if p["kind"] == k) + '</ul>'
 guide('groceries-beer-and-liquor', 'Groceries, beer and liquor around Lake Wallenpaupack', 'Where to stock up around Lake Wallenpaupack: grocery stores, beer distributors, and the state wine and spirits stores. In Pennsylvania, liquor is sold at state Fine Wine & Good Spirits stores and cases of beer at beer distributors.',
       ''.join(f'<h2>{t}</h2>{stl(k)}' for k, t in _ST) + '<p class="fine">From OpenStreetMap and Overture Maps; hours are not listed here, so check before a late run. Some groceries and restaurants also sell beer and wine to go, which this list does not cover.</p>', '?stockup')
+
+# ---- utilities and services directory
+if os.path.exists('../docs/services.json'):
+    _SV = J('services'); _PW = J('outages')
+    def _svi(it): return f'<li><b>{e(it["n"])}</b><small>{e(it.get("a", ""))}{" · " if it.get("a") and it.get("ph") else ""}{e(it.get("ph", ""))}{f""" · <a href="{e(it["url"])}" rel="nofollow noopener">website</a>""" if it.get("url") else ""}</small></li>'
+    guide('utilities-and-services', 'Utilities and local services around Lake Wallenpaupack', 'Who to call around Lake Wallenpaupack: power outages, plumbers, electricians, septic and trash services, property managers, builders and emergency services.',
+          '<h2>Power</h2><ul class="l">' + ''.join(f'<li><b>{e(u["n"])}</b><small><a href="{e(u["map"])}" rel="nofollow noopener">Live outage map</a> · <a href="{e(u["report"])}" rel="nofollow noopener">report an outage</a> · {e(u["phone"])}</small></li>' for u in _PW['utilities']) + '</ul>' +
+          f'<p>{e(_SV["intro"])}</p>' + ''.join(f'<h2>{e(g["t"])}</h2>' + ('<p><b>In an emergency, call 911.</b></p>' if g['t'] == 'Emergency services' else '') + '<ul class="l">' + ''.join(_svi(i) for i in g['items']) + '</ul>' for g in _SV['groups']) + f'<p class="fine">{e(_SV["fine"])}</p>', '?services')

@@ -97,3 +97,13 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - **Boating** (`docs/boating.json`): speed and no-wake rules from 58 Pa. Code §§ 103.3 and 111.52, fuel docks (only marinas that say so on their own sites) and pump-outs. `bandFeet` draws the statewide 100-foot no-wake strip along the lake shore. No depth contours: no openly licensed survey was found (checked 2026-11-26).
 - **Opening hours**: a place card says "Open now" or "Closed now" only when the map data has hours in a form the page understands (13 places on 2026-11-26).
 - **Overview tour**: `?tour` hides the controls and plays a captioned fly-through (about 80 seconds) for screen recording. Add `&wx=clear&day` for fair daytime weather, `&loop` to repeat, `&wait=5` for a longer pause before it starts. The last card's wording is in `docs/tour.json`. Esc leaves the tour.
+
+## Business pages, guides and the old map (added 2026-11-26)
+
+- `docs/business.json` — wording for the For businesses page and the claim form. `contact.email` / `contact.form` / `contact.price` are what the public sees (empty = "Enquiries open soon"); `demo` is the placeholder shown with `?demo`; `counter.goatcounter` switches visitor counting on.
+- `docs/card.html?p=<place id>&n=<name>` — printable 4×6 QR card for one place.
+- `docs/access.json`, `docs/dine.json` — public access and dock-and-dine guides; every entry sourced.
+- `docs/plans.json` — day plans, hidden until `approved` is true (`?plans=preview` to review).
+- `docs/historic.jpg` + `historic.json` — the 1927–28 and 1935 USGS sheets warped onto the map by `data/build_historic.py` (source GeoTIFFs in `data/historic/`, not committed).
+- `docs/sw.js`, `manifest.webmanifest`, `icon-*.png` — add-to-home-screen and a saved copy for weak signal (network first).
+- Tour variants: `?tour=hawley` (one town), `?tour&biz=<place id>` (one business as a featured pin); upright windows stand further back. Record with `data/record_tour.mjs`.

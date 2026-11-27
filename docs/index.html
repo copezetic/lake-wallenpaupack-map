@@ -6,6 +6,10 @@
 <title>Lake Wallenpaupack — The Whole Lake in 3D</title>
 <meta name="description" content="A 3D map of Lake Wallenpaupack: every cove, marina, boat launch, road and community around the lake.">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="theme-color" content="#f1eadb">
+<meta name="apple-mobile-web-app-title" content="Lake Map">
 <meta property="og:title" content="Lake Wallenpaupack — The Whole Lake in 3D">
 <meta property="og:description" content="Every cove, marina, boat launch, road and community around the lake.">
 <meta property="og:type" content="website">
@@ -261,7 +265,7 @@ body.far .pin.minor .tag,body.far .pin.minor .stem,.pin.tuck .tag,.pin.tuck .ste
   <g id="needle"><path d="M30 6 L35 30 L30 27 L25 30 Z" fill="#7a3b2e"/><path d="M30 54 L35 30 L30 33 L25 30 Z" fill="#22303a" opacity=".55"/>
   <text x="30" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#22303a" dy="-1"></text></g></svg>
 </button>
-<div id="credit"><b>© 2026 DeWitt Hutchins. All rights reserved.</b> <a href="#" id="bLegal">Legal notice</a><br>
+<div id="credit"><b>© 2026 DeWitt Hutchins. All rights reserved.</b> <a href="#" id="bLegal">Legal notice</a> · <a href="#" id="bBiz">For businesses</a><br>
   <span class="long">An independent map — not an official publication of any community or business shown. Early draft: places come from public data and may be wrong or missing.</span>
   Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Overture Maps, USGS.</div>
 <div id="hint">Drag to move · right-drag or two fingers to turn · scroll or pinch to zoom · tap a pin · zoom in for houses, trees, boats and wildlife</div>
@@ -277,7 +281,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=6';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=1';
+import { initExtras, openNow } from './extras.js?v=2';
 
 const EX = 2.0;            // vertical exaggeration
 const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
@@ -636,6 +640,7 @@ function layout(){
 /* ---------------- panel ---------------- */
 const panel = document.getElementById('panel');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hooks = {};                                    // filled in by extras.js: the claim form and the business page
 function openPlace(p){
   for (const el of pinEls.values()) el.classList.remove('sel');
   pinEls.get(p.id)?.classList.add('sel');
@@ -647,7 +652,9 @@ function openPlace(p){
     ${p.photo && p.photoCredit ? `<div class="cred">Photo: ${esc(p.photoCredit)}</div>` : ''}<p>${esc(p.blurb || '')}</p>
     ${p.facts?.length ? `<dl>${p.facts.map(f => `<div><dt>${esc(f[0])}</dt><dd>${esc(f[1])}</dd></div>`).join('')}</dl>` : ''}
     <div class="acts">${p.outside ? '' : '<button class="btn pri" id="goRoute">Route on this map</button>'}${p.url ? `<a class="btn" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.urlLabel || 'Website')}</a>` : ''}
-    <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a><button class="btn" id="goShare">Share</button></div>`;
+    <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=${ll[0].toFixed(6)},${ll[1].toFixed(6)}" target="_blank" rel="noopener">Google Maps</a><button class="btn" id="goShare">Share</button></div>
+    <p class="fine"><a href="#" id="goClaim" style="color:inherit">Run this place? Claim or correct it</a></p>`;
+  panel.querySelector('#goClaim').onclick = e => { e.preventDefault(); hooks.claim ? hooks.claim(p) : say('One moment…'); };
   panel.querySelector('#goShare').onclick = () => share(p.name, '?p=' + encodeURIComponent(p.id));
   panel.classList.remove('route'); const gr = panel.querySelector('#goRoute'); if (gr) gr.onclick = () => routeTo(p);
   panel.querySelector('.x').onclick = dismiss;
@@ -675,6 +682,7 @@ const LEGAL = `<div class="sec">Copyright</div><p>© 2026 DeWitt Hutchins. All r
    <p>The underlying geographic data belongs to its sources and stays under their licences: © OpenStreetMap contributors (Open Database License), Overture Maps Foundation, and USGS elevation data. Nothing here limits your rights to that data from those sources.</p>
    <div class="sec">Disclaimer</div><p>This map is provided "as is", for general information only, with no warranty of any kind. It is not a survey, a nautical chart or a navigation aid, and must not be relied on for boating, driving, property lines or emergencies. Places, names, locations and routes may be wrong, out of date or missing. Use it at your own risk; the publisher is not liable for any loss or injury arising from its use.</p>
    <p>An independent publication. It is not affiliated with, sponsored by or endorsed by any community, association, utility, government body or business shown. All names and trademarks belong to their owners and appear only to identify places.</p>`;
+document.getElementById('bBiz').onclick = e => { e.preventDefault(); hooks.biz && hooks.biz(); };
 document.getElementById('bLegal').onclick = e => { e.preventDefault(); openSheet('Legal', 'Copyright and disclaimer', LEGAL); };
 document.getElementById('bInfo').onclick = () => openSheet('About', 'The whole lake in 3D',
   `<p>Lake Wallenpaupack and the country around it on one model, from Greentown and the interstate up through Hawley to Honesdale: ${D.roads.length.toLocaleString()} roads, ${D.water.length} lakes and ponds, ${D.towns.length} towns, communities and islands, and ${D.pois.length} places to launch, eat, stay and explore. Come in close and the houses, trees, boats and wildlife appear.</p>
@@ -942,7 +950,7 @@ function routeTo(p, quiet){
   if (at){ const [la, lo] = at.split(',').map(Number); watchId = -1; locBtn.classList.add('on'); gotFix(la, lo); } }
 
 initFishing({D, M, openSheet, openPlace, flyTo, esc, panel, chips});
-initExtras({THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chips, items, pinEls, addLabel, place, controls, camera, say, share, CATS, stopFly: () => { fly = null; }});
+initExtras({THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chips, items, pinEls, addLabel, place, controls, camera, say, share, CATS, hooks, stopFly: () => { fly = null; }});
 
 /* ---------------- listing links for agents ----------------
    ?home=lat,lon&t=label&ag=code shows a home and what is near it. The code must be in agents.json and in date,
@@ -1224,6 +1232,7 @@ function frame(now){
 requestAnimationFrame(frame);
 { const ld = document.getElementById('load'); ld.classList.add('done'); setTimeout(() => ld.remove(), 900); }
 window.__lake = {sky, life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
+if ('serviceWorker' in navigator && !new URLSearchParams(location.search).has('tour')) navigator.serviceWorker.register('sw.js').catch(() => {});   // keeps the last-loaded map for weak signal
 </script>
 </body>
 </html>

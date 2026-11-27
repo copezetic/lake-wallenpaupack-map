@@ -7,3 +7,5 @@ data/buildings.geojsonl.state
 data/dem.npy
 __pycache__/
 .DS_Store
+video/
+data/historic/

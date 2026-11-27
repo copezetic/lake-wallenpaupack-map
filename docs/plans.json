@@ -1,0 +1,67 @@
+{
+ "_note": "Day plans are the publisher's own recommendations. Nothing shows publicly until approved is true; preview with ?plans=preview. Each stop is a place id from the map plus an optional note. These drafts were assembled from the kinds of place in the map data, not from visits: edit before approving.",
+ "approved": false,
+ "fine": "Suggestions only. Check hours and seasons before you set out.",
+ "plans": [
+  {
+   "id": "rainy-day",
+   "short": "Rainy day",
+   "title": "A rainy day",
+   "intro": "Indoors, mostly in Honesdale and White Mills.",
+   "stops": [
+    {
+     "poi": "dorflinger-glass-museum-11116297709"
+    },
+    {
+     "poi": "ov-791a4246-4db"
+    },
+    {
+     "poi": "ov-5ae907bf-9fc"
+    },
+    {
+     "poi": "ov-f16041e2-60a"
+    },
+    {
+     "poi": "ov-ea73dcd7-463"
+    }
+   ]
+  },
+  {
+   "id": "with-kids",
+   "short": "With kids",
+   "title": "A day with kids",
+   "intro": "Animals, water and ice cream.",
+   "stops": [
+    {
+     "poi": "ov-239ab530-f70"
+    },
+    {
+     "poi": "ov-9bec8a65-864"
+    },
+    {
+     "poi": "ov-d0b554bb-531"
+    },
+    {
+     "poi": "ov-1b3d6445-eba"
+    }
+   ]
+  },
+  {
+   "id": "date-night",
+   "short": "Date night",
+   "title": "Date night",
+   "intro": "A drink, dinner by the water and music.",
+   "stops": [
+    {
+     "poi": "ov-3fbad644-799"
+    },
+    {
+     "poi": "the-boathouse-729764255"
+    },
+    {
+     "poi": "ov-0cacbc3b-091"
+    }
+   ]
+  }
+ ]
+}

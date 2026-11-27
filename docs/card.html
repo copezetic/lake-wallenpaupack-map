@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>QR card · Lake Wallenpaupack map</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Cormorant+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#22303a;--card:#f7f2e6;--paper:#f1eadb;--accent:#7a3b2e}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif;display:flex;flex-direction:column;align-items:center;gap:18px;padding:24px 12px}
+.card{width:4in;height:6in;box-sizing:border-box;background:var(--card);border:1.5px solid var(--ink);outline:1px solid var(--ink);outline-offset:-9px;padding:.42in .36in;display:flex;flex-direction:column;align-items:center;text-align:center}
+.card img.logo{width:.8in;height:.8in}
+.k{font:700 13px 'Cormorant SC',Georgia,serif;letter-spacing:.2em;margin-top:.12in}
+h1{font:600 30px/1.05 'Cormorant Garamond',Georgia,serif;margin:.1in 0 0;overflow-wrap:anywhere}
+#qr{margin:auto 0;width:2.35in;height:2.35in}#qr svg{width:100%;height:100%;display:block}
+.find{font:600 23px 'Cormorant Garamond',Georgia,serif;margin:0}
+.sub{font:700 11.5px 'Cormorant SC',Georgia,serif;letter-spacing:.18em;margin:.06in 0 0;color:var(--accent)}
+.url{font:500 11px Georgia,serif;margin-top:.08in;opacity:.75;overflow-wrap:anywhere}
+.bar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+button,a.b{font:700 12px 'Cormorant SC',Georgia,serif;letter-spacing:.14em;color:var(--card);background:var(--ink);border:1px solid var(--ink);padding:9px 14px 8px;cursor:pointer;text-decoration:none}
+p.note{max-width:4in;font-size:16px;margin:0;text-align:center}
+@media print{body{background:#fff;padding:0}.bar,p.note{display:none}.card{margin:0}@page{size:4in 6in;margin:0}}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="logo" src="logo.svg" alt="">
+  <div class="k">Lake Wallenpaupack · The Whole Lake in 3D</div>
+  <h1 id="name"></h1>
+  <div id="qr"></div>
+  <p class="find">Find us on the map</p>
+  <p class="sub">Point your phone's camera here</p>
+  <div class="url" id="url"></div>
+</div>
+<div class="bar"><button onclick="print()">Print this card</button><a class="b" id="back" href="./">Back to the map</a></div>
+<p class="note">Prints on a 4 × 6 inch card. The code opens the map at this place.</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+const Q = new URLSearchParams(location.search), id = Q.get('p') || '', base = location.origin + location.pathname.replace(/card\.html$/, '');
+const link = base + (id ? '?p=' + encodeURIComponent(id) : '');
+document.getElementById('name').textContent = Q.get('n') || 'Lake Wallenpaupack';
+document.getElementById('url').textContent = link.replace(/^https?:\/\//, '');
+document.getElementById('back').href = link;
+const q = qrcode(0, 'M'); q.addData(link); q.make();
+document.getElementById('qr').innerHTML = q.createSvgTag({cellSize: 8, margin: 0, scalable: true});
+document.querySelectorAll('#qr rect').forEach(r => r.setAttribute('fill', 'none'));
+document.querySelectorAll('#qr path').forEach(p => p.setAttribute('fill', '#22303a'));
+</script>
+</body>
+</html>

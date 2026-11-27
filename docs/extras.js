@@ -1,4 +1,4 @@
-/* Lake Wallenpaupack map — town guides, homes for sale, sponsored places, trails, boating, opening hours and the overview tour.
+/* Lake Wallenpaupack map — town guides, homes for sale, sponsored places, trails, boating, public access, day plans, the business pages, opening hours and the overview tour.
    Everything shown comes from the map data or from the hand-kept JSON files beside this one; nothing is made up here.
    © 2026 DeWitt Hutchins. All rights reserved. */
 const Q = new URLSearchParams(location.search);
@@ -49,7 +49,7 @@ export async function initExtras(c){
 .pin.sale .tag{background:#7a3b2e;color:var(--card);border-color:#7a3b2e;font-weight:700;font-size:13.5px}.pin.sale .stem{height:18px;background:#7a3b2e}.pin.sale .dot{background:#7a3b2e}
 body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.tour #compass,body.tour #hint,body.tour #panel,body.tour #credit .long,body.tour #bLegal{display:none!important}
 #tourCap{position:fixed;left:0;right:0;bottom:11%;z-index:8;text-align:center;pointer-events:none;opacity:0;transition:opacity .9s}
-#tourCap.on{opacity:1}#tourCap b{display:inline-block;font:600 clamp(30px,4.6vw,64px)/1.05 var(--serif);color:var(--ink);background:rgba(247,242,230,.9);padding:.18em .5em .22em;box-shadow:6px 6px 0 rgba(34,48,58,.16);border:1px solid var(--ink)}
+#tourCap.on{opacity:1}@media (orientation:portrait){#tourCap{bottom:17%}}#tourCap b{display:inline-block;max-width:88vw;font:600 clamp(30px,4.6vw,64px)/1.05 var(--serif);color:var(--ink);background:rgba(247,242,230,.9);padding:.18em .5em .22em;box-shadow:6px 6px 0 rgba(34,48,58,.16);border:1px solid var(--ink)}
 #tourCap span{display:block;margin:.7em auto 0;width:fit-content;max-width:86vw;font:700 clamp(12px,1.25vw,17px) var(--sc);letter-spacing:.16em;color:var(--card);background:var(--ink);padding:.55em 1em .45em}`;
   document.head.appendChild(css);
   const addChip = (label, fn, cls = '') => { const b = document.createElement('button'); b.className = 'chip sky ' + cls; b.textContent = label; b.onclick = fn; chips.insertBefore(b, chips.querySelector('.chip:not(.sky)')); return b; };
@@ -179,6 +179,100 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     if (Q.has('boating')) setTimeout(() => chip.click(), 800);
   }
 
+  /* ---------- public access, and eating by boat: both are guide sheets kept in JSON, every entry with its source ---------- */
+  for (const [file, label, kick, title, q] of [['access.json', 'Public access', 'Open to everyone', 'Public access', 'access'], ['dine.json', 'Dock & dine', 'On the water', 'Dock and dine', 'dine']]){
+    const F = await getJSON(file); if (!F || !(F.sections || []).some(s => (s.items || []).length)) continue;
+    const chip = addChip(label, () => guide(F, kick, title));
+    if (Q.has(q)) setTimeout(() => chip.click(), 800);
+  }
+
+  /* ---------- the old survey: the earliest government maps of the lake, laid over the model (built by data/build_historic.py) ---------- */
+  const HI = await getJSON('historic.json');
+  if (HI){
+    let old = null, op = .9;
+    const make = () => {
+      const [x0, z0] = toXZ(HI.N, HI.W), [x1, z1] = toXZ(HI.S, HI.E), g = new THREE.PlaneGeometry(x1 - x0, z1 - z0, 170, 205).rotateX(-Math.PI / 2).translate((x0 + x1) / 2, 0, (z0 + z1) / 2);
+      const P = g.attributes.position; for (let i = 0; i < P.count; i++) P.setY(i, Y(P.getX(i), P.getZ(i)) + 4);
+      const tex = new THREE.TextureLoader().load('historic.jpg', () => say('1928 map loaded.'), undefined, () => say('The old map could not be loaded.')); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+      const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({map: tex, transparent: true, opacity: op, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6}));
+      m.renderOrder = 2; m.visible = false; scene.add(m); return m;
+    };
+    const chip = addChip('1928 map', () => {
+      openSheet('History', 'The lake when it was new',
+        `<p>The dam at Wilsonville was finished in 1926. These are the first government survey maps made afterwards: the western sheet was surveyed in 1927–28 and the eastern in 1935, when the lake was a few years old and most of today's communities were still farms and woods.</p>
+         <button class="wide" id="oldBtn" style="margin:0 0 10px"></button>
+         <label style="display:block;font:700 11px var(--sc);letter-spacing:.13em">Old map ⟷ today<input id="oldOp" type="range" min="0" max="100" value="${Math.round(op * 100)}" style="display:block;width:100%;margin-top:6px"></label>
+         <p class="fine">No survey of the valley before the flooding exists in this collection, so the farms and the village of Wilsonville under the water are not shown. The two sheets were printed in different colours and meet down the middle of the lake. They cover the lake and south; Honesdale is off the top.</p>
+         <p class="fine">Maps: U.S. Geological Survey, Historical Topographic Map Collection (Ariel, Pa., surveyed 1927–28; Hawley, Pa., 1935 edition).</p>`);
+      const b = panel.querySelector('#oldBtn'), r = panel.querySelector('#oldOp');
+      const label = () => b.textContent = old && old.visible ? 'Hide the old map' : 'Show the old map';
+      const toggle = on => { old = old || make(); old.visible = on; chip.classList.toggle('fx', on); label(); };
+      b.onclick = () => toggle(!(old && old.visible)); r.oninput = () => { op = r.value / 100; if (old) old.material.opacity = op; };
+      if (!old || !old.visible) toggle(true); else label();
+    });
+    if (Q.has('old')) setTimeout(() => chip.click(), 800);
+  }
+
+  /* ---------- day plans: the publisher's own picks; hidden until plans.json says approved (preview with ?plans=preview) ---------- */
+  const PL = await getJSON('plans.json');
+  if (PL && (PL.plans || []).length && (PL.approved || Q.get('plans') === 'preview' || PL.plans.some(p => p.id === Q.get('plan') && PL.approved))){
+    const planSheet = id => {
+      const pl = PL.plans.find(p => p.id === id) || PL.plans[0], stops = pl.stops.map(s => ({...s, p: D.pois.find(p => p.id === s.poi)})).filter(s => s.p);
+      openSheet('Day plans', pl.title, `<div class="tabs">${PL.plans.map(o => `<button data-plan="${esc(o.id)}" aria-pressed="${o === pl}">${esc(o.short || o.title)}</button>`).join('')}</div>` +
+        (PL.approved ? '' : '<p class="fine" style="margin:0 0 8px">Draft for review: not shown to the public yet.</p>') + (pl.intro ? `<p>${esc(pl.intro)}</p>` : '') +
+        stops.map((s, i) => `<div class="gi"><h3><button data-poi="${esc(s.p.id)}">${i + 1}. ${esc(s.p.name)}</button></h3><p>${esc(s.note || s.p.kind || '')}</p></div>`).join('') +
+        `<p class="fine">${esc(PL.fine || '')}</p><button class="wide" id="planShare">Share this plan</button>`);
+      panel.querySelectorAll('button[data-plan]').forEach(b => b.onclick = () => planSheet(b.dataset.plan));
+      panel.querySelector('#planShare').onclick = () => share(pl.title, '?plan=' + encodeURIComponent(pl.id));
+      if (stops.length){ const x = stops.reduce((a, s) => a + s.p.x, 0) / stops.length, z = stops.reduce((a, s) => a + s.p.z, 0) / stops.length;
+        flyTo(x, z, Math.max(3500, 2.6 * Math.max(...stops.map(s => Math.hypot(s.p.x - x, s.p.z - z))))); }
+    };
+    addChip('Day plans', () => planSheet());
+    if (Q.has('plan') || Q.get('plans') === 'preview') setTimeout(() => planSheet(Q.get('plan')), 800);
+  }
+
+  /* ---------- for businesses: what a listing is, claiming or correcting one, and a printable QR card ---------- */
+  const BZ = (await getJSON('business.json')) || {}, CT = (DEMO ? BZ.demo : BZ.contact) || {};
+  const here = location.origin + location.pathname;
+  const cardLink = p => `card.html?p=${encodeURIComponent(p.id)}&n=${encodeURIComponent(p.name)}`;
+  function bizSheet(){
+    const mail = CT.email ? `<a class="btn pri" href="mailto:${esc(CT.email)}?subject=${encodeURIComponent('Lake Wallenpaupack map: featured pin')}">Email ${esc(CT.email)}</a>` : '';
+    const form = CT.form ? `<a class="btn pri" href="${esc(CT.form)}" target="_blank" rel="noopener">Get in touch</a>` : '';
+    openSheet('For businesses', BZ.title || 'Put your business on the map',
+      (BZ.intro ? `<p>${esc(BZ.intro)}</p>` : '') +
+      `<div class="sec">Your free listing</div><p>${esc(BZ.free || '')}</p>
+       <div class="sec">A featured pin</div><ul style="margin:4px 0 0;padding-left:20px;font-size:16px;line-height:1.4">${(BZ.featured || []).map(f => `<li>${esc(f)}</li>`).join('')}</ul>` +
+      (CT.price ? `<p style="font:600 20px var(--serif);margin:10px 0 0">${esc(CT.price)}</p>` : '') +
+      `<div class="acts">${mail}${form}<a class="btn" href="?demo&town=hawley">See a sample</a><a class="btn" href="?tour&wx=clear&day">Watch the tour</a></div>` +
+      (mail || form ? '' : `<p><b>${esc(BZ.soon || 'Enquiries open soon.')}</b></p>`) +
+      (DEMO ? '<p class="fine">Sample view: the contact and price shown here are placeholders.</p>' : '') +
+      `<p class="fine">${esc(BZ.fine || '')}</p>`);
+  }
+  function claimSheet(p){
+    const f = (id, label, ph = '', type = 'text') => `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">${label}<input id="cl_${id}" type="${type}" placeholder="${esc(ph)}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></label>`;
+    const tick = (id, label) => `<label style="display:block;margin:6px 0 0;font-size:15.5px"><input id="cl_${id}" type="checkbox"> ${label}</label>`;
+    openSheet('Claim or correct', p.name,
+      `<p>Run or own this place? Tell us what is right. Nothing is published until it has been checked.</p>` +
+      f('who', 'Your name and role', 'Pat Smith, owner') + f('reach', 'Phone or email', '') + f('site', 'Website', 'https://') +
+      `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Opening hours<textarea id="cl_hours" rows="3" placeholder="Mon–Thu 11–9, Fri–Sat 11–10, closed Sun; closed January" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>` +
+      tick('dock', 'Customers can arrive by boat') + tick('fuel', 'Fuel dock') + tick('pump', 'Pump-out') + tick('gone', 'This place has closed or moved') + tick('feat', 'Tell me about a featured pin') +
+      `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Anything else<textarea id="cl_note" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>
+       <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Send by email</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a></div>` +
+      (CT.email || CT.form ? '' : `<p><b>${esc(BZ.soon || 'Sending opens soon.')}</b> You can copy your details for now.</p>`) +
+      `<p class="fine">${CT.email ? 'Send opens your own email app with the details filled in; attach a photo there if you would like one shown. ' : ''}Only send a photo you took or have the right to share.</p>`);
+    const v = id => panel.querySelector('#cl_' + id), text = () => [`Place: ${p.name} (${p.kind || ''})`, `Map link: ${here}?p=${p.id}`, `From: ${v('who').value}`, `Reach me at: ${v('reach').value}`, `Website: ${v('site').value}`, `Hours: ${v('hours').value}`,
+      `Arrive by boat: ${v('dock').checked ? 'yes' : '-'}`, `Fuel dock: ${v('fuel').checked ? 'yes' : '-'}`, `Pump-out: ${v('pump').checked ? 'yes' : '-'}`, `Closed or moved: ${v('gone').checked ? 'yes' : '-'}`, `Featured pin: ${v('feat').checked ? 'please tell me more' : '-'}`, `Notes: ${v('note').value}`].join('\n');
+    const copy = () => navigator.clipboard ? navigator.clipboard.writeText(text()).then(() => say('Details copied.'), () => say('Could not copy.')) : say('Could not copy.');
+    panel.querySelector('#clCopy').onclick = copy;
+    const send = panel.querySelector('#clSend'); if (send) send.onclick = () => { if (!v('who').value.trim() || !v('reach').value.trim()) return say('Please add your name and how to reach you.');
+      if (CT.email) location.href = `mailto:${CT.email}?subject=${encodeURIComponent('Lake Wallenpaupack map: ' + p.name)}&body=${encodeURIComponent(text())}`; else { copy(); open(CT.form, '_blank', 'noopener'); } };
+  }
+  if (c.hooks){ c.hooks.claim = claimSheet; c.hooks.biz = bizSheet; }
+  if (Q.has('business')) setTimeout(bizSheet, 800);
+  if (BZ.counter && BZ.counter.goatcounter && !DEMO && !Q.has('tour')){     // visitor counting stays off until a site code is set in business.json
+    const sc = document.createElement('script'); sc.async = true; sc.src = 'https://gc.zgo.at/count.js'; sc.dataset.goatcounter = `https://${BZ.counter.goatcounter}.goatcounter.com/count`; document.head.appendChild(sc);
+  }
+
   if (Q.has('town')){ const t = TOWNS.find(t => t.n.toLowerCase() === Q.get('town').toLowerCase()); if (t) setTimeout(() => townSheet(t.n), 800); }
 
   /* ---------- the overview tour: ?tour plays a captioned fly-through with the controls hidden, for recording a video ---------- */
@@ -189,14 +283,28 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     const town = n => TOWNS.find(t => t.n === n), near = t => D.pois.filter(p => inTown(t, p)).length;
     const marina = D.pois.find(p => /Lighthouse Harbor/.test(p.name)) || D.pois.find(p => p.kind === 'Marina');
     const [lx, lz] = toXZ(41.4115, -75.248), [mx, mz] = toXZ(41.432, -75.212);
-    const shots = [
-      {x: lx, z: lz, d: [34000, 23000], az: [-.3, .05], pol: [.72, .86], s: 11, b: 'Lake Wallenpaupack', t: 'The whole lake, and the towns around it, in 3D'},
+    const zf = innerHeight > innerWidth ? 1.55 : 1;                   // an upright (phone-shaped) recording stands further back
+    const intro = {x: lx, z: lz, d: [34000, 23000], az: [-.3, .05], pol: [.72, .86], s: 11, b: 'Lake Wallenpaupack', t: 'The whole lake, and the towns around it, in 3D'};
+    const end = {x: lx, z: lz, d: [20000, 30000], az: [-.1, -.35], pol: [.9, .78], s: 11, b: T.endTitle || 'Put your business on the map', t: T.endLine || 'Featured pins, photos and listings for local businesses'};
+    const tw = Q.get('tour') && town(TOWNS.map(t => t.n).find(n => n.toLowerCase() === Q.get('tour').toLowerCase())), biz = Q.get('biz') && D.pois.find(p => p.id === Q.get('biz'));
+    let shots;
+    if (biz){                                                          // ?tour&biz=<place id>: a short clip that flies to one business, shown as a featured pin
+      const el = pinEls.get(biz.id), it = itemOf(biz); if (el){ el.classList.remove('minor'); el.classList.add('feat'); } if (it){ it.maxD = 0; it.w = 0; }
+      shots = [{...intro, d: [30000, 24000], s: 5, t: 'The whole lake in 3D'},
+        {x: biz.x, z: biz.z, d: [5200, 1700], az: [-.7, -.15], pol: [.9, 1.1], s: 7, b: biz.name, t: 'On the map of Lake Wallenpaupack'},
+        {x: biz.x, z: biz.z, d: [1700, 1150], az: [-.15, .45], pol: [1.1, 1.16], s: 8, b: T.bizTitle || 'Your pin, featured', t: T.bizLine || 'Always on the map · first in your town guide · your photo and link'},
+        {...end, s: 6}];
+    } else if (tw){                                                    // ?tour=hawley: a short clip for one town
+      shots = [{...intro, d: [30000, 24000], s: 5, t: 'The whole lake in 3D'},
+        {x: tw.x, z: tw.z, d: [6000, 3200], az: [-.6, -.1], pol: [.9, 1.08], s: 9, b: tw.n, t: `${near(tw)} places to eat, shop and stay`},
+        {x: tw.x, z: tw.z, d: [3200, 2000], az: [-.1, .5], pol: [1.08, 1.14], s: 8, b: 'Every shop, table and bed', t: 'Tap any pin for directions and details'},
+        {...end, s: 6}];
+    } else shots = [intro,
       {x: mx, z: mz, d: [9500, 6800], az: [.5, 1.05], pol: [1.0, 1.1], s: 10, b: 'Every cove, road and community', t: `${D.roads.length.toLocaleString()} roads · ${D.towns.length} towns and communities`},
       marina && {x: marina.x, z: marina.z, d: [1900, 1250], az: [-.2, .6], pol: [1.05, 1.15], s: 10, b: 'Marinas, launches and beaches', t: 'Zoom in for houses, trees, boats and wildlife'},
       ...['Hawley', 'Honesdale', 'Greentown'].map(n => town(n) && {x: town(n).x, z: town(n).z, d: [3600, 2500], az: [-.5, .25], pol: [.95, 1.1], s: 10, b: n, t: `${near(town(n))} places to eat, shop and stay`}),
       {x: lx, z: lz, d: [12000, 16000], az: [1.2, 1.7], pol: [1.12, 1.0], s: 9, b: 'Weather, events, fishing and trails', t: 'Live, and updated through the year'},
-      {x: lx, z: lz, d: [20000, 30000], az: [-.1, -.35], pol: [.9, .78], s: 11, b: T.endTitle || 'Put your business on the map', t: T.endLine || 'Featured pins, photos and listings for local businesses'},
-    ].filter(Boolean);
+      end].filter(Boolean);
     const total = shots.reduce((a, s) => a + s.s, 0), ease = k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, v = new THREE.Vector3();
     let t0 = 0, cur = -1, stop = false;
     addEventListener('keydown', e => { if (e.key === 'Escape'){ stop = true; document.body.classList.remove('tour'); cap.remove(); } });
@@ -207,7 +315,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       const s = shots[i], k = ease(Math.min(1, (t - acc) / s.s)), L = a => a[0] + (a[1] - a[0]) * k;
       if (i !== cur){ cur = i; cap.classList.remove('on'); setTimeout(() => { cap.firstChild.textContent = s.b; cap.lastChild.textContent = s.t; cap.classList.add('on'); }, cur ? 700 : 0); }
       if (t - acc > s.s - 1 && i < shots.length - 1) cap.classList.remove('on');
-      c.stopFly(); place(v.set(s.x, Y(s.x, s.z), s.z), L(s.az), L(s.pol), L(s.d));
+      c.stopFly(); place(v.set(s.x, Y(s.x, s.z), s.z), L(s.az), L(s.pol), L(s.d) * zf);
       requestAnimationFrame(step);
     }
     requestAnimationFrame(step);

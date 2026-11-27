@@ -1,5 +1,7 @@
 {
- "_note": "Wording for the last card of the overview tour (?tour).",
+ "_note": "Wording for the overview tour (?tour): endTitle/endLine are the last card; bizTitle/bizLine are the featured-pin card in a business clip (?tour&biz=<place id>).",
  "endTitle": "Put your business on the map",
- "endLine": "Featured pins, photos and listings for local businesses"
+ "endLine": "Featured pins, photos and listings for local businesses",
+ "bizTitle": "Your pin, featured",
+ "bizLine": "Always on the map · first in your town guide · your photo and link"
 }

@@ -1,0 +1,33 @@
+{
+ "_note": "Restaurants a boater can reach by water. A place is listed only when its own site or the visitors bureau says customers can arrive by boat.",
+ "intro": "Places that say you can come by boat. Neither says whether docking is free or how many boats fit, so call ahead.",
+ "sections": [
+  {
+   "title": "Arrive by boat",
+   "items": [
+    {
+     "n": "The Boat House Restaurant",
+     "poi": "the-boathouse-729764255",
+     "note": "141 Route 507, Hawley. 570-226-5027. Its own site welcomes guests arriving by car or by boat.",
+     "url": "https://www.theboathouserestaurant.net/",
+     "link": "Restaurant's site"
+    },
+    {
+     "n": "The Dock on Wallenpaupack",
+     "poi": "ov-e237a30c-bd2",
+     "note": "At Silver Birches, 205 Route 507, Hawley. 570-226-4388. The visitors bureau lists it as reachable by boat or car; the resort's own pages do not mention docking for diners.",
+     "url": "https://silverbirchesresortpa.com/dining/",
+     "link": "Resort's dining page"
+    }
+   ]
+  }
+ ],
+ "fine": "Other lakefront restaurants may welcome boats, but we found no statement from them. Docks come out of the water for winter. Owners: use 'Claim or correct' on your pin to be added.",
+ "updated": "2026-11-26",
+ "sources": [
+  {
+   "n": "Pocono Mountains Visitors Bureau",
+   "url": "https://www.poconomountains.com/plan-your-vacation/explore-our-area/lake-wallenpaupack/restaurants/"
+  }
+ ]
+}

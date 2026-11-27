@@ -1,0 +1,84 @@
+{
+  "title": "Lake beer & wine trail",
+  "updated": "2026-11-27",
+  "intro": "Seven brewery and wine stops around Hawley, Tafton, Greentown and Honesdale. Pick a small outing, check current opening hours, and save the places you want to visit.",
+  "transport": "Arrange a designated driver or transport before tasting. These stops are spread across several towns; this is not a walking or boating route.",
+  "regional": {
+    "name": "Official Pocono Beverage Trail",
+    "url": "https://www.poconomountains.com/plan-your-vacation/pocono-experience-passports/"
+  },
+  "stops": [
+    {
+      "poi": "wallenpaupack-brewing-company-979366351",
+      "name": "Wallenpaupack Brewing Company",
+      "note": "Hawley brewpub serving its own beer and food.",
+      "url": "https://wallenpaupackbrewingco.com/new-home-page/"
+    },
+    {
+      "poi": "ov-9ff88f25-004",
+      "name": "Hopping Eagle Brewing Company",
+      "note": "Small-batch brewery now on Route 6. The former Silk Mill location has moved.",
+      "url": "https://hoppingeaglebrewing.com/"
+    },
+    {
+      "poi": "ov-748b3431-0e7",
+      "name": "Log Tavern Brewing Co. - Tafton",
+      "note": "Tafton taproom with snack food and an outdoor beer garden. Friendly leashed pets are permitted outdoors.",
+      "url": "https://www.logtavernbrewing.com/tafton"
+    },
+    {
+      "poi": "ov-529e06f0-743",
+      "name": "Jam Room Brewing Company",
+      "note": "Greentown brewery with a beer menu and live-event calendar.",
+      "url": "https://www.jamroombrewing.co/"
+    },
+    {
+      "poi": "ov-cd22cda3-f2c",
+      "name": "Here & Now Brewing Company",
+      "note": "Downtown Honesdale brewery and restaurant with pizza, a bar and takeaway beer. Kitchen and bar hours differ.",
+      "url": "https://www.hereandnowbrewing.com/"
+    },
+    {
+      "poi": "ov-f69f9f1e-01e",
+      "name": "Runaway Train Brewery: Brewhouse + Saloon",
+      "note": "Brewery and saloon at 2 Chapel Street, with food and a seasonal pet-friendly outdoor patio.",
+      "url": "https://runawaytrainbrewery.com/"
+    },
+    {
+      "poi": "ov-4a380575-0e3",
+      "name": "Three Hammers Wine Lounge on Main",
+      "note": "Three Hammers\u2019 Wine Lounge on Main in downtown Honesdale. This is separate from the winery on Welcome Lake Road.",
+      "url": "https://threehammerswinery.com/contact-us"
+    }
+  ],
+  "outings": [
+    {
+      "id": "hawley",
+      "title": "Hawley breweries",
+      "note": "Two breweries around Hawley; arrange transport between them.",
+      "stops": [
+        "wallenpaupack-brewing-company-979366351",
+        "ov-9ff88f25-004"
+      ]
+    },
+    {
+      "id": "lake",
+      "title": "Tafton & Greentown",
+      "note": "Two separate stops on the east and south sides of the lake; leave time for the drive.",
+      "stops": [
+        "ov-748b3431-0e7",
+        "ov-529e06f0-743"
+      ]
+    },
+    {
+      "id": "honesdale",
+      "title": "Honesdale beer & wine",
+      "note": "Two breweries and a wine lounge in Honesdale. Check each venue\u2019s hours, especially the wine lounge.",
+      "stops": [
+        "ov-cd22cda3-f2c",
+        "ov-f69f9f1e-01e",
+        "ov-4a380575-0e3"
+      ]
+    }
+  ]
+}

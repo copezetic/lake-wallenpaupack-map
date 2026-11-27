@@ -1,15 +1,37 @@
 {
- "_note": "Tags owners have told us about. tags: id -> label (and optional why). places: place id -> list of tag ids. Empty until owners reply through the claim form.",
- "tags": {
-  "dog": {
-   "label": "Dog friendly"
+  "_note": "Tags trace to place-details.json sources. Dog access may be outdoor only; see place card.",
+  "tags": {
+    "dog": {
+      "label": "Dog friendly"
+    },
+    "kid": {
+      "label": "Good for kids"
+    },
+    "late": {
+      "label": "Open late"
+    }
   },
-  "kid": {
-   "label": "Good for kids"
-  },
-  "late": {
-   "label": "Open late"
+  "places": {
+    "ov-748b3431-0e7": [
+      "dog"
+    ],
+    "ov-cd22cda3-f2c": [
+      "late"
+    ],
+    "ov-f69f9f1e-01e": [
+      "dog"
+    ],
+    "ov-239ab530-f70": [
+      "kid"
+    ],
+    "ov-791a4246-4db": [
+      "kid"
+    ],
+    "ov-3974bad8-82a": [
+      "kid"
+    ],
+    "ov-9bec8a65-864": [
+      "kid"
+    ]
   }
- },
- "places": {}
 }

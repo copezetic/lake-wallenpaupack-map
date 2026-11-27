@@ -123,3 +123,22 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - `docs/immersive.js` — rides (`?ride=boat|507|6|train`), browser-made sound, the moving-water and cloud-shadow skin, house lights after dark, the Time & season sheet (`?hour=21.5`, `?season=fall|winter`), the dam wall and a few landmark buildings at their mapped height.
 - `docs/rides.json` and `docs/patches.json` — built by `data/build_rides.py`: the lake's centreline, PA 507 and US 6 chained from the road data, the rail line and dam outline from OSM, and ~6 m elevation (Terrarium zoom 14) for the dam and the falls gorge. Rerun it after `build.py` whenever the area changes.
 - Seasons repaint the ground, water and trees (`SEASONS` in `index.html`); the clock override lives in `sky.js` (`setClock`).
+
+## Visitor tools (2026-11-27)
+
+- The masthead groups Explore, Conditions and Map controls; search occupies a full row on phones. `docs/visitor.css` preserves the illustrated map style.
+- `docs/discovery.js` searches names, categories, cuisines, towns, sourced tags and keywords. Browse results filter map pins; distances are explicitly straight-line from the map centre or a permitted location fix.
+- `docs/visitor.js` saves up to 30 places in a named, ordered weekend in local browser storage. Shared `?trip=` links preview a collection without replacing the recipient's saved places. Import adds to their collection. No account or backend storage is used.
+- Owner corrections and short visitor reports open an email addressed to `dewitt.hutchins@gmail.com`. The visitor must send it from their own mail app; opening the app is never represented as a submission.
+- `docs/place-details.json` holds dated, field-specific source checks, access notes, closures, official gallery links and redirects for superseded listings. Both the interactive map and `data/build_seo.py` merge this over the base dataset, so rebuilding the terrain cannot discard the review work. Source checks are not site visits. Owner photography can use the existing `photo` / `photoCredit` fields; official gallery links avoid copying photographs without permission.
+- `docs/beer-wine.json` defines seven sourced stops and three smaller outings. Open `?trail=beer-wine` (optional `&outing=hawley|lake|honesdale`) or `/guide/beer-wine-trail.html`. WallyMap's selection links to the official regional Pocono Beverage Trail and is not a passport or official affiliation.
+- Reviewed `docs/plans.json` suggestions are now public. Family plans are explicitly seasonal. Any stop can be saved to a weekend.
+- `?lite=1` selects lightweight mode (persisted when chosen from Map): lower rendering resolution, a 30 fps ceiling, no decorative wildlife, trees or immersive effects. Buildings, pins, search, routes and visitor tools remain. `?lite=0` restores full detail. Hidden pages skip the main render work.
+- Save for offline explicitly downloads the map, all building tiles, guides and required Three.js modules. Progress reaches Ready only after every file succeeds. Weather, traffic, river gauges, mail, external websites and photo galleries require internet. Cached forecasts are labeled with their refresh time. Browser storage may be evicted; offline status is a browser download confirmation, not a guarantee of future storage retention.
+
+After changing site files, run from `data/`:
+
+    python3 build_seo.py
+    python3 build_offline.py
+
+`build_offline.py` hashes the final site and writes `docs/offline-manifest.json`. Re-run it after any site change. The download's local byte count excludes external Three.js files (about 1.3 MB). System fonts remain available when external font files are not cached.

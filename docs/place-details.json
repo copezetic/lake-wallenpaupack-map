@@ -1,0 +1,666 @@
+{
+  "updated": "2026-11-27",
+  "_note": "Only stated fields were checked. Source links do not imply a site visit, complete verification, or permission to reproduce photography. Redirects preserve old shared place links.",
+  "redirects": {
+    "ov-ec9ff207-f5b": "ov-9ff88f25-004",
+    "ov-b36a8277-556": "ov-f69f9f1e-01e"
+  },
+  "places": {
+    "wallenpaupack-brewing-company-979366351": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://wallenpaupackbrewingco.com/new-home-page/"
+        }
+      ],
+      "blurb": "Hawley brewpub serving its own beer and food.",
+      "url": "https://wallenpaupackbrewingco.com/new-home-page/",
+      "facts": {
+        "Address": "73 Welwood Avenue, Hawley",
+        "Phone": "570-390-7933",
+        "Hours": "Mo-We off; Th 15:00-21:00; Fr-Sa 12:00-21:00; Su 11:00-19:00"
+      },
+      "keywords": [
+        "beer",
+        "brewery"
+      ]
+    },
+    "ov-9ff88f25-004": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://hoppingeaglebrewing.com/"
+        }
+      ],
+      "blurb": "Small-batch brewery now on Route 6. The former Silk Mill location has moved.",
+      "url": "https://hoppingeaglebrewing.com/",
+      "facts": {
+        "Address": "2420 Route 6, Hawley",
+        "Phone": "570-390-7331",
+        "Hours": "We-Fr 14:00-21:00; Sa 12:00-21:00; Su 12:00-19:00; Mo-Tu off"
+      },
+      "keywords": [
+        "beer",
+        "brewery"
+      ]
+    },
+    "ov-529e06f0-743": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.jamroombrewing.co/"
+        }
+      ],
+      "blurb": "Greentown brewery with a beer menu and live-event calendar.",
+      "url": "https://www.jamroombrewing.co/",
+      "facts": {
+        "Address": "101 Creamery Road, Greentown",
+        "Phone": "570-676-6070",
+        "Hours": "Mo-We off; Th 12:00-20:00; Fr-Sa 12:00-22:00; Su 12:00-20:00"
+      },
+      "keywords": [
+        "beer",
+        "brewery",
+        "music"
+      ]
+    },
+    "ov-748b3431-0e7": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.logtavernbrewing.com/tafton"
+        }
+      ],
+      "blurb": "Tafton taproom with snack food and an outdoor beer garden. Friendly leashed pets are permitted outdoors.",
+      "url": "https://www.logtavernbrewing.com/tafton",
+      "facts": {
+        "Hours": "We-Th 13:00-20:00; Fr 13:00-21:00; Sa 12:00-21:00; Su 12:00-20:00",
+        "Pets": "Friendly leashed pets in the outdoor beer garden"
+      },
+      "tags": [
+        "dog friendly"
+      ],
+      "keywords": [
+        "beer",
+        "brewery",
+        "pizza"
+      ]
+    },
+    "ov-cd22cda3-f2c": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.hereandnowbrewing.com/"
+        }
+      ],
+      "blurb": "Downtown Honesdale brewery and restaurant with pizza, a bar and takeaway beer. Kitchen and bar hours differ.",
+      "url": "https://www.hereandnowbrewing.com/",
+      "facts": {
+        "Address": "645 Main Street, Honesdale",
+        "Phone": "570-253-0700",
+        "Hours": null,
+        "Kitchen": "Tue\u2013Wed 5\u20138 pm; Thu 5\u20139 pm; Fri\u2013Sat 4\u20139 pm. Closed Sun\u2013Mon.",
+        "Bar": "Tue\u2013Thu 5\u201311 pm; Fri\u2013Sat 3 pm\u2013midnight. Closed Sun\u2013Mon."
+      },
+      "keywords": [
+        "beer",
+        "brewery",
+        "pizza",
+        "restaurant"
+      ],
+      "tags": [
+        "open late"
+      ]
+    },
+    "ov-f69f9f1e-01e": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://runawaytrainbrewery.com/"
+        }
+      ],
+      "blurb": "Brewery and saloon at 2 Chapel Street, with food and a seasonal pet-friendly outdoor patio.",
+      "url": "https://runawaytrainbrewery.com/",
+      "facts": {
+        "Phone": "570-228-2899",
+        "Hours": null,
+        "Pets": "Dogs welcome on the seasonal outdoor patio"
+      },
+      "notice": "The official page gives conflicting Wednesday hours. Check its current hours before going.",
+      "tags": [
+        "dog friendly"
+      ],
+      "keywords": [
+        "beer",
+        "brewery"
+      ]
+    },
+    "ov-4a380575-0e3": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://threehammerswinery.com/contact-us"
+        }
+      ],
+      "blurb": "Three Hammers\u2019 Wine Lounge on Main in downtown Honesdale. This is separate from the winery on Welcome Lake Road.",
+      "url": "https://threehammerswinery.com/contact-us",
+      "facts": {
+        "Address": "542 Main Street, Honesdale",
+        "Phone": "570-616-4199"
+      },
+      "name": "Three Hammers Wine Lounge on Main",
+      "keywords": [
+        "wine",
+        "winery",
+        "tasting"
+      ],
+      "notice": "Current lounge hours were not confirmed. Call ahead; Hawley winery hours do not apply here."
+    },
+    "ov-239ab530-f70": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://clawsnpaws.com/"
+        }
+      ],
+      "blurb": "Woodland animal park with family activities and a seasonal snack bar.",
+      "url": "https://clawsnpaws.com/",
+      "facts": {
+        "Hours": null,
+        "Season": "Closed for the season as of 2026-11-27; check the official site for spring reopening."
+      },
+      "notice": "Seasonal closure reported 2026-11-27. Plan this stop for the next open season.",
+      "tags": [
+        "good for kids"
+      ],
+      "keywords": [
+        "zoo",
+        "animals",
+        "family"
+      ]
+    },
+    "ov-791a4246-4db": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://dorflingerfactorymuseum.com/visit-us/"
+        }
+      ],
+      "blurb": "Glassmaking heritage museum in the former factory. Rear entrance and accessible parking are on Elizabeth Street.",
+      "url": "https://dorflingerfactorymuseum.com/visit-us/",
+      "facts": {
+        "Address": "670 Texas Palmyra Highway, Hawley / White Mills",
+        "Phone": "570-253-0220",
+        "Hours": "Apr 15\u2013Dec 15: Wed\u2013Sat 10 am\u20135 pm; Sun 1\u20135 pm. Mon\u2013Tue closed. Winter by appointment.",
+        "Access": "Barrier-free rear entrance; accessible gallery and restrooms."
+      },
+      "keywords": [
+        "museum",
+        "indoors",
+        "rainy day"
+      ],
+      "tags": [
+        "good for kids"
+      ]
+    },
+    "dorflinger-glass-museum-11116297709": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://dorflinger.org/dorflinger-glass-museum/"
+        }
+      ],
+      "blurb": "Collection of more than 1,000 pieces of Dorflinger glass at the sanctuary. Separate from the Factory Museum.",
+      "url": "https://dorflinger.org/dorflinger-glass-museum/",
+      "facts": {
+        "Phone": "570-253-1185"
+      },
+      "keywords": [
+        "museum",
+        "glass",
+        "indoors"
+      ]
+    },
+    "lacawac-sanctuary-700750343": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://lacawac.org/"
+        }
+      ],
+      "blurb": "Sanctuary, research and education centre with hiking trails. Check closures before visiting.",
+      "url": "https://lacawac.org/",
+      "facts": {
+        "Address": "94 Sanctuary Road, Lake Ariel",
+        "Phone": "570-689-9494",
+        "Trail hours": "Sunrise to sunset when open"
+      },
+      "notice": "2026 hunting closure: no public hiking November 28 through December 12 at noon.",
+      "closures": [
+        {
+          "from": "2026-11-28T00:00:00-05:00",
+          "until": "2026-12-12T12:00:00-05:00",
+          "text": "Closed for hunting season \u00b7 reopens December 12 at noon"
+        }
+      ],
+      "keywords": [
+        "hike",
+        "hiking",
+        "trails"
+      ]
+    },
+    "the-boathouse-729764255": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.theboathouserestaurant.net/"
+        }
+      ],
+      "blurb": "Casual lakeside restaurant welcoming arrivals by car or boat. Confirm seasonal dock availability before boating over.",
+      "url": "https://www.theboathouserestaurant.net/",
+      "facts": {
+        "Address": "141 PA 507, Hawley",
+        "Phone": "570-226-5027",
+        "Access": "Customers may arrive by boat; call about docking."
+      },
+      "keywords": [
+        "dock and dine",
+        "boat",
+        "restaurant"
+      ]
+    },
+    "ov-3974bad8-82a": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.silverbirchesresortpa.com/"
+        }
+      ],
+      "blurb": "Lakefront resort with rooms, suites and cottages, plus dining at The Dock and TJ\u2019s.",
+      "url": "https://www.silverbirchesresortpa.com/",
+      "facts": {
+        "Address": "205 Route 507, Hawley",
+        "Phone": "570-226-4388"
+      },
+      "tags": [
+        "good for kids"
+      ],
+      "keywords": [
+        "hotel",
+        "resort",
+        "lakefront"
+      ],
+      "gallery": "https://www.silverbirchesresortpa.com/gallery"
+    },
+    "ov-e237a30c-bd2": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.silverbirchesresortpa.com/"
+        }
+      ],
+      "blurb": "The Dock on Wallenpaupack is the lake-view American restaurant at Silver Birches.",
+      "url": "https://www.silverbirchesresortpa.com/",
+      "facts": {
+        "Phone": "570-226-4388"
+      },
+      "keywords": [
+        "restaurant",
+        "lakefront"
+      ]
+    },
+    "the-settlers-inn-417762893": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.thesettlersinn.com/"
+        }
+      ],
+      "blurb": "Arts & Crafts-style inn and farm-to-table restaurant in Hawley.",
+      "url": "https://www.thesettlersinn.com/",
+      "facts": {
+        "Address": "4 Main Avenue, Hawley",
+        "Phone": "570-226-2993"
+      },
+      "keywords": [
+        "hotel",
+        "restaurant",
+        "dinner"
+      ],
+      "gallery": "https://www.thesettlersinn.com/gallery"
+    },
+    "ledges-hotel-417768323": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.ledgeshotel.com/"
+        }
+      ],
+      "blurb": "Boutique hotel above Paupack High Falls. Glass wine.bar.kitchen serves small plates with waterfall views.",
+      "url": "https://www.ledgeshotel.com/",
+      "facts": {
+        "Address": "119 Falls Avenue, Hawley",
+        "Phone": "570-226-1337"
+      },
+      "keywords": [
+        "hotel",
+        "wine",
+        "dinner",
+        "waterfall"
+      ],
+      "gallery": "https://www.ledgeshotel.com/gallery"
+    },
+    "cocoon-coffeehouse-12386300565": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.hawleysilkmill.com/cocoon-coffee-house-hawley-pa"
+        }
+      ],
+      "blurb": "Coffeehouse and bakery at the Hawley Silk Mill, serving sandwiches, soups and baked goods.",
+      "url": "https://www.hawleysilkmill.com/cocoon-coffee-house-hawley-pa",
+      "facts": {
+        "Hours": "Daily 7:30 am\u20134 pm, Labor Day to Memorial Day; 7:30 am\u20135 pm in summer.",
+        "Phone": "570-226-6130"
+      },
+      "keywords": [
+        "coffee",
+        "cafe",
+        "bakery",
+        "lunch"
+      ]
+    },
+    "ov-7e6442a5-7ca": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.lighthouseharbor.com/"
+        }
+      ],
+      "blurb": "Marina and boat dealer on Route 507, with rentals and a seasonal gas dock.",
+      "url": "https://www.lighthouseharbor.com/",
+      "facts": {
+        "Phone": "570-857-0220",
+        "Fuel": "Gas dock closed for the season as reported 2026-11-27."
+      },
+      "notice": "Gas dock closed for the season as of 2026-11-27; check reopening with the marina.",
+      "keywords": [
+        "marina",
+        "fuel",
+        "boat"
+      ]
+    },
+    "ov-d0966c87-9bc": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.1stklas.com/"
+        }
+      ],
+      "blurb": "Marina and boat dealer in Tafton.",
+      "url": "https://www.1stklas.com/",
+      "facts": {
+        "Address": "387 Route 507, Tafton",
+        "Phone": "570-226-6276"
+      },
+      "keywords": [
+        "marina",
+        "boat"
+      ]
+    },
+    "ov-9bec8a65-864": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://palmyrapike.org/parks-recreation/"
+        }
+      ],
+      "blurb": "Public swimming beach on the lake trail. Summer opening dates and fees need confirmation with the township.",
+      "url": "https://palmyrapike.org/parks-recreation/",
+      "facts": {
+        "Hours": null,
+        "Season": "Warm-weather swimming; confirm the current season\u2019s dates."
+      },
+      "notice": "The township page still displays 2024 beach dates. Those are not current opening hours.",
+      "tags": [
+        "good for kids"
+      ],
+      "keywords": [
+        "swim",
+        "beach",
+        "public access"
+      ]
+    },
+    "lake-wallenpaupack-visitor-center-199030220": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.poconomountains.com/plan-your-vacation/explore-our-area/lake-wallenpaupack/"
+        }
+      ],
+      "blurb": "Visitor information and fishing-tackle loans near the lake.",
+      "url": "https://www.poconomountains.com/plan-your-vacation/explore-our-area/lake-wallenpaupack/",
+      "facts": {
+        "Address": "2512 Route 6, Suite 1, Hawley",
+        "Phone": "570-226-2141",
+        "Hours": "Mo-Su 09:00-17:00"
+      },
+      "keywords": [
+        "visitor information",
+        "fishing"
+      ]
+    },
+    "boat-launch-2670938738": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+        }
+      ],
+      "blurb": "Wilsonville launch: a launch fee applies, waived for campers. Sewage pump-out is available for a fee.",
+      "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+      "facts": {},
+      "keywords": [
+        "boat launch",
+        "camping",
+        "public access"
+      ]
+    },
+    "wilsonville-recreation-area-campground-1236537995": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+        }
+      ],
+      "blurb": "Wilsonville is a lakeside camping and launch area. Launch fees are waived for campers; pump-out costs extra.",
+      "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+      "facts": {},
+      "keywords": [
+        "boat launch",
+        "camping",
+        "public access"
+      ]
+    },
+    "ov-fffccd88-413": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+        }
+      ],
+      "blurb": "Caffrey has camping and boat access. A launch fee applies, waived for campers; pump-out costs extra.",
+      "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+      "facts": {},
+      "keywords": [
+        "boat launch",
+        "camping",
+        "public access"
+      ]
+    },
+    "ironwood-point-recreation-area-campground-1236537363": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+        }
+      ],
+      "blurb": "Ironwood Point has camping, paid boat access and an accessible fishing pier. Launch fees are waived for campers.",
+      "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+      "facts": {},
+      "keywords": [
+        "boat launch",
+        "camping",
+        "public access"
+      ]
+    },
+    "boat-launch-1594858525": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack"
+        }
+      ],
+      "blurb": "Ledgedale provides boat access at the upper end of the lake. A launch fee applies, waived for campers.",
+      "url": "https://www.pa.gov/agencies/fishandboat/about-us/pfbc-lakes/lake-wallenpaupack",
+      "facts": {},
+      "keywords": [
+        "boat launch",
+        "camping",
+        "public access"
+      ]
+    },
+    "ov-5e7562bd-1ce": {
+      "checked": "2026-11-27",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://eastshorelodging.com/"
+        }
+      ],
+      "blurb": "Boutique motel across from Lake Wallenpaupack, with links to boat tours and rentals.",
+      "url": "https://eastshorelodging.com/",
+      "facts": {},
+      "keywords": [
+        "hotel",
+        "motel",
+        "stay"
+      ]
+    },
+    "shuman-point-natural-area-700951121": {
+      "checked": "2026-11-26",
+      "checkedNote": "From the sourced WallyMap guide reviewed on this date. Confirm current conditions before visiting.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://brodheadwatershed.org/shuman-point-natural-area/"
+        }
+      ],
+      "blurb": "More than 300 acres of undeveloped shoreline with a blue-blazed loop of 3 to 3.5 miles. Free, leashed dogs welcome, no facilities. Parking is on Route 590 in Lakeville.",
+      "url": "https://brodheadwatershed.org/shuman-point-natural-area/",
+      "facts": {}
+    },
+    "promised-land-state-park-12657477": {
+      "checked": "2026-11-26",
+      "checkedNote": "From the sourced WallyMap guide reviewed on this date. Confirm current conditions before visiting.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/promised-land-state-park/winter.html"
+        }
+      ],
+      "blurb": "State park at the south edge of the map.",
+      "url": "https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/promised-land-state-park/winter.html",
+      "facts": {}
+    },
+    "ov-ec4de35c-cb1": {
+      "checked": "2026-11-26",
+      "checkedNote": "From the sourced WallyMap guide reviewed on this date. Confirm current conditions before visiting.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://dorflinger.org/?p=213"
+        }
+      ],
+      "blurb": "Trails at White Mills. No pets.",
+      "url": "https://dorflinger.org/?p=213",
+      "facts": {}
+    },
+    "lm-ledgedale-natural-area": {
+      "checked": "2026-11-26",
+      "checkedNote": "Description and the details listed here checked online; not a site visit. Confirm seasonal and holiday changes.",
+      "sources": [
+        {
+          "name": "Official source",
+          "url": "https://discovernepa.com/listing/ledgedale-natural-area/"
+        }
+      ],
+      "blurb": "80 acres with four marked trails and parking off Kuhn Hill Road. Dawn to dusk, leashed dogs. Hiking only: fishing and picnicking are not allowed.",
+      "url": "https://discovernepa.com/listing/ledgedale-natural-area/",
+      "facts": {},
+      "keywords": [
+        "hike",
+        "hiking",
+        "trails"
+      ]
+    }
+  },
+  "pageAliases": {
+    "hopping-eagle-brewing-company-hawley": "ov-9ff88f25-004",
+    "irving-cliff-brewery": "ov-f69f9f1e-01e",
+    "three-hammers-winery-wine-lounge-on-main": "ov-4a380575-0e3"
+  }
+}

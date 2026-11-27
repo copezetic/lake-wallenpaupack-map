@@ -1,27 +1,27 @@
 {
- "_note": "Wording for the For businesses page and the claim form. 'contact' is what the public sees: set email (a mailto address) or form (a link to a form), and optionally price. While both are empty the page says enquiries open soon. 'demo' is the placeholder shown only when the address ends in ?demo. 'counter.goatcounter' is the GoatCounter site code; empty means no visitor counting.",
- "title": "Put your business on the map",
- "intro": "This map shows the whole lake and the towns around it in 3D, with every marina, restaurant, shop and place to stay. People use it to find their way around and decide where to go.",
- "free": "Your business is probably on the map already, free. Open your pin and choose 'Claim or correct' to send your hours, website and anything we have wrong. You can also print a QR card that opens the map at your pin.",
- "featured": [
-  "A larger pin that is always on the map, even from far out",
-  "First place in your town's guide",
-  "Your own photo, a few lines in your words, and a link to your site",
-  "Always marked 'Sponsored', so visitors know"
- ],
- "soon": "Enquiries open soon.",
- "fine": "An independent map, not affiliated with any community, utility or business shown.",
- "contact": {
-  "email": "",
-  "form": "",
-  "price": ""
- },
- "demo": {
-  "email": "hello@example.com",
-  "form": "",
-  "price": "$000 a season (placeholder)"
- },
- "counter": {
-  "goatcounter": ""
- }
+  "_note": "Wording for the For businesses page and the claim form. 'contact' is what the public sees: set email (a mailto address) or form (a link to a form), and optionally price. While both are empty the page says enquiries open soon. 'demo' is the placeholder shown only when the address ends in ?demo. 'counter.goatcounter' is the GoatCounter site code; empty means no visitor counting.",
+  "title": "Put your business on the map",
+  "intro": "This map shows the whole lake and the towns around it in 3D, with every marina, restaurant, shop and place to stay. People use it to find their way around and decide where to go.",
+  "free": "Your business is probably on the map already, free. Open your pin and choose 'Claim or correct' to send your hours, website and anything we have wrong. You can also print a QR card that opens the map at your pin.",
+  "featured": [
+    "A larger pin that is always on the map, even from far out",
+    "First place in your town's guide",
+    "Your own photo, a few lines in your words, and a link to your site",
+    "Always marked 'Sponsored', so visitors know"
+  ],
+  "soon": "Enquiries open soon.",
+  "fine": "An independent map, not affiliated with any community, utility or business shown.",
+  "contact": {
+    "email": "dewitt.hutchins@gmail.com",
+    "form": "",
+    "price": ""
+  },
+  "demo": {
+    "email": "hello@example.com",
+    "form": "",
+    "price": "$000 a season (placeholder)"
+  },
+  "counter": {
+    "goatcounter": ""
+  }
 }

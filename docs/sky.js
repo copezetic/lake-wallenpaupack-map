@@ -8,7 +8,7 @@ export function initSky(c){
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const gl = document.getElementById('gl');
   const store = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k, v){ try { localStorage.setItem(k, v); } catch(e){} } };
-  let animate = store.get('lake-wx') !== 'off';
+  let animate = !c.LITE && store.get('lake-wx') !== 'off';
 
   /* ---------- overlays ---------- */
   const css = document.createElement('style');
@@ -63,7 +63,7 @@ export function initSky(c){
   const dark = () => handHour != null ? Math.min(1, Math.max(0, (3 - sunAlt()) / 10)) : Q.has('day') ? 0 : Q.has('night') || Q.has('fx') ? 1 : Math.min(1, Math.max(0, (3 - sunAlt()) / 10));   // 0 by day, 1 once the sun is 7° down
 
   /* ---------- weather: National Weather Service hourly forecast for the lake ---------- */
-  const W = {kind: 'clear', heavy: 0, cover: 0, wind: 0, dir: 270, temp: null, text: '', periods: [], alerts: [], ok: false};
+  const W = {kind: 'clear', heavy: 0, cover: 0, wind: 0, dir: 270, temp: null, text: '', periods: [], alerts: [], ok: false, fetched: null, stale: true};
   const DIRS = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
   function read(text, pop){
     const s = text.toLowerCase(), maybe = /chance/.test(s) && (pop == null || pop < 55);
@@ -77,37 +77,39 @@ export function initSky(c){
     if (kind !== 'clear' && kind !== 'cloudy') cover = Math.max(cover, .9);
     return {kind, cover, heavy: /heavy/.test(s) ? 1 : /light|flurr|drizzle/.test(s) ? .35 : .65};
   }
-  const chip = document.createElement('button'); chip.className = 'chip sky'; chip.style.display = 'none'; chip.onclick = weatherSheet; chips.prepend(chip);
+  const chip = document.createElement('button'); chip.className = 'chip sky'; chip.dataset.menu='conditions'; chip.textContent='Weather · loading'; chip.onclick = weatherSheet; chips.prepend(chip);
   async function load(){
     try {
       const [f, a] = await Promise.all([
         fetch('https://api.weather.gov/gridpoints/BGM/94,30/forecast/hourly').then(r => r.json()),
         fetch(`https://api.weather.gov/alerts/active?point=${LAT},${LON}`).then(r => r.json()).catch(() => ({features: []}))]);
       const now = Date.now(), ps = f.properties.periods.filter(p => new Date(p.endTime) > now);
-      const p = ps[0]; if (!p) return;
+      const p = ps[0]; if (!p) throw new Error('No current forecast');
       Object.assign(W, read(p.shortForecast, p.probabilityOfPrecipitation && p.probabilityOfPrecipitation.value),
         {temp: p.temperature, text: p.shortForecast, wind: parseInt(p.windSpeed) || 0, dir: Math.max(0, DIRS.indexOf(p.windDirection)) * 22.5, from: p.windDirection, periods: ps.slice(0, 12),
-         alerts: (a.features || []).map(x => x.properties), ok: true});
-    } catch(e){ /* no forecast: the map simply shows fair weather */ }
+         alerts: (a.features || []).map(x => x.properties), ok: true, fetched: Date.now(), stale: false});
+    store.set('wally-weather',JSON.stringify(W));
+    } catch(e){try{const old=JSON.parse(store.get('wally-weather'));if(old?.fetched)Object.assign(W,old);}catch{} W.stale=true;}
     const force = Q.get('wx');
     if (force) Object.assign(W, {kind: force, cover: force === 'clear' ? 0 : .9, heavy: .8, wind: W.wind || 9, text: W.text || force, ok: true});
     apply();
   }
   function apply(){
     if (W.ok){ chip.style.display = ''; chip.textContent = (W.temp != null ? W.temp + '° ' : '') + W.text; chip.classList.toggle('alert', W.alerts.length > 0);
+      if(W.stale)chip.textContent += ' · saved';
       chip.title = W.alerts.length ? W.alerts.map(a => a.event).join(', ') : 'Weather at the lake'; }
-    seed(); clouds();
+    if(!W.ok){chip.style.display='';chip.textContent='Weather unavailable';} seed(); clouds();
   }
   function weatherSheet(){
     const hr = t => new Date(t).toLocaleTimeString('en-US', {timeZone: 'America/New_York', hour: 'numeric'});
     openSheet('Weather', 'At the lake now',
-      `<div class="wxnow">${W.temp != null ? W.temp + '°F' : ''}</div><p>${esc(W.text)}${W.wind ? ` · wind ${esc(W.from || '')} ${W.wind} mph` : ''}</p>` +
+      `<p class="notice">${W.fetched ? (W.stale || !navigator.onLine || Date.now()-W.fetched>3600000 ? 'Saved forecast · may be out of date. ' : 'Forecast refreshed ') + new Date(W.fetched).toLocaleString('en-US',{timeZone:'America/New_York'}) + ' Eastern.' : 'Live weather is unavailable. The map scenery does not indicate current conditions.'}</p><div class="wxnow">${W.temp != null ? W.temp + '°F' : ''}</div><p>${esc(W.text)}${W.wind ? ` · wind ${esc(W.from || '')} ${W.wind} mph` : ''}</p>` +
       W.alerts.map(a => `<div class="wxalert"><b>${esc(a.event)}</b><br><span class="fine" style="margin:0">${esc(a.headline || '')}</span></div>`).join('') +
       `<div class="sec">Next hours</div>` + W.periods.map(p => `<div class="wxrow"><span>${hr(p.startTime)}</span><b>${p.temperature}°</b><span>${esc(p.shortForecast)} <small>${esc(p.windDirection)} ${esc(p.windSpeed)}</small></span></div>`).join('') +
 `<div class="sec">Sun and moon</div>${skyRows()}<div id="cond">${condHTML()}</div>` +
-            `<button class="tog" id="wxTog">${animate ? 'Turn weather effects off' : 'Turn weather effects on'}</button>
+            `<button class="tog" id="wxTog">${c.LITE ? 'Effects off in lightweight mode' : animate ? 'Turn weather effects off' : 'Turn weather effects on'}</button>
        <p class="fine">Hourly forecast and alerts from the U.S. National Weather Service for the middle of the lake. The rain, snow, clouds and night shading on the map follow it; they are an illustration, not a radar picture.</p>`);
-    panel.querySelector('#wxTog').onclick = () => { animate = !animate; store.set('lake-wx', animate ? 'on' : 'off'); apply(); weatherSheet(); };
+    panel.querySelector('#wxTog').onclick = () => { animate = !c.LITE && !animate; store.set('lake-wx', animate ? 'on' : 'off'); apply(); weatherSheet(); };
     loadCond().then(() => { const el = panel.querySelector('#cond'); if (el) el.innerHTML = condHTML(); });
   }
 
@@ -241,7 +243,7 @@ export function initSky(c){
     const Z = 12, n = 2 ** Z, lon2x = lon => Math.floor((lon + 180) / 360 * n), lat2y = lat => Math.floor((1 - Math.asinh(Math.tan(lat * Math.PI / 180)) / Math.PI) / 2 * n);
     const x2lon = x => x / n * 360 - 180, y2lat = y => Math.atan(Math.sinh(Math.PI * (1 - 2 * y / n))) * 180 / Math.PI;
     let on = false, timer = 0;
-    const tchip = document.createElement('button'); tchip.className = 'chip sky'; tchip.textContent = 'Traffic'; tchip.title = 'Live traffic on the major roads'; chip.after(tchip);
+    const tchip = document.createElement('button');tchip.dataset.menu='conditions'; tchip.className = 'chip sky'; tchip.textContent = 'Traffic'; tchip.title = 'Live traffic on the major roads'; chip.after(tchip);
     const credit = document.getElementById('credit');
     async function draw(){
       const jobs = [];
@@ -256,7 +258,8 @@ export function initSky(c){
       tx.stroke(); tx.globalCompositeOperation = 'source-over'; ttex.needsUpdate = true;
       tchip.textContent = 'Traffic · live';
     }
-    tchip.onclick = () => { on = !on; tg.visible = on; tchip.classList.toggle('fx', on); clearInterval(timer);
+    addEventListener('offline',()=>{on=false;tg.visible=false;clearInterval(timer);tchip.textContent='Traffic · offline';tchip.classList.remove('fx');});
+    tchip.onclick = () => { if(!navigator.onLine){tchip.textContent='Traffic · offline';return;} on = !on; tg.visible = on; tchip.classList.toggle('fx', on); clearInterval(timer);
       let note = document.getElementById('ttc'); if (on && !note && credit){ note = document.createElement('span'); note.id = 'ttc'; note.textContent = ' Traffic © TomTom.'; credit.appendChild(note); } if (note) note.hidden = !on;
       if (on){ tchip.textContent = 'Traffic…'; draw(); timer = setInterval(draw, 5 * 60e3); } else tchip.textContent = 'Traffic'; };
   }

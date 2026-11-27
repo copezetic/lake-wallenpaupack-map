@@ -1,67 +1,59 @@
 {
- "_note": "Day plans are the publisher's own recommendations. Nothing shows publicly until approved is true; preview with ?plans=preview. Each stop is a place id from the map plus an optional note. These drafts were assembled from the kinds of place in the map data, not from visits: edit before approving.",
- "approved": false,
- "fine": "Suggestions only. Check hours and seasons before you set out.",
- "plans": [
-  {
-   "id": "rainy-day",
-   "short": "Rainy day",
-   "title": "A rainy day",
-   "intro": "Indoors, mostly in Honesdale and White Mills.",
-   "stops": [
+  "approved": true,
+  "reviewed": "2026-11-27",
+  "fine": "Suggested combinations, not timed or booked itineraries. Check hours, seasonal notices and access before leaving.",
+  "plans": [
     {
-     "poi": "dorflinger-glass-museum-11116297709"
+      "id": "rainy-day",
+      "short": "Rainy day",
+      "title": "Coffee & glassmaking",
+      "intro": "An indoor-focused outing between Hawley and White Mills. The Factory Museum is seasonal and normally closed Mondays and Tuesdays.",
+      "stops": [
+        {
+          "poi": "cocoon-coffeehouse-12386300565",
+          "note": "Start with coffee or lunch; seasonal hours are on the place card."
+        },
+        {
+          "poi": "ov-791a4246-4db",
+          "note": "Visit the glassmaking exhibits. April 15\u2013December 15; winter visits by appointment."
+        }
+      ]
     },
     {
-     "poi": "ov-791a4246-4db"
+      "id": "with-kids",
+      "short": "With kids",
+      "title": "A warm-weather family day",
+      "intro": "A summer plan, not an outing for the current winter season. Both the animal park and swimming beach have seasonal access.",
+      "stops": [
+        {
+          "poi": "ov-239ab530-f70",
+          "note": "Woodland animal park. Currently closed for the season; confirm spring reopening."
+        },
+        {
+          "poi": "ov-9bec8a65-864",
+          "note": "Public swimming beach in summer. Confirm current opening dates, fees and weather."
+        },
+        {
+          "poi": "cocoon-coffeehouse-12386300565",
+          "note": "A bakery stop before its afternoon closing time."
+        }
+      ]
     },
     {
-     "poi": "ov-5ae907bf-9fc"
-    },
-    {
-     "poi": "ov-f16041e2-60a"
-    },
-    {
-     "poi": "ov-ea73dcd7-463"
+      "id": "date-night",
+      "short": "Date night",
+      "title": "Dinner & a waterfall view",
+      "intro": "Choose dinner at The Settlers Inn, then a separately arranged visit to Glass at Ledges if its hours and availability suit. Reservations are not included.",
+      "stops": [
+        {
+          "poi": "the-settlers-inn-417762893",
+          "note": "Farm-to-table restaurant in Hawley; check dining hours and reserve directly."
+        },
+        {
+          "poi": "ledges-hotel-417768323",
+          "note": "Glass wine.bar.kitchen overlooks the falls. Check availability before travelling."
+        }
+      ]
     }
-   ]
-  },
-  {
-   "id": "with-kids",
-   "short": "With kids",
-   "title": "A day with kids",
-   "intro": "Animals, water and ice cream.",
-   "stops": [
-    {
-     "poi": "ov-239ab530-f70"
-    },
-    {
-     "poi": "ov-9bec8a65-864"
-    },
-    {
-     "poi": "ov-d0b554bb-531"
-    },
-    {
-     "poi": "ov-1b3d6445-eba"
-    }
-   ]
-  },
-  {
-   "id": "date-night",
-   "short": "Date night",
-   "title": "Date night",
-   "intro": "A drink, dinner by the water and music.",
-   "stops": [
-    {
-     "poi": "ov-3fbad644-799"
-    },
-    {
-     "poi": "the-boathouse-729764255"
-    },
-    {
-     "poi": "ov-0cacbc3b-091"
-    }
-   ]
-  }
- ]
+  ]
 }

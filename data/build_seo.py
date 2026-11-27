@@ -4,6 +4,15 @@ map's data files. Run after build.py and whenever the guide JSON files change.""
 import json, re, os, html, math, datetime, glob
 SITE = 'https://wallymap.com'; TODAY = str(datetime.date.today())
 D = json.load(open('../docs/lake-data.json')); M = D['meta']; POIS = D['pois']
+DETAILS = json.load(open('../docs/place-details.json')) if os.path.exists('../docs/place-details.json') else {}
+POIS = [p for p in POIS if p['id'] not in DETAILS.get('redirects', {})]
+for p in POIS:
+    detail = DETAILS.get('places', {}).get(p['id'], {})
+    facts = dict(p.get('facts', []))
+    for k, v in detail.get('facts', {}).items():
+        if v is None: facts.pop(k, None)
+        else: facts[k] = v
+    p.update(detail); p['facts'] = list(facts.items())
 J = lambda f: json.load(open(f'../docs/{f}.json'))
 e = lambda s: html.escape(str(s), quote=True)
 CSS = """:root{--bg:#f1eadb;--ink:#22313a;--mut:#5d6a6c;--line:#cfc4aa;--card:#f8f3e7;--acc:#7a3b2e;--navy:#1d2f3d}
@@ -49,7 +58,7 @@ plink = lambda pid, name=None: (f'<a href="/place/{slugs[pid]}.html">{e(name or 
 BY = {p['id']: p for p in POIS}
 NAV = [('marinas', 'Marinas'), ('public-access', 'Public beaches and boat launches'), ('dock-and-dine', 'Dock and dine'), ('restaurants', 'Restaurants and bars'),
        ('places-to-stay', 'Places to stay'), ('things-to-do', 'Things to do'), ('hiking-and-outdoors', 'Hiking and outdoors'), ('fishing', 'Fishing'), ('boating-rules', 'Boating rules'),
-       ('history', 'History'), ('events', 'Events')]
+       ('history', 'History'), ('events', 'Events'), ('beer-wine-trail', 'Beer and wine trail')]
 if os.path.exists('../docs/market.json'): NAV.append(('real-estate', 'Real estate market'))
 PARKS = {p['poi']: p for p in J('parks')['parks']}
 for p in PAGED:
@@ -57,12 +66,13 @@ for p in PAGED:
     desc = f"{p['name']}: {p['kind'].lower()}{' in ' + tw if tw else ''} near Lake Wallenpaupack. " + ' '.join(f'{k}: {v}.' for k, v in p['facts'][:3]) + ' See it on the 3D lake map.'
     rows = ''.join(f'<dt>{e(k)}</dt><dd>{e(v)}</dd>' for k, v in p['facts'])
     if p.get('url'): rows += f'<dt>Website</dt><dd><a href="{e(p["url"])}" rel="nofollow noopener">{e(re.sub(r"^https?://(www\.)?", "", p["url"]).rstrip("/"))}</a></dd>'
+    if p.get('sources'): rows += '<dt>Source check</dt><dd>' + e(p.get('checked','')) + ' · ' + ', '.join(f'<a href="{e(v["url"])}">{e(v["name"])}</a>' for v in p['sources']) + '</dd>'
     pk = PARKS.get(p['id'])
     body = f"""<h1>{e(p['name'])}</h1><p>{e(p['kind'])}{' in ' + e(tw) if tw else ''}, on the map of Lake Wallenpaupack.</p>
 <a class="btn" href="/?p={e(p['id'])}">See it on the 3D map</a>{f'<a class="btn" href="/?park={e(pk["id"])}">{e(pk.get("button", "A closer look"))}</a>' if pk else ''}
-<dl>{rows}</dl>{''.join(f'<p>{e(l)}</p>' for l in (pk or {}).get('lines', []))}
+<p>{e(p.get('blurb',''))}</p>{('<p><strong>' + e(p['notice']) + '</strong></p>') if p.get('notice') else ''}<dl>{rows}</dl>{''.join(f'<p>{e(l)}</p>' for l in (pk or {}).get('lines', []))}
 <h2>Nearby</h2><ul class="l">{''.join(f'<li>{plink(q["id"])}<small>{e(q["kind"])} · {math.hypot(q["x"] - p["x"], q["z"] - p["z"]) / 1609.34:.1f} mi</small></li>' for q in near)}</ul>
-<p class="fine">Name, address and contact details are from OpenStreetMap and Overture Maps. Run this place? <a href="/?p={e(p['id'])}">Open it on the map</a> and choose “Claim or correct it”.</p>"""
+<p class="fine">Base map details come from OpenStreetMap and Overture Maps; reviewed additions cite their sources above. Run this place? <a href="/?p={e(p['id'])}">Open it on the map</a> and choose “Claim or correct it”.</p>"""
     ld = {'@context': 'https://schema.org', '@type': {'food': 'FoodEstablishment', 'stay': 'LodgingBusiness'}.get(p['cat'], 'Place'), 'name': p['name'], 'url': f'{SITE}/place/{slugs[p["id"]]}.html',
           'geo': {'@type': 'GeoCoordinates', 'latitude': p['dlat'], 'longitude': p['dlon']}}
     if f.get('Address'): ld['address'] = f['Address'] + ', PA'
@@ -95,6 +105,14 @@ d = J('markers'); guide('history', 'History around Lake Wallenpaupack', 'State h
 d = J('events'); ev = sorted((x for x in d['events'] if x.get('d0', '') >= TODAY), key=lambda x: x['d0'])
 guide('events', 'Events around Lake Wallenpaupack', 'Upcoming events in Hawley, Honesdale and around the lake, each linked to its organiser.',
     '<ul class="l">' + ''.join(f'<li>{f"""<a href="{e(x["url"])}" rel="nofollow noopener">{e(x["n"])}</a>""" if x.get("url") else "<b>" + e(x["n"]) + "</b>"}<small>{e(datetime.date.fromisoformat(x["d0"]).strftime("%A, %B %-d, %Y"))}{" · " + e(x["where"]) if x.get("where") else ""}{". " + e(x["note"]) if x.get("note") else ""}</small></li>' for x in ev) + f'</ul><p class="fine">Dates come from the organisers\' own listings, checked {e(d["updated"])}. Confirm before you travel.</p>')
+d = J('beer-wine')
+body = ''.join('<h2>' + e(o['title']) + '</h2><p>' + e(o['note']) + '</p><ul class="l">' + ''.join('<li>' + plink(pid) + '<small>' + e(next(t['note'] for t in d['stops'] if t['poi']==pid)) + '</small><a href="' + e(next(t['url'] for t in d['stops'] if t['poi']==pid)) + '">Official site and current hours</a></li>' for pid in o['stops']) + '</ul>' for o in d['outings'])
+body += '<p>' + e(d['transport']) + '</p><p class="fine">Sources checked ' + e(d['updated']) + '. Independent WallyMap selection. <a href="' + e(d['regional']['url']) + '">Official regional Pocono Beverage Trail</a>.</p>'
+guide('beer-wine-trail', d['title'], d['intro'], body, '?trail=beer-wine')
+# Keep historical shared page URLs useful after confirmed moves or renamed listings.
+for old_slug, target in DETAILS.get('pageAliases', {}).items():
+    if target in slugs and old_slug != slugs[target]:
+        page('place/'+old_slug+'.html', 'Updated place listing | WallyMap', 'This place listing has moved or changed.', '<h1>Updated place listing</h1><p>This old listing has been replaced by '+plink(target)+'.</p><a class="btn" href="/?p='+e(target)+'">Open the current map pin</a>')
 if os.path.exists('../docs/market.json'):
     exec(open('seo_market.py').read())
 page('guide/index.html', 'Guides to Lake Wallenpaupack | WallyMap', 'Guides to Lake Wallenpaupack: marinas, public beaches and launches, dock and dine, restaurants, places to stay, fishing, boating rules, history and events.',

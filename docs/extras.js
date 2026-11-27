@@ -26,6 +26,8 @@ function parseHours(s){
 }
 const clock = m => { m %= 1440; const h = Math.floor(m / 60), mi = m % 60; return `${h % 12 || 12}${mi ? ':' + String(mi).padStart(2, '0') : ''} ${h < 12 ? 'am' : 'pm'}`; };
 export function openNow(p){                    // {open, text} or null when the hours are unknown or not understood
+  const closure=(p.closures||[]).find(c=>Date.now()>=Date.parse(c.from)&&Date.now()<Date.parse(c.until));if(closure)return {open:false,text:closure.text};
+  if(p.checked && Date.now()-Date.parse(p.checked+'T12:00:00Z')>90*86400000)return null;
   const h = p.facts && p.facts.find(f => f[0] === 'Hours'); const week = h && parseHours(h[1]); if (!week) return null;
   const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone: 'America/New_York', weekday: 'short', hour: 'numeric', minute: 'numeric', hourCycle: 'h23'}).formatToParts(new Date()).map(x => [x.type, x.value]));
   const d = DAYS.indexOf(parts.weekday.slice(0, 2)), now = +parts.hour * 60 + +parts.minute;
@@ -382,7 +384,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       {id: 'lake', label: 'On the lake', why: 'Places to eat, drink or stay within about 300 feet of the lake shore, measured on this map. Being near the water is not the same as having a view or a dock.', list: () => D.pois.filter(p => (p.cat === 'food' || p.cat === 'stay') && shore(p) < 92)},
       {id: 'boat', label: 'Arrive by boat', why: 'Places that say customers can come by boat. Call ahead about docking.', list: () => D.pois.filter(p => boat.has(p.id))},
       {id: 'open', label: 'Open now', why: 'Only places whose hours are on the map; most have not told us theirs yet.', list: () => D.pois.filter(p => { const o = openNow(p); return o && o.open; })},
-      ...Object.entries(TG.tags || {}).map(([id, t]) => ({id, label: t.label, why: t.why || 'Told to us by the owners.', list: () => D.pois.filter(p => (TG.places && TG.places[p.id] || []).includes(id))}))];
+      ...Object.entries(TG.tags || {}).map(([id, t]) => ({id, label: t.label, why: t.why || 'Confirmed on the linked official source or supplied by the owner; check each place card.', list: () => D.pois.filter(p => (TG.places && TG.places[p.id] || []).includes(id))}))];
     const findSheet = id => { const lists = sets.map(t => ({...t, got: t.list().sort((a, b) => a.name.localeCompare(b.name))})).filter(t => t.got.length || t.id === 'open'), t = lists.find(t => t.id === id) || lists[0]; if (!t) return;
       openSheet('Find by', t.label, `<div class="tabs">${lists.map(o => `<button data-tag="${esc(o.id)}" aria-pressed="${o === t}">${esc(o.label)}</button>`).join('')}</div><p>${esc(t.why)}</p>` +
         (t.got.length ? `<div class="plist">${t.got.map(p => `<button data-poi="${esc(p.id)}">${esc(p.name)}<small>${esc(p.kind || '')}</small></button>`).join('')}</div>` : '<p><b>None right now.</b></p>') +
@@ -399,14 +401,31 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       openSheet('Day plans', pl.title, `<div class="tabs">${PL.plans.map(o => `<button data-plan="${esc(o.id)}" aria-pressed="${o === pl}">${esc(o.short || o.title)}</button>`).join('')}</div>` +
         (PL.approved ? '' : '<p class="fine" style="margin:0 0 8px">Draft for review: not shown to the public yet.</p>') + (pl.intro ? `<p>${esc(pl.intro)}</p>` : '') +
         stops.map((s, i) => `<div class="gi"><h3><button data-poi="${esc(s.p.id)}">${i + 1}. ${esc(s.p.name)}</button></h3><p>${esc(s.note || s.p.kind || '')}</p></div>`).join('') +
-        `<p class="fine">${esc(PL.fine || '')}</p><button class="wide" id="planShare">Share this plan</button>`);
+        `<p class="fine">${esc(PL.fine || '')}</p><button class="wide" id="planShare">Share this plan</button><button class="wide" id="planSave">Add stops to my weekend</button>`);
       panel.querySelectorAll('button[data-plan]').forEach(b => b.onclick = () => planSheet(b.dataset.plan));
+      panel.querySelector('#planSave').onclick = () => c.hooks.addStops?.(stops.map(s=>s.p.id));
       panel.querySelector('#planShare').onclick = () => share(pl.title, '?plan=' + encodeURIComponent(pl.id));
       if (stops.length){ const x = stops.reduce((a, s) => a + s.p.x, 0) / stops.length, z = stops.reduce((a, s) => a + s.p.z, 0) / stops.length;
         flyTo(x, z, Math.max(3500, 2.6 * Math.max(...stops.map(s => Math.hypot(s.p.x - x, s.p.z - z))))); }
     };
     addChip('Day plans', () => planSheet());
-    if (Q.has('plan') || Q.get('plans') === 'preview') setTimeout(() => planSheet(Q.get('plan')), 800);
+    if (Q.has('plan') || Q.get('plans') === 'preview') planSheet(Q.get('plan'));
+  }
+
+  const TRAIL = await getJSON('beer-wine.json');
+  if(TRAIL){
+    const trailSheet = id => {
+      const group=TRAIL.outings.find(o=>o.id===id), stops=(group?group.stops:TRAIL.stops.map(s=>s.poi)).map(id=>TRAIL.stops.find(s=>s.poi===id)).filter(Boolean);
+      openSheet('Explore the lake',group?group.title:TRAIL.title,`<p>${esc(TRAIL.intro)}</p><div class="tabs"><button data-outing="">All stops</button>${TRAIL.outings.map(o=>`<button data-outing="${esc(o.id)}" aria-pressed="${o===group}">${esc(o.title)}</button>`).join('')}</div>${group?`<p>${esc(group.note)}</p>`:''}`+
+        stops.map(s=>{const p=D.pois.find(p=>p.id===s.poi);return p?`<div class="gi"><h3><button data-poi="${esc(p.id)}">${esc(p.name)}</button></h3><p>${esc(s.note)}</p><p class="fine">${esc(dictAddress(p))}</p><a href="${esc(s.url)}" target="_blank" rel="noopener">Official site & current hours ↗</a></div>`:'';}).join('')+
+        `<p class="notice">${esc(TRAIL.transport)}</p><p class="fine">Sources checked ${esc(TRAIL.updated)}. An independent WallyMap selection. <a href="${esc(TRAIL.regional.url)}" target="_blank" rel="noopener">${esc(TRAIL.regional.name)}</a> covers the wider region.</p><div class="acts"><button class="btn pri" id="trailSave">Add these stops to my weekend</button><button class="btn" id="trailShare">Share trail</button></div>`);
+      panel.querySelectorAll('[data-outing]').forEach(b=>b.onclick=()=>trailSheet(b.dataset.outing));
+      panel.querySelector('#trailSave').onclick=()=>c.hooks.addStops?.(stops.map(s=>s.poi));panel.querySelector('#trailShare').onclick=()=>share(TRAIL.title,'?trail=beer-wine'+(group?'&outing='+group.id:''));
+      c.hooks.showCollection?.(stops.map(s=>s.poi),()=>trailSheet(id));
+      const ps=stops.map(s=>D.pois.find(p=>p.id===s.poi)).filter(Boolean);if(ps.length){const x=ps.reduce((a,p)=>a+p.x,0)/ps.length,z=ps.reduce((a,p)=>a+p.z,0)/ps.length;flyTo(x,z,Math.max(4000,...ps.map(p=>Math.hypot(p.x-x,p.z-z)*3)));}
+    };
+    const dictAddress=p=>(p.facts||[]).find(f=>f[0]==='Address')?.[1]||'';
+    addChip('Beer & wine trail',()=>trailSheet()); if(Q.get('trail')==='beer-wine')trailSheet(Q.get('outing'));
   }
 
   /* ---------- for businesses: what a listing is, claiming or correcting one, and a printable QR card ---------- */
@@ -445,9 +464,9 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Opening hours<textarea id="cl_hours" rows="3" placeholder="Mon–Thu 11–9, Fri–Sat 11–10, closed Sun; closed January" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>` +
       tick('dock', 'Customers can arrive by boat') + tick('fuel', 'Fuel dock') + tick('pump', 'Pump-out') + tick('dog', 'Dog friendly') + tick('kid', 'Good for kids') + tick('late', 'Open after 9 pm') + tick('gone', 'This place has closed or moved') + tick('feat', 'Tell me about a featured pin') +
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Anything else<textarea id="cl_note" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>
-       <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Send by email</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a><button class="btn" id="clEmbed">Map for your website</button></div>` +
+       <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Open email to send</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a><button class="btn" id="clEmbed">Map for your website</button></div>` +
       (CT.email || CT.form ? '' : `<p><b>${esc(BZ.soon || 'Sending opens soon.')}</b> You can copy your details for now.</p>`) +
-      `<p class="fine">${CT.email ? 'Send opens your own email app with the details filled in; attach a photo there if you would like one shown. ' : ''}Only send a photo you took or have the right to share.</p>`);
+      `<p class="fine">${CT.email ? 'Opens your email app with the details filled in. Review and send there; nothing is submitted automatically. Attach a photo you own if you would like one shown. ' : ''}Only send a photo you took or have the right to share.</p>`);
     const v = id => panel.querySelector('#cl_' + id), text = () => [`Place: ${p.name} (${p.kind || ''})`, `Map link: ${here}?p=${p.id}`, `From: ${v('who').value}`, `Reach me at: ${v('reach').value}`, `Website: ${v('site').value}`, `Reservations link: ${v('resv').value}`, `Ordering link: ${v('order').value}`, `Hours: ${v('hours').value}`,
       `Arrive by boat: ${v('dock').checked ? 'yes' : '-'}`, `Fuel dock: ${v('fuel').checked ? 'yes' : '-'}`, `Pump-out: ${v('pump').checked ? 'yes' : '-'}`, `Dog friendly: ${v('dog').checked ? 'yes' : '-'}`, `Good for kids: ${v('kid').checked ? 'yes' : '-'}`, `Open after 9 pm: ${v('late').checked ? 'yes' : '-'}`, `Closed or moved: ${v('gone').checked ? 'yes' : '-'}`, `Featured pin: ${v('feat').checked ? 'please tell me more' : '-'}`, `Notes: ${v('note').value}`].join('\n');
     const copy = () => navigator.clipboard ? navigator.clipboard.writeText(text()).then(() => say('Details copied.'), () => say('Could not copy.')) : say('Could not copy.');

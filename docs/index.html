@@ -232,6 +232,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
   .pin .tag{font-size:14px}
 }
 </style>
+<link rel="stylesheet" href="visitor.css">
 </head>
 <body class="far">
 <noscript><div style="max-width:640px;margin:40px auto;padding:0 16px;font:18px Georgia,serif"><h1>Lake Wallenpaupack map</h1><p>This 3D map of Lake Wallenpaupack needs JavaScript. The same places are listed in plain pages: <a href="/guide/">guides to the lake</a>, <a href="/guide/marinas.html">marinas</a>, <a href="/guide/public-access.html">public beaches and boat launches</a>, <a href="/guide/restaurants.html">restaurants</a>, <a href="/guide/places-to-stay.html">places to stay</a>, <a href="/guide/fishing.html">fishing</a>, <a href="/guide/real-estate.html">real estate market</a>.</p></div></noscript>
@@ -250,7 +251,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
     <div class="tools">
       <div class="find">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l4 4"/></svg>
-        <input id="q" type="search" placeholder="Find a street or place…" autocomplete="off" spellcheck="false" aria-label="Find a street or place">
+        <input id="q" type="search" placeholder="Find pizza, a marina, a town…" autocomplete="off" spellcheck="false" aria-label="Find a street or place" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="results">
         <div id="results" role="listbox"></div>
       </div>
       <button class="hbtn" id="bFish" hidden>Fishing</button>
@@ -259,7 +260,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
       <button class="hbtn" id="bInfo">About</button>
     </div>
   </div>
-  <div class="chips" id="chips"></div>
+  <nav id="nav" aria-label="Map navigation"></nav><div class="chips" id="chips"></div>
 </header>
 
 <aside id="panel" aria-live="polite"></aside>
@@ -279,7 +280,9 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
   Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Overture Maps, USGS.</div>
 <div id="hint">Drag to move · right-drag or two fingers to turn · scroll or pinch to zoom · tap a pin · zoom in for houses, trees, boats and wildlife</div>
 <div id="toast"></div>
-<div id="load"><span>Drawing the map…</span></div>
+<div id="connection" hidden role="status"></div>
+<div id="load"><div><span>Drawing the map…</span><div class="recovery" hidden>Taking longer than expected? <a href="?lite=1">Try lightweight mode</a> or <a href="/guide/">browse the place guides</a>. <button onclick="location.reload()">Retry</button></div></div></div>
+<script>setTimeout(()=>{const r=document.querySelector('#load .recovery');if(r)r.hidden=false;},12000);</script>
 
 <script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -288,9 +291,11 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=7';
+import { initSky } from './sky.js?v=8';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=9';
+import { initExtras, openNow } from './extras.js?v=10';
+import { initVisitor } from './visitor.js';
+import { searchEntries, applyPlaceDetails } from './discovery.js';
 import { initImmersive } from './immersive.js?v=4';
 
 const EX = 2.0;            // vertical exaggeration
@@ -307,6 +312,7 @@ const CATS = {
   nature: {label:'Parks & Sights', c:'#6f8a4a'},
   shops:  {label:'Shops & Fuel',   c:'#9a7426'},
 };
+const LITE = (()=>{const q=new URLSearchParams(location.search);try{return q.has('lite')?q.get('lite')==='1':localStorage.getItem('wally-lite')==='1';}catch{return q.get('lite')==='1';}})();
 const small = matchMedia('(max-width:760px)').matches;
 const EDIT = new URLSearchParams(location.search).has('edit');
 const EMBED = new URLSearchParams(location.search).has('embed');   // a small copy for another website: map and pins only, with a link to the full map
@@ -314,6 +320,8 @@ if (EMBED){ document.body.classList.add('embed'); const a = document.createEleme
   const q = new URLSearchParams(location.search); q.delete('embed'); a.href = location.pathname + (q.toString() ? '?' + q : ''); document.body.appendChild(a); }
 
 const [D, PATCH, DOCKS] = await Promise.all([fetch('lake-data.json', { cache: 'no-cache' }).then(r => r.json()), fetch('patches.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null), fetch('docks.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)]);
+const DETAILS = await fetch('place-details.json', {cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({}));
+const REDIRECTS = applyPlaceDetails(D, DETAILS);
 const M = D.meta, XS = M.xmax - M.xmin, ZS = M.zmax - M.zmin;
 
 /* ---------------- elevation ---------------- */
@@ -469,7 +477,7 @@ function paint(x0, z0, x1, z1, TW, detail){
 /* ---------------- scene ---------------- */
 const canvas = document.getElementById('gl');
 const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, preserveDrawingBuffer: EDIT});
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio, LITE ? 1 : 2));
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, 1, 30, 140000);
 await document.fonts.ready.catch(() => {});
@@ -675,8 +683,9 @@ function layout(){
   const w = canvas.clientWidth, h = canvas.clientHeight;
   for (const it of items){
     it.shown = false;
+    if(it.el.classList.contains('search-off')){it.el.style.visibility='hidden';continue;}
     if (iso && it.isoOut){ it.el.style.visibility = 'hidden'; continue; }
-    if (it.maxD && camD > it.maxD && !it.el.classList.contains('sel')){ it.el.style.visibility = 'hidden'; continue; }
+    if (it.maxD && camD > it.maxD && !it.el.classList.contains('sel') && !it.el.classList.contains('collection-pin')){ it.el.style.visibility = 'hidden'; continue; }
     v.copy(it.v).project(camera);
     if (v.z > 1 || v.x < -1.15 || v.x > 1.15 || v.y < -1.2 || v.y > 1.2){ it.el.style.visibility = 'hidden'; continue; }
     it.el.style.visibility = '';
@@ -690,7 +699,7 @@ function layout(){
   // keep name tags from piling up: the more important one keeps its tag, the other shrinks to its dot (or, for a plain name, steps aside)
   const far = document.body.classList.contains('far'), kept = [];
   const rank = it => it.ring ? 0 : it.poi ? (it.el.classList.contains('sel') ? 1 : it.poi.major ? 3 : 5) : it.el.classList.contains('big') || it.el.classList.contains('t1') ? 2 : 4;
-  const live = items.filter(it => it.shown && !it.el.classList.contains('off')).sort((a, b) => rank(a) - rank(b));
+  const live = items.filter(it => it.shown && !it.el.classList.contains('off') && !it.el.classList.contains('search-off')).sort((a, b) => rank(a) - rank(b));
   for (const it of live){
     if (it.poi && !it.poi.major && far){ it.el.classList.remove('tuck'); continue; }
     const hit = kept.some(k => it.r[0] < k[2] && it.r[2] > k[0] && it.r[1] < k[3] && it.r[3] > k[1]);
@@ -726,6 +735,7 @@ function openPlace(p){
   if (!back) back = view();
   placeOpen = true;
   panel.classList.add('open'); panel.scrollTop = 0;
+  hooks.place?.(p);
   flyTo(p.x + (small ? 0 : 120), p.z + (small ? 140 : 0), 1500);
 }
 function share(title, query){                       // hand the link to the phone's share sheet, or copy it
@@ -778,7 +788,7 @@ for (const [k, c] of Object.entries(CATS)){
   const b = document.createElement('button'); b.className = 'chip'; b.style.setProperty('--c', c.c); b.setAttribute('aria-pressed', 'true');
   b.innerHTML = `<i></i>${esc(c.label)}`;
   b.onclick = () => { hidden.has(k) ? hidden.delete(k) : hidden.add(k); b.setAttribute('aria-pressed', String(!hidden.has(k)));
-    for (const p of D.pois) pinEls.get(p.id).classList.toggle('off', hidden.has(p.cat)); };
+    for (const p of D.pois) pinEls.get(p.id).classList.toggle('off', hidden.has(p.cat)); hooks.categoryChanged?.(); };
   chips.appendChild(b);
 }
 
@@ -793,15 +803,16 @@ const index = [...D.pois.map(p => ({n: p.name, kind: 'Place', p})),
 for (const l of D.lakes) index.push({n: l.n, kind: 'Lake', at: [l.x, l.z, Math.max(1800, Math.sqrt(l.a) * 3.2)]});
 for (const t of D.towns) index.push({n: t.n, kind: t.k === 'island' ? 'Island' : 'Community', t, at: [t.x, t.z, t.k === 'town' || t.k === 'hamlet' ? 3400 : 1900]});
 const q = document.getElementById('q'), results = document.getElementById('results'); let cur = -1, shown = [];
-function hideResults(){ results.style.display = 'none'; cur = -1; }
+function hideResults(){ results.style.display = 'none'; q.setAttribute('aria-expanded','false'); q.removeAttribute('aria-activedescendant'); cur = -1; }
 function showResults(){
-  const t = q.value.trim().toLowerCase();
-  shown = (t ? index.filter(e => e.n.toLowerCase().includes(t)) : index.filter(e => e.kind === 'Place'))
-    .sort((a, b) => (b.n.toLowerCase().startsWith(t) - a.n.toLowerCase().startsWith(t))).slice(0, 40);
-  results.innerHTML = shown.length ? shown.map((e, i) => `<button role="option" data-i="${i}">${esc(e.n)}<small>${e.kind}</small></button>`).join('')
-    : `<button disabled>No match around the lake</button>`;
-  results.style.display = 'block'; cur = -1;
+  const t = q.value.trim();
+  shown = searchEntries(index,t,{cats:CATS,origin:me || [controls.target.x,controls.target.z],hidden}).slice(0,40);
+  results.innerHTML = shown.length ? shown.map((e,i)=>`<button role="option" id="result-${i}" aria-selected="false" data-i="${i}">${esc(e.n)}<small>${esc(e.p ? hooks.searchDetail?.(e.p) || e.kind : e.kind)}</small></button>`).join('') : '<p style="padding:12px">No matches. Try a category, food or town.</p>';
+  results.innerHTML = `<p class="search-note">Distances: straight-line from ${me?'your location':'the map centre'}.</p>` + results.innerHTML;
+  results.innerHTML += '<button id="allSearchResults">Browse all matching places →</button>';
+  results.style.display='block';q.setAttribute('aria-expanded','true');cur=-1;
 }
+
 function pick(e){
   hideResults(); q.blur(); q.value = e.n;
   if (e.p) return openPlace(e.p);
@@ -820,11 +831,13 @@ q.addEventListener('input', showResults); q.addEventListener('focus', showResult
 q.addEventListener('keydown', e => {
   const bs = [...results.querySelectorAll('button[data-i]')];
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); cur = (cur + (e.key === 'ArrowDown' ? 1 : -1) + bs.length) % bs.length;
-    bs.forEach((b, i) => b.classList.toggle('on', i === cur)); bs[cur]?.scrollIntoView({block: 'nearest'}); }
-  if (e.key === 'Enter' && shown.length) pick(shown[Math.max(0, cur)]);
+    bs.forEach((b, i) => (b.classList.toggle('on', i === cur),b.setAttribute('aria-selected',String(i===cur)))); bs[cur]?.scrollIntoView({block: 'nearest'});if(bs[cur])q.setAttribute('aria-activedescendant',bs[cur].id); }
+  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();hideResults();}
+  if(e.key==='Enter' && shown.length){e.preventDefault();pick(shown[Math.max(0,cur)]);}
 });
-results.addEventListener('pointerdown', e => { const b = e.target.closest('button[data-i]'); if (b){ e.preventDefault(); pick(shown[+b.dataset.i]); } });
+results.addEventListener('click', e => { if(e.target.closest('#allSearchResults')){e.preventDefault();hideResults();q.blur();hooks.searchList?.(q.value);return;} const b = e.target.closest('button[data-i]'); if (b){ e.preventDefault(); pick(shown[+b.dataset.i]); } });
 canvas.addEventListener('pointerdown', hideResults);
+document.addEventListener('pointerdown',e=>{if(!q.closest('.find').contains(e.target))hideResults();});
 
 /* ---------------- one community on its own ---------------- */
 // Pick a community and the rest of the map fades back: only its ground, houses, trees and places stay.
@@ -890,7 +903,7 @@ document.getElementById('bComs').onclick = () => {
   openSheet('Around the lake', 'Communities', `<p>Pick one to see it on its own.</p><div class="clist">${COMS.map((t, i) => `<button data-com="${i}">${esc(t.n)}</button>`).join('')}</div>`);
   panel.querySelectorAll('button[data-com]').forEach(b => b.onclick = () => isolate(COMS[+b.dataset.com]));
 };
-{ const id = new URLSearchParams(location.search).get('p'), p = id && D.pois.find(p => p.id === id);
+{ const id = new URLSearchParams(location.search).get('p'), p = id && D.pois.find(p => p.id === (REDIRECTS[id] || id));
   if (p && EMBED) setTimeout(() => { pinEls.get(p.id)?.classList.add('sel'); flyTo(p.x, p.z, 1500); }, 600); else if (p) setTimeout(() => openPlace(p), 600); }   // ?p=<id> opens on that place
 { const c = new URLSearchParams(location.search).get('c'), t = c && COMS.find(t => slugOf(t.n) === c); if (t) setTimeout(() => isolate(t), 600); }   // ?c=indian-rocks opens on that community
 
@@ -1096,6 +1109,7 @@ initExtras({THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chip
 
 /* ---------------- life on the map: boats, trees and wildlife (shown when you zoom in) ---------------- */
 const life = (() => {
+  if(LITE)return {update(){},dress(){},undress(){},g:new THREE.Group(),movers:[]};
   const g = new THREE.Group(); g.visible = false; scene.add(g);
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mat = c => new THREE.MeshBasicMaterial({color: c});
@@ -1268,14 +1282,16 @@ if (EDIT){
 }
 
 const imm = {riding: () => false, update(){}};      // filled in below once the page is up: rides, sound, moving water, the time and season dial
-const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, tiles, getCamD: () => camD});
+const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, tiles, getCamD: () => camD, LITE});
 
 /* ---------------- loop ---------------- */
 function resize(){ const w = canvas.clientWidth, h = canvas.clientHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
   for (const it of items) it.w = 0; }
 addEventListener('resize', resize); resize();
 const sphTmp = new THREE.Spherical(), offTmp = new THREE.Vector3();
+let lastFrame = 0;
 function frame(now){
+  if(document.hidden || (LITE && now-lastFrame < 33)){requestAnimationFrame(frame);return;}lastFrame=now;
   if (fly){
     let k = Math.min(1, (now - fly.s) / fly.ms); k = k < .5 ? 4*k*k*k : 1 - Math.pow(-2*k + 2, 3) / 2;
     const t = fly.t0.clone().lerp(fly.t1, k);
@@ -1300,7 +1316,8 @@ function frame(now){
 requestAnimationFrame(frame);
 { const ld = document.getElementById('load'); ld.classList.add('done'); setTimeout(() => ld.remove(), 900); }
 window.__lake = {sky, life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
-if (!EMBED) initImmersive({THREE, scene, camera, controls, canvas, renderer, D, M, Y, terrain, tiles, flyTo, panel, openSheet, esc, chips, say, addLabel, items, sky, setSeason, season: () => SEASON, getCamD: () => camD, stopFly: () => { fly = null; }, small}).then(o => Object.assign(imm, o)).catch(e => console.error(e));
+if (!EMBED && !LITE) initImmersive({THREE, scene, camera, controls, canvas, renderer, D, M, Y, terrain, tiles, flyTo, panel, openSheet, esc, chips, say, addLabel, items, sky, setSeason, season: () => SEASON, getCamD: () => camD, stopFly: () => { fly = null; }, small}).then(o => Object.assign(imm, o)).catch(e => console.error(e));
+if(!EMBED) initVisitor({D,CATS,hooks,panel,esc,closePanel,openSheet,openPlace,flyTo,say,share,pinEls,LITE,hidden,getOrigin:()=>me || [controls.target.x,controls.target.z],hasLocation:()=>!!me,setSearchIds:ids=>{for(const [id,el] of pinEls)el.classList.toggle('search-off',!!ids&&!ids.has(id));}});
 if ('serviceWorker' in navigator && !new URLSearchParams(location.search).has('tour')) navigator.serviceWorker.register('sw.js').catch(() => {});   // keeps the last-loaded map for weak signal
 </script>
 </body>

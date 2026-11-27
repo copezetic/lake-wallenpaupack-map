@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lake Wallenpaupack — The Whole Lake in 3D</title>
-<meta name="description" content="A 3D map of Lake Wallenpaupack: every cove, marina, boat launch, road and community around the lake.">
+<title>Lake Wallenpaupack Map — The Whole Lake in 3D | WallyMap</title>
+<meta name="description" content="An interactive 3D map of Lake Wallenpaupack, Pennsylvania: every cove, marina, dock, boat launch, restaurant, road and lake community, with fishing, boating and visitor guides.">
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -13,7 +13,12 @@
 <meta property="og:title" content="Lake Wallenpaupack — The Whole Lake in 3D">
 <meta property="og:description" content="Every cove, marina, boat launch, road and community around the lake.">
 <meta property="og:type" content="website">
-<meta name="robots" content="noindex">
+<link rel="canonical" href="https://wallymap.com/">
+<meta property="og:url" content="https://wallymap.com/">
+<meta property="og:image" content="https://wallymap.com/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"WallyMap","alternateName":"Lake Wallenpaupack 3D map","url":"https://wallymap.com/","description":"A 3D map of Lake Wallenpaupack, Pennsylvania: every cove, marina, boat launch, road and community around the lake.","about":{"@type":"LakeBodyOfWater","name":"Lake Wallenpaupack","geo":{"@type":"GeoCoordinates","latitude":41.43,"longitude":-75.22}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+SC:wght@500;600;700&display=swap" rel="stylesheet">
@@ -229,6 +234,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
 </style>
 </head>
 <body class="far">
+<noscript><div style="max-width:640px;margin:40px auto;padding:0 16px;font:18px Georgia,serif"><h1>Lake Wallenpaupack map</h1><p>This 3D map of Lake Wallenpaupack needs JavaScript. The same places are listed in plain pages: <a href="/guide/">guides to the lake</a>, <a href="/guide/marinas.html">marinas</a>, <a href="/guide/public-access.html">public beaches and boat launches</a>, <a href="/guide/restaurants.html">restaurants</a>, <a href="/guide/places-to-stay.html">places to stay</a>, <a href="/guide/fishing.html">fishing</a>, <a href="/guide/real-estate.html">real estate market</a>.</p></div></noscript>
 <div id="stage">
   <canvas id="gl" tabindex="0" aria-label="3D map of Lake Wallenpaupack"></canvas>
   <div id="labels"></div>
@@ -268,7 +274,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
   <g id="needle"><path d="M30 6 L35 30 L30 27 L25 30 Z" fill="#7a3b2e"/><path d="M30 54 L35 30 L30 33 L25 30 Z" fill="#22303a" opacity=".55"/>
   <text x="30" y="5" text-anchor="middle" font-family="Georgia,serif" font-size="8" font-weight="700" fill="#22303a" dy="-1"></text></g></svg>
 </button>
-<div id="credit"><b>© 2026 DeWitt Hutchins. All rights reserved.</b> <a href="#" id="bLegal">Legal notice</a> · <a href="#" id="bBiz">For businesses</a><br>
+<div id="credit"><b>© 2026 DeWitt Hutchins. All rights reserved.</b> <a href="#" id="bLegal">Legal notice</a> · <a href="#" id="bBiz">For businesses</a> · <a href="/guide/">Guides</a> · <a href="/guide/real-estate.html">Market</a><br>
   <span class="long">An independent map — not an official publication of any community or business shown. Early draft: places come from public data and may be wrong or missing.</span>
   Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors, Overture Maps, USGS.</div>
 <div id="hint">Drag to move · right-drag or two fingers to turn · scroll or pinch to zoom · tap a pin · zoom in for houses, trees, boats and wildlife</div>

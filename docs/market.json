@@ -1,0 +1,313 @@
+{
+ "source": "Realtor.com\u00ae Economic Research",
+ "source_url": "https://www.realtor.com/research/data/",
+ "counties": [
+  {
+   "n": "Pike County",
+   "price": 331500.0,
+   "price_yy": -0.0501,
+   "active": 690.0,
+   "active_yy": 0.1755,
+   "days": 82.0,
+   "days_yy": 0.2331,
+   "new": 136.0,
+   "reduced_share": 0.1675,
+   "ppsf": 197.0,
+   "sqft": 1688.0,
+   "pending": 215.0
+  },
+  {
+   "n": "Wayne County",
+   "price": 385250.0,
+   "price_yy": 0.0395,
+   "active": 347.0,
+   "active_yy": 0.1158,
+   "days": 74.0,
+   "days_yy": -0.039,
+   "new": 76.0,
+   "reduced_share": 0.1618,
+   "ppsf": 208.0,
+   "sqft": 1909.0,
+   "pending": 114.0
+  }
+ ],
+ "zips": [
+  {
+   "zip": "18428",
+   "n": "Hawley",
+   "price": 359000.0,
+   "price_yy": -0.0477,
+   "active": 166.0,
+   "active_yy": 0.0957,
+   "days": 78.0,
+   "days_yy": 0.0909,
+   "new": 32.0,
+   "reduced_share": 0.1368,
+   "ppsf": 209.0,
+   "sqft": 1728.0,
+   "pending": 51.0
+  },
+  {
+   "zip": "18464",
+   "n": "Tafton",
+   "price": 489000.0,
+   "price_yy": 0.0032,
+   "active": 19.0,
+   "active_yy": -0.1556,
+   "days": 87.0,
+   "days_yy": 0.0679,
+   "new": 4.0,
+   "reduced_share": 0.0,
+   "ppsf": 247.0,
+   "sqft": 1966.0,
+   "pending": 5.0
+  },
+  {
+   "zip": "18426",
+   "n": "Greentown",
+   "price": 369000.0,
+   "price_yy": 0.0634,
+   "active": 53.0,
+   "active_yy": 0.0495,
+   "days": 86.0,
+   "days_yy": 0.1316,
+   "new": 4.0,
+   "reduced_share": 0.08,
+   "ppsf": 219.0,
+   "sqft": 1773.0,
+   "pending": 22.0
+  },
+  {
+   "zip": "18451",
+   "n": "Paupack",
+   "price": 469900.0,
+   "price_yy": 0.2564,
+   "active": 6.0,
+   "active_yy": -0.1429,
+   "days": 68.0,
+   "days_yy": -0.343,
+   "new": 0.0,
+   "reduced_share": 0.0,
+   "ppsf": 278.0,
+   "sqft": 2039.0,
+   "pending": 1.0
+  },
+  {
+   "zip": "18438",
+   "n": "Lakeville",
+   "price": 570000.0,
+   "price_yy": -0.0147,
+   "active": 12.0,
+   "active_yy": -0.4419,
+   "days": 87.0,
+   "days_yy": 0.3488,
+   "new": 4.0,
+   "reduced_share": 0.1481,
+   "ppsf": 245.0,
+   "sqft": 1930.0,
+   "pending": 7.0
+  },
+  {
+   "zip": "18436",
+   "n": "Lake Ariel",
+   "price": 369900.0,
+   "price_yy": 0.0879,
+   "active": 147.0,
+   "active_yy": 0.225,
+   "days": 73.0,
+   "days_yy": -0.1705,
+   "new": 24.0,
+   "reduced_share": 0.2115,
+   "ppsf": 199.0,
+   "sqft": 2002.0,
+   "pending": 47.0
+  },
+  {
+   "zip": "18445",
+   "n": "Newfoundland",
+   "price": 452450.0,
+   "price_yy": 0.1798,
+   "active": 25.0,
+   "active_yy": 0.1628,
+   "days": 105.0,
+   "days_yy": 0.8829,
+   "new": 4.0,
+   "reduced_share": 0.1212,
+   "ppsf": 224.0,
+   "sqft": 1848.0,
+   "pending": 3.0
+  },
+  {
+   "zip": "18431",
+   "n": "Honesdale",
+   "price": 320000.0,
+   "price_yy": -0.129,
+   "active": 30.0,
+   "active_yy": 0.0526,
+   "days": 53.0,
+   "days_yy": -0.124,
+   "new": 8.0,
+   "reduced_share": 0.1633,
+   "ppsf": 188.0,
+   "sqft": 1530.0,
+   "pending": 11.0
+  }
+ ],
+ "history": {
+  "Pike County": [
+   {
+    "y": 2016,
+    "price": 159900.0,
+    "active": 1388.0,
+    "days": 113.0
+   },
+   {
+    "y": 2017,
+    "price": 165725.0,
+    "active": 1159.0,
+    "days": 106.0
+   },
+   {
+    "y": 2018,
+    "price": 173500.0,
+    "active": 1045.0,
+    "days": 93.0
+   },
+   {
+    "y": 2019,
+    "price": 193568.0,
+    "active": 980.0,
+    "days": 99.0
+   },
+   {
+    "y": 2020,
+    "price": 258765.0,
+    "active": 407.0,
+    "days": 45.0
+   },
+   {
+    "y": 2021,
+    "price": 278000.0,
+    "active": 424.0,
+    "days": 63.0
+   },
+   {
+    "y": 2022,
+    "price": 299450.0,
+    "active": 422.0,
+    "days": 72.0
+   },
+   {
+    "y": 2023,
+    "price": 349900.0,
+    "active": 373.0,
+    "days": 68.0
+   },
+   {
+    "y": 2024,
+    "price": 344850.0,
+    "active": 497.0,
+    "days": 61.0
+   },
+   {
+    "y": 2025,
+    "price": 349000.0,
+    "active": 587.0,
+    "days": 67.0
+   },
+   {
+    "y": 2026,
+    "price": 331500.0,
+    "active": 690.0,
+    "days": 82.0
+   }
+  ],
+  "Wayne County": [
+   {
+    "y": 2016,
+    "price": 169999.0,
+    "active": 933.0,
+    "days": 122.0
+   },
+   {
+    "y": 2017,
+    "price": 179350.0,
+    "active": 759.0,
+    "days": 115.0
+   },
+   {
+    "y": 2018,
+    "price": 189225.0,
+    "active": 731.0,
+    "days": 103.0
+   },
+   {
+    "y": 2019,
+    "price": 195089.0,
+    "active": 649.0,
+    "days": 101.0
+   },
+   {
+    "y": 2020,
+    "price": 275000.0,
+    "active": 242.0,
+    "days": 49.0
+   },
+   {
+    "y": 2021,
+    "price": 295000.0,
+    "active": 225.0,
+    "days": 60.0
+   },
+   {
+    "y": 2022,
+    "price": 349000.0,
+    "active": 306.0,
+    "days": 75.0
+   },
+   {
+    "y": 2023,
+    "price": 359750.0,
+    "active": 235.0,
+    "days": 59.0
+   },
+   {
+    "y": 2024,
+    "price": 354500.0,
+    "active": 299.0,
+    "days": 72.0
+   },
+   {
+    "y": 2025,
+    "price": 370600.0,
+    "active": 311.0,
+    "days": 77.0
+   },
+   {
+    "y": 2026,
+    "price": 385250.0,
+    "active": 347.0,
+    "days": 74.0
+   }
+  ]
+ },
+ "month": "202610",
+ "seasonal": [
+  {
+   "n": "Palmyra Township, Pike County",
+   "share": 59.8
+  },
+  {
+   "n": "Paupack Township, Wayne County",
+   "share": 57.5
+  },
+  {
+   "n": "Pike County",
+   "share": 35.4
+  },
+  {
+   "n": "Wayne County",
+   "share": 30.6
+  }
+ ]
+}

@@ -282,12 +282,18 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
 <script type="module">
 import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
-import { initSky } from './sky.js?v=6';
+import { initSky } from './sky.js?v=7';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=7';
+import { initExtras, openNow } from './extras.js?v=8';
+import { initImmersive } from './immersive.js?v=1';
 
 const EX = 2.0;            // vertical exaggeration
 const WASH = '241,234,219', WASH_A = .56, FADE = 1300;   // the ground pales toward the edge of the detailed map and runs on, faded, past it
+const SEASONS = {summer: {leaf: ['#6f8a4a', '#5c7a4f', '#7d9456', '#688548', '#8a9a50'], pine: ['#3f5a4a', '#46634d', '#375244', '#4c6a50'], wash: null, water: '#9db4b1'},
+  fall: {leaf: ['#c8642c', '#d99a2b', '#b5452a', '#e0b23c', '#9c5a2a', '#c98a2e'], pine: ['#3f5a4a', '#46634d', '#375244', '#4c6a50'], wash: 'rgba(196,142,58,.2)', water: '#93aaad'},
+  winter: {leaf: ['#8f8778', '#9a9284', '#857d70'], pine: ['#5d7568', '#6a8274', '#55705f'], wash: 'rgba(250,251,252,.74)', water: '#dfe8ea'}};
+let SEASON = 'summer';                               // changed from the Time and season sheet; the ground, water and trees are repainted
+const LEAF_NOW = [...SEASONS.summer.leaf], PINE_NOW = [...SEASONS.summer.pine];
 const CATS = {
   water:  {label:'On the Water',   c:'#4f79a6'},
   food:   {label:'Food & Drink',   c:'#b5562f'},
@@ -301,7 +307,7 @@ const EMBED = new URLSearchParams(location.search).has('embed');   // a small co
 if (EMBED){ document.body.classList.add('embed'); const a = document.createElement('a'); a.id = 'full'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open the full map ↗';
   const q = new URLSearchParams(location.search); q.delete('embed'); a.href = location.pathname + (q.toString() ? '?' + q : ''); document.body.appendChild(a); }
 
-const D = await (await fetch('lake-data.json', { cache: 'no-cache' })).json();
+const [D, PATCH] = await Promise.all([fetch('lake-data.json', { cache: 'no-cache' }).then(r => r.json()), fetch('patches.json', { cache: 'no-cache' }).then(r => r.ok ? r.json() : null).catch(() => null)]);
 const M = D.meta, XS = M.xmax - M.xmin, ZS = M.zmax - M.zmin;
 
 /* ---------------- elevation ---------------- */
@@ -309,10 +315,22 @@ const demRaw = Uint8Array.from(atob(D.dem), c => c.charCodeAt(0));
 const dem16 = new Uint16Array(demRaw.buffer);
 const DW = M.demW, DH = M.demH;
 const hAt = (i, j) => dem16[Math.min(DH-1, Math.max(0, j)) * DW + Math.min(DW-1, Math.max(0, i))] / 10;
-function height(x, z){           // metres above the lowest point, bilinear
+function coarse(x, z){           // metres above the lowest point, bilinear
   const u = (x - M.xmin) / XS * (DW - 1), v = (z - M.zmin) / ZS * (DH - 1);
   const i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j;
   return (hAt(i,j)*(1-fu) + hAt(i+1,j)*fu)*(1-fv) + (hAt(i,j+1)*(1-fu) + hAt(i+1,j+1)*fu)*fv;
+}
+/* a few small boxes (the dam, the falls gorge) carry much finer elevation; inside one the ground follows it, easing back to the coarse model at the box's edge */
+const PATCHES = ((PATCH && PATCH.patches) || []).map(q => { const raw = Uint8Array.from(atob(q.d), c => c.charCodeAt(0)); return {...q, h: new Uint16Array(raw.buffer), x1: q.x0 + (q.n - 1) * q.step, z1: q.z0 + (q.n - 1) * q.step}; });
+const PEASE = 110;
+function height(x, z){
+  const c = coarse(x, z);
+  for (const q of PATCHES){ if (x <= q.x0 || x >= q.x1 || z <= q.z0 || z >= q.z1) continue;
+    const u = (x - q.x0) / q.step, v = (z - q.z0) / q.step, i = Math.min(q.n - 2, Math.floor(u)), j = Math.min(q.n - 2, Math.floor(v)), fu = u - i, fv = v - j, H = (a, b) => q.h[b * q.n + a] / 10;
+    const f = (H(i, j)*(1-fu) + H(i+1, j)*fu)*(1-fv) + (H(i, j+1)*(1-fu) + H(i+1, j+1)*fu)*fv;
+    let w = Math.min(1, Math.min(x - q.x0, q.x1 - x, z - q.z0, q.z1 - z) / PEASE); w = w * w * (3 - 2 * w);
+    return c + (f - c) * w; }
+  return c;
 }
 const Y = (x, z) => height(x, z) * EX;
 
@@ -383,6 +401,7 @@ function paint(x0, z0, x1, z1, TW, detail){
   const g = cv.getContext('2d'), S = TW / (x1 - x0), px = x => (x - x0) * S, pz = z => (z - z0) * S, on = (bb, pad = 60) => hits(bb, x0, z0, x1, z1, pad);
   g.imageSmoothingQuality = 'high';
   g.drawImage(shade, (x0 - M.xmin) / XS * DW, (z0 - M.zmin) / ZS * DH, (x1 - x0) / XS * DW, (z1 - z0) / ZS * DH, 0, 0, TW, TH);
+  if (SEASONS[SEASON].wash){ g.fillStyle = SEASONS[SEASON].wash; g.fillRect(0, 0, TW, TH); }
   const ring = r => { r.forEach((p, i) => i ? g.lineTo(px(p[0]), pz(p[1])) : g.moveTo(px(p[0]), pz(p[1]))); g.closePath(); };
   const line = r => { g.beginPath(); r.forEach((p, i) => i ? g.lineTo(px(p[0]), pz(p[1])) : g.moveTo(px(p[0]), pz(p[1]))); };
   g.lineJoin = g.lineCap = 'round';
@@ -391,7 +410,7 @@ function paint(x0, z0, x1, z1, TW, detail){
   for (const f of D.features) if (f.k === 'stream' && on(f.bb)){ line(f.p); g.strokeStyle = '#7f9c9d'; g.lineWidth = Math.max(1, 3*S); g.stroke(); }
   // water, with old-chart shore lines
   for (const w of D.water){ if (!on(w.bb)) continue;
-    g.beginPath(); ring(w.o); w.h.forEach(ring); g.fillStyle = '#9db4b1'; g.fill('evenodd');
+    g.beginPath(); ring(w.o); w.h.forEach(ring); g.fillStyle = SEASONS[SEASON].water; g.fill('evenodd');
     g.save(); g.clip('evenodd');
     for (let k = 3; k >= 1; k--){ g.beginPath(); ring(w.o); w.h.forEach(ring); g.strokeStyle = `rgba(232,238,228,${.16 + .07*(3-k)})`; g.lineWidth = k * (detail ? 16 : 34) * S; g.stroke(); }
     g.restore();
@@ -446,7 +465,7 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(32, 1, 30, 140000);
 await document.fonts.ready.catch(() => {});
 try { await Promise.all([document.fonts.load('600 14px "Cormorant SC"'), document.fonts.load('600 14px "Cormorant Garamond"')]); } catch(e){}
-const mapTex = paint(M.xmin, M.zmin, M.xmax, M.zmax, Math.round((small ? 3072 : 5120) * Math.min(1, XS / ZS)), false);
+let mapTex = paint(M.xmin, M.zmin, M.xmax, M.zmax, Math.round((small ? 3072 : 5120) * Math.min(1, XS / ZS)), false);
 
 /* terrain: one grid for the whole detailed map, cut into tiles so each can take a sharper painting when you come close */
 const NTX = M.ntx, NTZ = M.ntz, TWX = XS / NTX, TWZ = ZS / NTZ;
@@ -474,6 +493,30 @@ function buildTerrain(){
 }
 const terrain = buildTerrain();
 scene.add(terrain);
+/* the finer boxes: each gets its own close-set mesh and painting (with its own hill shading), and the coarse ground under it is pressed out of the way */
+const patchMeshes = PATCHES.map(q => {
+  const PM = 50, ax0 = q.x0 - PM, az0 = q.z0 - PM, ax1 = q.x1 + PM, az1 = q.z1 + PM, st = 8, nx = Math.round((ax1 - ax0) / st) + 1, nz = Math.round((az1 - az0) / st) + 1;
+  const geo = new THREE.PlaneGeometry(ax1 - ax0, az1 - az0, nx - 1, nz - 1).rotateX(-Math.PI / 2).translate((ax0 + ax1) / 2, 0, (az0 + az1) / 2), P = geo.attributes.position;
+  for (let i = 0; i < P.count; i++){ const x = P.getX(i), z = P.getZ(i), edge = x <= ax0 + 1 || x >= ax1 - 1 || z <= az0 + 1 || z >= az1 - 1; P.setY(i, Y(x, z) + (edge ? -14 : .35)); }
+  const tp = terrain.children[0].geometry.attributes.position;                       // one shared position list for every tile
+  for (let i = 0; i < tp.count; i++){ const x = tp.getX(i), z = tp.getZ(i); if (x > q.x0 && x < q.x1 && z > q.z0 && z < q.z1) tp.setY(i, tp.getY(i) - 70); }
+  tp.needsUpdate = true;
+  const tex = () => { const t = paint(ax0, az0, ax1, az1, 1536, true), cv = t.image, g = cv.getContext('2d'), W = cv.width, H = cv.height, N = 220, sm = document.createElement('canvas'); sm.width = sm.height = N;
+    const sg = sm.getContext('2d'), im = sg.createImageData(N, N), d = (ax1 - ax0) / N;
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++){ const x = ax0 + (i + .5) * d, z = az0 + (j + .5) * (az1 - az0) / N, gx = (height(x + d, z) - height(x - d, z)) / (2 * d), gz = (height(x, z + d) - height(x, z - d)) / (2 * d);
+      const lit = (-gx * -1 + 1.15 - gz * -1) / Math.hypot(gx * 3, 1, gz * 3) / 1.15, v = Math.max(0, Math.min(1, .5 + (lit - 1) * 1.1 - Math.hypot(gx, gz) * .35)), o = (j * N + i) * 4, c = v < .5 ? 0 : 255;
+      im.data[o] = im.data[o+1] = im.data[o+2] = c; im.data[o+3] = Math.min(84, Math.abs(v - .5) * 230); }
+    sg.putImageData(im, 0, 0); g.imageSmoothingQuality = 'high'; g.drawImage(sm, 0, 0, W, H); t.needsUpdate = true; return t; };
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: tex()})); m.userData.repaint = () => { m.material.map.dispose(); m.material.map = tex(); m.material.needsUpdate = true; };
+  scene.add(m); return m; });
+function setSeason(k){                               // repaint the ground and water, and let the close-up tiles grow their trees again in the new colours
+  if (!SEASONS[k] || k === SEASON) return; SEASON = k;
+  LEAF_NOW.splice(0, LEAF_NOW.length, ...SEASONS[k].leaf); PINE_NOW.splice(0, PINE_NOW.length, ...SEASONS[k].pine);
+  const old = mapTex; mapTex = paint(M.xmin, M.zmin, M.xmax, M.zmax, old.image.width, false);
+  for (const t of tiles){ if (t.state === 2) sleepTile(t); else if (!t.state){ t.mesh.material.map = mapTex; t.mesh.material.needsUpdate = true; } }
+  for (const t of tiles) if (!t.state){ t.mesh.material.map = mapTex; t.mesh.material.needsUpdate = true; }
+  old.dispose(); for (const m of patchMeshes) m.userData.repaint();
+}
 
 /* the country beyond: a coarse, pale relief that runs on past the detailed map and fades into the page, so the map has no edge */
 const farMat = (() => {
@@ -545,6 +588,7 @@ async function wakeTile(t){
   t.tex = paint(t.x0, t.z0, t.x1, t.z1, TPX, true); t.tex.repeat.set(NTX, NTZ); t.tex.offset.set(-t.i, t.j + 1 - NTZ);
   t.mesh.material.map = t.tex; t.mesh.material.needsUpdate = true;
   let blds = []; try { blds = await (await fetch(`tiles/b_${t.i}_${t.j}.json`)).json(); } catch(e){}
+  t.blds = blds;
   if (iso) blds = blds.filter(b => inIso(b.p[0][0], b.p[0][1], 40));
   if (t.state === 1){ t.group = new THREE.Group(); const hm = housesMesh(blds); if (hm) t.group.add(hm);
     life.dress(t, blds); tileGroup.add(t.group); t.state = 2; }
@@ -1132,7 +1176,7 @@ const life = (() => {
   /* each tile that wakes up is dressed: a mask of what is water, roof and road, then trees in the open ground and a few animals */
   const lit = geo => { const n = geo.attributes.normal, c = []; for (let i = 0; i < n.count; i++){ const s = .66 + .34 * Math.max(0, n.getX(i) * -.5 + n.getY(i) * .6 + n.getZ(i) * -.62); c.push(s, s, s); } geo.setAttribute('color', new THREE.Float32BufferAttribute(c, 3)); return geo; };
   const pineG = lit(new THREE.ConeGeometry(1, 2.6, 6).translate(0, 1.6, 0)), leafG = lit(new THREE.IcosahedronGeometry(1, 0).scale(1, 1.05, 1).translate(0, 1.5, 0));
-  const PINE = ['#3f5a4a', '#46634d', '#375244', '#4c6a50'], LEAF = ['#6f8a4a', '#5c7a4f', '#7d9456', '#688548', '#8a9a50'], treeMat = new THREE.MeshBasicMaterial({vertexColors: true});
+  const PINE = PINE_NOW, LEAF = LEAF_NOW, treeMat = new THREE.MeshBasicMaterial({vertexColors: true});
   const PIED = toXZ(41.3985, -75.2690);                                   // the piebald buck keeps to his own neighborhood
   function dress(t, blds){
     const MP = 5, mw = Math.ceil((t.x1 - t.x0) / MP), mh = Math.ceil((t.z1 - t.z0) / MP), c = document.createElement('canvas'); c.width = mw; c.height = mh;
@@ -1214,6 +1258,7 @@ if (EDIT){
   });
 }
 
+const imm = {riding: () => false, update(){}};      // filled in below once the page is up: rides, sound, moving water, the time and season dial
 const sky = initSky({THREE, scene, camera, M, D, Y, openSheet, flyTo, esc, chips, maxH, panel, tiles, getCamD: () => camD});
 
 /* ---------------- loop ---------------- */
@@ -1229,12 +1274,13 @@ function frame(now){
     if (k >= 1) fly = null;
   }
   controls.update();
+  imm.update(now);                                   // a ride takes the camera over here
   if (controls.target.y < 0) controls.target.y = 0;
-  if (!fly){ const pad = 9000; controls.target.x = Math.min(M.xmax + pad, Math.max(M.xmin - pad, controls.target.x)); controls.target.z = Math.min(M.zmax + pad, Math.max(M.zmin - pad, controls.target.z)); }
+  if (!fly && !imm.riding()){ const pad = 9000; controls.target.x = Math.min(M.xmax + pad, Math.max(M.xmin - pad, controls.target.x)); controls.target.z = Math.min(M.zmax + pad, Math.max(M.zmin - pad, controls.target.z)); }
   offTmp.copy(camera.position).sub(controls.target); sphTmp.setFromVector3(offTmp);
   if (isFinite(sphTmp.theta)) needle.setAttribute('transform', `rotate(${(sphTmp.theta * 180 / Math.PI).toFixed(1)} 30 30)`);
   document.body.classList.toggle('far', sphTmp.radius > 3600);
-  camD = sphTmp.radius;
+  camD = imm.riding() ? 2300 : sphTmp.radius;       // during a ride the surroundings are dressed as if seen from a little way off
   if (farMat){ farMat.uniforms.fadeB.value = Math.min(62000, Math.max(9000, camD * 1.5)); farMat.uniforms.fadeA.value = farMat.uniforms.fadeB.value * .08; }
   tilesUpdate(controls.target.x, controls.target.z, camD);
   life.update(now, camD); sky.update(now);
@@ -1245,6 +1291,7 @@ function frame(now){
 requestAnimationFrame(frame);
 { const ld = document.getElementById('load'); ld.classList.add('done'); setTimeout(() => ld.remove(), 900); }
 window.__lake = {sky, life, tiles, camera, controls, flyTo, place, HOME, THREE, routeTo, gotFix, D, renderer};
+if (!EMBED) initImmersive({THREE, scene, camera, controls, canvas, renderer, D, M, Y, terrain, tiles, flyTo, panel, openSheet, esc, chips, say, addLabel, items, sky, setSeason, season: () => SEASON, getCamD: () => camD, stopFly: () => { fly = null; }, small}).then(o => Object.assign(imm, o)).catch(e => console.error(e));
 if ('serviceWorker' in navigator && !new URLSearchParams(location.search).has('tour')) navigator.serviceWorker.register('sw.js').catch(() => {});   // keeps the last-loaded map for weak signal
 </script>
 </body>

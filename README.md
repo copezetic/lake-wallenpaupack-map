@@ -117,3 +117,9 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - Sponsors can carry an `offer` {text, until}; the Boating sheet has a trip measurer (`?measure`).
 - `docs/falls.json` — waterfalls: a pin plus an illustrated moving cascade along the creek line (`?falls` flies to it).
 - `docs/links.json` — owners' own reservation and ordering links for food places; without one a card shows Call plus search links to OpenTable, DoorDash, Uber Eats and Grubhub. Interstates (ref "I nn") are drawn bolder and named by the viewer.
+
+## Immersion (added 2026-11-26)
+
+- `docs/immersive.js` — rides (`?ride=boat|507|6|train`), browser-made sound, the moving-water and cloud-shadow skin, house lights after dark, the Time & season sheet (`?hour=21.5`, `?season=fall|winter`), the dam wall and a few landmark buildings at their mapped height.
+- `docs/rides.json` and `docs/patches.json` — built by `data/build_rides.py`: the lake's centreline, PA 507 and US 6 chained from the road data, the rail line and dam outline from OSM, and ~6 m elevation (Terrarium zoom 14) for the dam and the falls gorge. Rerun it after `build.py` whenever the area changes.
+- Seasons repaint the ground, water and trees (`SEASONS` in `index.html`); the clock override lives in `sky.js` (`setClock`).

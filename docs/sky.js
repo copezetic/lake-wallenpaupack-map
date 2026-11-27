@@ -51,14 +51,16 @@ export function initSky(c){
     const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'}).formatToParts(d).map(x => [x.type, x.value]));
     return {ymd: `${p.year}-${p.month}-${p.day}`, md: `${p.month}-${p.day}`, h: +p.hour + +p.minute / 60};
   }
-  function sunAlt(d = new Date()){                    // degrees above the horizon, good to about a degree
+  let handHour = null;                               // an hour set by hand from the Time and season sheet, or null for the real time
+  const nowD = () => { if (handHour == null) return new Date(); const d = new Date(), h = lakeDate(d).h; return new Date(d.getTime() + (handHour - h) * 36e5); };
+  function sunAlt(d = nowD()){                    // degrees above the horizon, good to about a degree
     const n = d / 864e5 - 10957.5, L = (280.46 + .9856474 * n) % 360, g = (357.528 + .9856003 * n) * Math.PI / 180;
     const lam = (L + 1.915 * Math.sin(g) + .02 * Math.sin(2 * g)) * Math.PI / 180, eps = 23.439 * Math.PI / 180;
     const ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam)), dec = Math.asin(Math.sin(eps) * Math.sin(lam));
     const gmst = (18.697374558 + 24.06570982441908 * n) % 24, ha = (gmst * 15 + LON) * Math.PI / 180 - ra, la = LAT * Math.PI / 180;
     return Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(ha)) * 180 / Math.PI;
   }
-  const dark = () => Q.has('day') ? 0 : Q.has('night') || Q.has('fx') ? 1 : Math.min(1, Math.max(0, (3 - sunAlt()) / 10));   // 0 by day, 1 once the sun is 7° down
+  const dark = () => handHour != null ? Math.min(1, Math.max(0, (3 - sunAlt()) / 10)) : Q.has('day') ? 0 : Q.has('night') || Q.has('fx') ? 1 : Math.min(1, Math.max(0, (3 - sunAlt()) / 10));   // 0 by day, 1 once the sun is 7° down
 
   /* ---------- weather: National Weather Service hourly forecast for the lake ---------- */
   const W = {kind: 'clear', heavy: 0, cover: 0, wind: 0, dir: 270, temp: null, text: '', periods: [], alerts: [], ok: false};
@@ -349,5 +351,5 @@ export function initSky(c){
   let last = 0;
   return { update(now){ const t = now / 1000, dt = Math.min(.05, t - last || 0); last = t; const camD = getCamD();
       mood(t); precip(t, dt); drift(dt, camD); if (show) fireworks(t, dt, camD); flySanta(t, dt, camD); },
-    W, eventsSheet };
+    W, eventsSheet, dark, sunAlt, lakeDate, setClock(h){ handHour = h; }, handHour: () => handHour, startFireworks(){ const site = EV.fireworks || {lat: 41.4585, lon: -75.1795}, [x, z] = toXZ(site.lat, site.lon); startShow(x, z, 'Fireworks'); return [x, z]; } };
 }

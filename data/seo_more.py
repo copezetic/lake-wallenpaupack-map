@@ -12,7 +12,13 @@ COMS_ = []; seen = set()
 for t in sorted((t for t in D['towns'] if t.get('k') == 'community' or t.get('a')), key=lambda t: t['n']):
     if sl(t['n']) not in seen: seen.add(sl(t['n'])); COMS_.append(t)
 MAR = cat('water', ('Marina',)); FOOD = cat('food'); STAY = cat('stay'); FUN = cat('nature')
-ANAME = {i['poi']: i['n'] for s in J('access')['sections'] for i in s.get('items', []) if i.get('poi') in BY}; ACC = [BY[k] for k in ANAME]
+ACC = []                                           # the public beach and the public launches only, from access.json
+for s_ in J('access')['sections'][:2]:
+    for i in s_.get('items', []):
+        q = BY.get(i.get('poi')); la, lo = (q['dlat'], q['dlon']) if q else (i.get('lat'), i.get('lon'))
+        if la is None: continue
+        pid = i.get('poi') if q else 'acc-' + sl(i['n']); ANAME[pid] = i['n']
+        ACC.append({'id': pid, 'name': i['n'], 'kind': 'Public beach' if s_['title'] == 'Swim' else 'Public boat launch', 'x': (lo - M['lon0']) * M['kx'], 'z': -(la - M['lat0']) * M['kz']})
 for t in COMS_:
     tn = nearest(t, TOWNPTS)[0] if TOWNPTS else None
     desc = f"{t['n']} is one of the lake communities around Lake Wallenpaupack{', about ' + format(mi(t, tn), '.1f') + ' miles from ' + tn['n'] if tn else ''}. See it on the 3D map, with the nearest marinas, public access and places to eat."

@@ -12,7 +12,7 @@
   "soon": "Enquiries open soon.",
   "fine": "An independent map, not affiliated with any community, utility or business shown.",
   "contact": {
-    "email": "dewitt.hutchins@gmail.com",
+    "email": "info@wallymap.com",
     "form": "",
     "price": ""
   },
@@ -23,5 +23,33 @@
   },
   "counter": {
     "goatcounter": ""
+  },
+  "purpose": "WallyMap is the one map of Lake Wallenpaupack that shows everything in one place: the water, the shoreline, the communities and the businesses around it. It is free for anyone to use. The goal is simple: make it easier to find your way around the lake, and easier for the people who live and work here to be found.",
+  "now": [
+    "Claim your pin and correct your hours, phone and links",
+    "Offers and specials shown on your pin",
+    "'Book or order' links to your reservation and delivery pages",
+    "A map of your location to embed on your own website",
+    "A printable QR card that opens the map at your door"
+  ],
+  "coming": [
+    "Featured pins: always visible, and first in your town's guide",
+    "A detailed layout of your property, as on the marinas and golf courses",
+    "A short video of your business on the map for your social media",
+    "A monthly report of how many people viewed your pin"
+  ],
+  "communities": {
+    "title": "For lake communities",
+    "intro": "Seventy-eight lake communities are already named on the map, each with its own page. For homeowner and property owner associations, more is on the way.",
+    "now": [
+      "Your community named and placed on the lake map",
+      "A guest link that opens the map at a specific house, for renters and visitors"
+    ],
+    "coming": [
+      "A private, detailed map just for your community: roads, amenities and lot numbers",
+      "Community events and notices shown to residents",
+      "Directions to a specific lot for emergency services and contractors"
+    ],
+    "fine": "An independent map, not affiliated with any community or association shown. Private community maps are made with the association, not without it."
   }
 }

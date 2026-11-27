@@ -460,6 +460,31 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     const sc = document.createElement('script'); sc.async = true; sc.src = 'https://gc.zgo.at/count.js'; sc.dataset.goatcounter = `https://${BZ.counter.goatcounter}.goatcounter.com/count`; document.head.appendChild(sc);
   }
 
+  /* ---------- waterfalls: a pin and a small moving cascade where the creek drops (falls.json) ---------- */
+  const added = new Set(((SP && SP.sponsors) || []).filter(s => s.add).map(s => s.poi));
+  const FL = await getJSON('falls.json'), flows = [];
+  for (const f of (FL && FL.falls) || []){
+    const [x, z] = toXZ(f.lat, f.lon), p = {id: f.id, name: f.n, cat: 'nature', kind: 'Waterfall', x, z, dlat: f.lat, dlon: f.lon, blurb: f.blurb, facts: f.facts, url: f.url, urlLabel: f.urlLabel, major: true};
+    const el = document.createElement('button'); el.className = 'lb pin'; el.style.setProperty('--c', CATS.nature.c); el.innerHTML = `<span class="tag"></span><span class="stem"></span><span class="dot"></span>`;
+    el.firstChild.textContent = p.name; el.addEventListener('click', e => { e.stopPropagation(); openPlace(p); }); pinEls.set(p.id, el); addLabel(el, x, z, 14).poi = p; D.pois.push(p); added.add(p.id);
+    /* the cascade: the creek's line through the falls, stepped down in three drops and painted with running white water */
+    const pts = f.line.map(q => toXZ(q[0], q[1])), cum = [0]; for (let i = 1; i < pts.length; i++) cum.push(cum[i-1] + Math.hypot(pts[i][0] - pts[i-1][0], pts[i][1] - pts[i-1][1]));
+    const L = cum[cum.length - 1], at = d => { let i = 1; while (i < pts.length - 1 && cum[i] < d) i++; const k = (d - cum[i-1]) / (cum[i] - cum[i-1] || 1); return [pts[i-1][0] + (pts[i][0] - pts[i-1][0]) * k, pts[i-1][1] + (pts[i][1] - pts[i-1][1]) * k]; };
+    const prof = [[0, 11], [.3, 11], [.33, 7], [.5, 7], [.53, 3.6], [.68, 3.6], [.71, 1], [1, 1]], W = f.width || 13, pos = [], uv = [], idx = [];
+    prof.forEach(([t, lift], i) => { const a = at(Math.max(0, t * L - 1)), b = at(Math.min(L, t * L + 1)), c0 = at(t * L), dx = b[0] - a[0], dz = b[1] - a[1], n = Math.hypot(dx, dz) || 1, ox = -dz / n * W / 2, oz = dx / n * W / 2;
+      const y = Y(c0[0], c0[1]) + lift; pos.push(c0[0] + ox, y, c0[1] + oz, c0[0] - ox, y, c0[1] - oz); const v = t * L / 14 + (11 - lift) / 5; uv.push(0, -v, 1, -v);
+      if (i){ const k = i * 2; idx.push(k - 2, k, k - 1, k - 1, k, k + 1); } });
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 128; const g = cv.getContext('2d'); g.fillStyle = '#b9d3d6'; g.fillRect(0, 0, 64, 128);
+    for (let i = 0; i < 70; i++){ g.fillStyle = `rgba(255,255,255,${.35 + Math.random() * .6})`; g.fillRect(Math.random() * 64, Math.random() * 128, 1 + Math.random() * 3, 8 + Math.random() * 34); }
+    const tex = new THREE.CanvasTexture(cv); tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.colorSpace = THREE.SRGBColorSpace;
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(idx);
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: tex, side: THREE.DoubleSide})); m.renderOrder = 2; scene.add(m); flows.push(tex);
+    const end = at(L), foam = new THREE.Mesh(new THREE.CircleGeometry(W * .7, 14).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({color: '#f4f8f8', transparent: true, opacity: .75, depthWrite: false})); foam.position.set(end[0], Y(end[0], end[1]) + 1.2, end[1]); scene.add(foam);
+  }
+  if (Q.has('falls') && FL && FL.falls && FL.falls[0]){ const [fx, fz] = toXZ(FL.falls[0].lat, FL.falls[0].lon); setTimeout(() => flyTo(fx, fz, 380), 900); }   // ?falls goes straight to the waterfall
+  if (flows.length){ let last = performance.now(); const run = now => { const dt = Math.min(.1, (now - last) / 1000); last = now; for (const t of flows) t.offset.y += dt * .9; requestAnimationFrame(run); }; requestAnimationFrame(run); }
+  { const pid = Q.get('p'); if (pid && added.has(pid) && !c.EMBED){ const p = D.pois.find(p => p.id === pid); if (p) setTimeout(() => openPlace(p), 300); } }   // places added here load after the page's own ?p= check
+
   if (Q.has('town')){ const t = TOWNS.find(t => t.n.toLowerCase() === Q.get('town').toLowerCase()); if (t) setTimeout(() => townSheet(t.n), 800); }
 
   /* ---------- the overview tour: ?tour plays a captioned fly-through with the controls hidden, for recording a video ---------- */

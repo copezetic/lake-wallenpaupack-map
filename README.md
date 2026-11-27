@@ -115,3 +115,4 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - `docs/markers.json` — PHMC state historical markers (public domain, data.pa.gov xt8f-pzzz), shown in the History sheet with the 1928 map.
 - `docs/parks.json` — closer looks. The animal park is hand-kept (`hand: true`); golf courses, marinas and campgrounds are rebuilt by `data/build_looks.py` from OSM.
 - Sponsors can carry an `offer` {text, until}; the Boating sheet has a trip measurer (`?measure`).
+- `docs/falls.json` — waterfalls: a pin plus an illustrated moving cascade along the creek line (`?falls` flies to it).

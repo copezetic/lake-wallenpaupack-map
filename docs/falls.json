@@ -1,0 +1,51 @@
+{
+ "_note": "Waterfalls drawn on the map. line is the creek's course through the falls, upstream first (from OpenStreetMap); the cascade itself is an illustration. Facts come from the source named.",
+ "falls": [
+  {
+   "id": "paupack-high-falls",
+   "n": "Paupack High Falls",
+   "lat": 41.47207,
+   "lon": -75.17102,
+   "line": [
+    [
+     41.47151,
+     -75.1717
+    ],
+    [
+     41.47194,
+     -75.17113
+    ],
+    [
+     41.47207,
+     -75.17102
+    ],
+    [
+     41.47217,
+     -75.17098
+    ],
+    [
+     41.47229,
+     -75.17099
+    ],
+    [
+     41.47256,
+     -75.17111
+    ]
+   ],
+   "blurb": "A waterfall on Wallenpaupack Creek in Hawley, about a mile below the dam. It drops through a rock gorge beside an 1890 glass factory that is now Ledges Hotel, whose wine bar has open-air decks overlooking the falls.",
+   "facts": [
+    [
+     "Beside",
+     "Ledges Hotel, 119 Falls Avenue, Hawley"
+    ],
+    [
+     "On",
+     "Wallenpaupack Creek"
+    ]
+   ],
+   "url": "https://ledgeshotel.com/",
+   "urlLabel": "Ledges Hotel",
+   "source": "ledgeshotel.com, checked 2026-11-26"
+  }
+ ]
+}

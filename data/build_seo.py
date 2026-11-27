@@ -29,8 +29,8 @@ def page(path, title, desc, body, ld=None, kick='Lake Wallenpaupack'):
     nav = ''.join(f'<a href="/guide/{s}.html">{e(t)}</a>' for s, t in NAV)
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{e(title)}</title><meta name="description" content="{e(desc[:158])}"><link rel="canonical" href="{SITE}/{path}">
-<meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc[:158])}"><meta property="og:image" content="{SITE}/og.jpg"><meta property="og:url" content="{SITE}/{path}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/icon-192.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
+<meta property="og:title" content="{e(title)}"><meta property="og:description" content="{e(desc[:158])}"><meta property="og:image" content="{SITE}/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:site_name" content="WallyMap"><meta name="twitter:image" content="{SITE}/og.jpg"><meta property="og:url" content="{SITE}/{path}"><meta property="og:type" content="article"><meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/svg+xml" href="/logo.svg"><link rel="apple-touch-icon" href="/icon-180.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
 <style>{CSS}</style>{'<script type="application/ld+json">' + json.dumps(ld).replace('</', '<\\/') + '</script>' if ld else ''}</head>
 <body><main><div class="top"><a href="/">WallyMap · the whole lake in 3D</a><a href="/guide/">All guides</a></div>
 <div class="kick">{e(kick)}</div>{body}

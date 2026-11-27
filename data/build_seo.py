@@ -35,7 +35,7 @@ def page(path, title, desc, body, ld=None, kick='Lake Wallenpaupack'):
 <body><main><div class="top"><a href="/">WallyMap · the whole lake in 3D</a><a href="/guide/">All guides</a></div>
 <div class="kick">{e(kick)}</div>{body}
 <h2>More guides</h2><nav class="g">{nav}</nav>
-<p class="fine">An independent map of Lake Wallenpaupack, not affiliated with the places shown. Details come from the sources named and can be out of date: check with the place before you go. Page built {TODAY}.</p></main></body></html>"""
+<p class="fine">An independent map of Lake Wallenpaupack, not affiliated with the places shown. Details come from the sources named and can be out of date: check with the place before you go. Page built {TODAY}.</p></main><!-- Cloudflare Web Analytics: page views only, no cookies --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "671646e84d3f4599956f46f296fa6530"}}'></script></body></html>"""
     os.makedirs(os.path.dirname('../docs/' + path), exist_ok=True); open('../docs/' + path, 'w').write(doc); URLS.append(path)
 URLS = []
 # ---- place pages

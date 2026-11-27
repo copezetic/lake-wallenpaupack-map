@@ -69,5 +69,6 @@ document.getElementById('span').onchange = draw; document.getElementById('shape'
 document.getElementById('dl').onclick = () => { const a = document.createElement('a'); a.download = 'lake-wallenpaupack-' + range()[0] + '.png'; a.href = cv.toDataURL('image/png'); a.click(); };
 Promise.all([fetch('events.json', {cache: 'no-cache'}).then(r => r.json()), document.fonts.load("600 92px 'Cormorant Garamond'"), document.fonts.load("700 30px 'Cormorant SC'"), document.fonts.load("italic 500 36px 'Cormorant Garamond'")]).then(([j]) => { EV = j.events || []; draw(); });
 </script>
+<!-- Cloudflare Web Analytics: page views only, no cookies --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "671646e84d3f4599956f46f296fa6530"}'></script>
 </body>
 </html>

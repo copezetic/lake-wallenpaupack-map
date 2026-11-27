@@ -1328,5 +1328,6 @@ if (!EMBED && !LITE) initImmersive({THREE, scene, camera, controls, canvas, rend
 if(!EMBED) initVisitor({D,CATS,hooks,panel,esc,closePanel,openSheet,openPlace,flyTo,say,share,pinEls,LITE,hidden,getOrigin:()=>me || [controls.target.x,controls.target.z],hasLocation:()=>!!me,setSearchIds:ids=>{for(const [id,el] of pinEls)el.classList.toggle('search-off',!!ids&&!ids.has(id));}});
 if ('serviceWorker' in navigator && !new URLSearchParams(location.search).has('tour')) navigator.serviceWorker.register('sw.js').catch(() => {});   // keeps the last-loaded map for weak signal
 </script>
+<!-- Cloudflare Web Analytics: page views only, no cookies --><script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "671646e84d3f4599956f46f296fa6530"}'></script>
 </body>
 </html>

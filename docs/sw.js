@@ -1,5 +1,5 @@
 // Ordinary browsing caches visited files. Explicit downloads commit only after every asset succeeds.
-const CACHE='wallymap-runtime-v3', OFFLINE='wallymap-offline-v2', STATUS='__offline_status__';
+const CACHE='wallymap-runtime-v4', OFFLINE='wallymap-offline-v2', STATUS='__offline_status__';
 const KEEP=u=>u.origin===location.origin || ['cdn.jsdelivr.net','fonts.googleapis.com','fonts.gstatic.com'].includes(u.hostname);
 const keyFor=u=>u.origin===location.origin?u.origin+u.pathname:u.href;
 self.addEventListener('install',()=>self.skipWaiting());
@@ -13,7 +13,8 @@ self.addEventListener('fetch',e=>{
   const cache=await caches.open(CACHE),offline=await caches.open(OFFLINE),full=fullKey(u),bare=keyFor(u),versioned=full!==bare;
   const same=await cache.match(full);
   const any=async()=>same||await cache.match(bare)||await offline.match(bare);
-  const net=fetch(e.request).then(async r=>{if(r.ok||r.type==='opaque'){await cache.put(full,r.clone());if(versioned)await cache.put(bare,r.clone());}else{const s=await any();if(s)return s;}return r;});
+  // our own files are always re-checked with the server (a cheap 'not modified' when unchanged), so the browser's ten-minute cache can never hand back a stale page or script
+  const net=(u.origin===location.origin?fetch(u.href,{cache:'no-cache'}):fetch(e.request)).then(async r=>{if(r.ok||r.type==='opaque'){await cache.put(full,r.clone());if(versioned)await cache.put(bare,r.clone());}else{const s=await any();if(s)return s;}return r;});
   const safe=net.catch(async()=>(await any())||Response.error());
   if(!same||!versioned&&e.request.mode==='navigate')return safe;          // pages always try the network first, with no timer
   return Promise.race([safe,new Promise(resolve=>setTimeout(()=>resolve(same),3500))]);

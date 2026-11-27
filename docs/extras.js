@@ -374,6 +374,18 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<p class="fine">Listing figures: <a href="${esc(MK.source_url)}" target="_blank" rel="noopener">${esc(MK.source)}</a>. They describe homes listed for sale (asking prices), not recorded sale prices, and cover whole counties and ZIP codes, not just lakefront. ZIP codes with few listings swing widely. Seasonal shares: U.S. Census Bureau, American Community Survey. General information only, not an appraisal or advice.</p>`);
     addChip('Market', marketSheet); if (Q.has('market')) setTimeout(marketSheet, 800);
   }
+  /* stocking up: groceries, beer distributors and wine and spirits stores, nearest the middle of the view first */
+  { const KS = [['Grocery store', 'Groceries'], ['Beer distributor', 'Beer'], ['Wine and spirits store', 'Wine and spirits']];
+    const has = D.pois.some(p => KS.some(k => k[0] === p.kind));
+    if (has && !c.EMBED){
+      const stockSheet = () => { const t = controls.target;
+        openSheet('Stock up', 'Groceries, beer and liquor', `<p>Nearest to the middle of your view first. In Pennsylvania, liquor is sold at state wine and spirits stores and cases of beer at beer distributors.</p>` +
+          KS.map(([k, lab]) => { const l = D.pois.filter(p => p.kind === k).sort((a, b) => Math.hypot(a.x - t.x, a.z - t.z) - Math.hypot(b.x - t.x, b.z - t.z));
+            return l.length ? `<div class="sec">${lab} · ${l.length}</div><div class="plist">${l.map(p => `<button data-stk="${esc(p.id)}"><b>${esc(p.name)}</b><small>${esc((p.facts || []).filter(f => f[0] === 'Address').map(f => f[1])[0] || '')}</small></button>`).join('')}</div>` : ''; }).join('') +
+          `<p class="fine">From public map data; hours are not listed, so check before a late run.</p>`);
+        panel.querySelectorAll('button[data-stk]').forEach(b => b.onclick = () => { const p = D.pois.find(p => p.id === b.dataset.stk); if (p) openPlace(p); }); };
+      addChip('Groceries & beer', stockSheet); if (Q.has('stockup')) setTimeout(stockSheet, 800);
+    } }
   /* power cuts: where to check and report them. Links only (outages.json says why) */
   const PWR = await getJSON('outages.json');
   if (PWR && (PWR.utilities || []).length && !c.EMBED){

@@ -31,7 +31,7 @@ for t in COMS_:
 guide('communities', 'Lake communities on Lake Wallenpaupack', f'{len(COMS_)} named communities and developments around the shore of Lake Wallenpaupack, each placed on the 3D map.',
       '<ul class="l">' + ''.join(f'<li><a href="/community/{sl(t["n"])}.html">{e(t["n"])}</a></li>' for t in COMS_) + '</ul>', '?c=' + sl(COMS_[0]['n']) if COMS_ else '')
 # ---- towns
-TOWNS_ = ['Hawley', 'Honesdale', 'Greentown', 'Lake Ariel', 'Tafton', 'Lakeville', 'Newfoundland']
+TOWNS_ = ['Hawley', 'Honesdale', 'Greentown', 'Lake Ariel', 'Hamlin', 'Tafton', 'Lakeville', 'Newfoundland']
 def intown(n): return [p for p in sorted(POIS, key=lambda p: p['name']) if town(p) == n]
 for n in TOWNS_:
     ps = intown(n); sec = ''
@@ -50,3 +50,9 @@ guide('boat-rentals', 'Boat rentals and tours on Lake Wallenpaupack', f'{len(ONL
 SHORE = sorted((p for p in FOOD if _LAKE.distance(_Pt(p['x'], p['z'])) <= 150), key=lambda p: _LAKE.distance(_Pt(p['x'], p['z'])))
 guide('waterfront-dining', 'Restaurants by the water on Lake Wallenpaupack', f'{len(SHORE)} places to eat and drink within about 500 feet of the Lake Wallenpaupack shoreline, nearest the water first. Being close to the shore does not mean a place has a lake view or a dock: see Dock and dine for those that say boaters can arrive by water.',
       '<ul class="l">' + ''.join(f'<li>{plink(p["id"])}<small>{e(p["kind"])} · about {max(10, round(_LAKE.distance(_Pt(p["x"], p["z"])) * 3.281 / 10) * 10):.0f} ft from the shoreline{" · " + e(dict(p["facts"]).get("Address", "")) if dict(p["facts"]).get("Address") else ""}</small></li>' for p in SHORE) + '</ul><p><a href="/guide/dock-and-dine.html">Dock and dine →</a></p>')
+
+# ---- groceries, beer and liquor
+_ST = [('Grocery store', 'Grocery stores'), ('Beer distributor', 'Beer distributors'), ('Wine and spirits store', 'Wine and spirits stores')]
+def stl(k): return '<ul class="l">' + ''.join(f'<li><b>{e(p["name"])}</b> · <a href="/?p={e(p["id"])}">on the map</a><small>{e(dict(p.get("facts", [])).get("Address", ""))}{" · " + e(dict(p.get("facts", [])).get("Phone", "")) if dict(p.get("facts", [])).get("Phone") else ""}</small></li>' for p in sorted(POIS, key=lambda p: p["name"]) if p["kind"] == k) + '</ul>'
+guide('groceries-beer-and-liquor', 'Groceries, beer and liquor around Lake Wallenpaupack', 'Where to stock up around Lake Wallenpaupack: grocery stores, beer distributors, and the state wine and spirits stores. In Pennsylvania, liquor is sold at state Fine Wine & Good Spirits stores and cases of beer at beer distributors.',
+      ''.join(f'<h2>{t}</h2>{stl(k)}' for k, t in _ST) + '<p class="fine">From OpenStreetMap and Overture Maps; hours are not listed here, so check before a late run. Some groceries and restaurants also sell beer and wine to go, which this list does not cover.</p>', '?stockup')

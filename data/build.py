@@ -449,6 +449,22 @@ for i in range(NTX):
         b = tiles.get((i, j), []); nb += len(b)
         json.dump(b, open(os.path.join(site, 'tiles', f'b_{i}_{j}.json'), 'w'), separators=(',', ':'))
 
+# ---- groceries, beer and liquor: the stops every visitor needs, so they are always-visible pins with plain kinds
+def staple(o):
+    n, k = o['name'], o['kind']
+    if o['cat'] != 'shops': return None
+    if re.search(r'wine\s*(&|and)\s*spirits', n, re.I) or k == 'Wine & spirits': return 'Wine and spirits store'
+    if k in ('Liquor store', 'Beer wine spirits store', 'Shop') and re.search(r'beverage|beer|distribut', n, re.I): return 'Beer distributor'
+    if k in ('Grocery store', 'Grocery', 'Supermarket'): return 'Grocery store'
+    return None
+keep_ = []
+for o in sorted(pois, key=lambda o: -len(o.get('facts', []))):
+    st = staple(o)
+    if st:
+        if any(staple(q) == st and math.hypot(q['x'] - o['x'], q['z'] - o['z']) < 130 for q in keep_): continue      # the same shop listed twice under two names
+        o['kind'] = st; o['major'] = True
+    keep_.append(o)
+pois = sorted(keep_, key=lambda o: o['name'])
 # the lake's shoreline comes from lidar when fetch_shore.py has run: far sharper than the volunteer outline
 if os.path.exists('lake_shore.json'):
     SH = json.load(open('lake_shore.json')); xz_ = lambda r: [[round((q[1] - lon0) * KX, 1), round(-(q[0] - lat0) * KZ, 1)] for q in r]

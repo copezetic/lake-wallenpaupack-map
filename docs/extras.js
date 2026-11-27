@@ -35,7 +35,7 @@ export function openNow(p){                    // {open, text} or null when the 
 }
 
 export async function initExtras(c){
-  const {THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chips, items, pinEls, addLabel, place, controls, camera, say, share, CATS} = c;
+  const {THREE, scene, D, M, Y, openSheet, openPlace, flyTo, esc, panel, chips, items, pinEls, addLabel, place, controls, camera, say, share, CATS, terrain, canvas} = c;
   const toXZ = (lat, lon) => [(lon - M.lon0) * M.kx, -(lat - M.lat0) * M.kz];
   const css = document.createElement('style');
   css.textContent = `#panel .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 10px}
@@ -48,7 +48,8 @@ export async function initExtras(c){
 .pin.feat .tag{font-weight:700;border-width:2px;border-color:#7a3b2e;padding:2px 10px 3px;font-size:16px}.pin.feat .dot{width:12px;height:12px;border-color:#7a3b2e}.pin.feat .stem{height:22px;background:#7a3b2e}
 .pin.sale .tag{background:#7a3b2e;color:var(--card);border-color:#7a3b2e;font-weight:700;font-size:13.5px}.pin.sale .stem{height:18px;background:#7a3b2e}.pin.sale .dot{background:#7a3b2e}
 body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.tour #compass,body.tour #hint,body.tour #panel,body.tour #credit .long,body.tour #bLegal{display:none!important}
-.lb.pk{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink);background:rgba(247,242,230,.92);border:1px solid var(--ink);padding:2px 6px 1px;pointer-events:none}.lb.pk.an{font:italic 600 13px var(--serif);letter-spacing:0;border-color:#7a3b2e;color:#5a2a20}
+.lb.pk{font:700 10.5px var(--sc);letter-spacing:.12em;color:var(--ink);background:rgba(247,242,230,.92);border:1px solid var(--ink);padding:2px 6px 1px;pointer-events:none}.lb.pk.hm{border-color:#5a4a8c;color:#3d2f6b;font-style:italic;letter-spacing:.04em;font-family:var(--serif);font-size:12.5px}.lb.mdot{width:10px;height:10px;border-radius:50%;background:#b0351f;border:2px solid #fff;pointer-events:none}
+.lb.pk.an{font:italic 600 13px var(--serif);letter-spacing:0;border-color:#7a3b2e;color:#5a2a20}
 #tourCap{position:fixed;left:0;right:0;bottom:11%;z-index:8;text-align:center;pointer-events:none;opacity:0;transition:opacity .9s}
 #tourCap.on{opacity:1}@media (orientation:portrait){#tourCap{bottom:17%}}#tourCap b{display:inline-block;max-width:88vw;font:600 clamp(30px,4.6vw,64px)/1.05 var(--serif);color:var(--ink);background:rgba(247,242,230,.9);padding:.18em .5em .22em;box-shadow:6px 6px 0 rgba(34,48,58,.16);border:1px solid var(--ink)}
 #tourCap span{display:block;margin:.7em auto 0;width:fit-content;max-width:86vw;font:700 clamp(12px,1.25vw,17px) var(--sc);letter-spacing:.16em;color:var(--card);background:var(--ink);padding:.55em 1em .45em}`;
@@ -92,7 +93,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   function townSheet(name){
     const t = TOWNS.find(t => t.n === name) || TOWNS[0]; if (!t) return;
     const here = D.pois.filter(p => inTown(t, p)).sort((a, b) => a.name.localeCompare(b.name)), sp = here.filter(p => p.sponsor);
-    const row = p => { const o = openNow(p); return `<button data-poi="${esc(p.id)}">${esc(p.name)}<small>${esc(p.kind || '')}${o && o.open ? ' · open now' : ''}</small>${p.sponsor ? '<span class="sp">Sponsored</span>' : ''}</button>`; };
+    const row = p => { const o = openNow(p); return `<button data-poi="${esc(p.id)}">${esc(p.name)}<small>${esc(p.kind || '')}${o && o.open ? ' · open now' : ''}</small>${p.sponsor ? `<span class="sp">Sponsored${p.sponsor.offer ? ' · offer' : ''}</span>` : ''}</button>`; };
     openSheet('Town guide', t.n, `<div class="tabs">${TOWNS.map(o => `<button data-town="${esc(o.n)}" aria-pressed="${o === t}">${esc(o.n)}</button>`).join('')}</div>
       <p>${here.length} places in and around ${esc(t.n)}. Tap one to see it on the map.</p>` +
       (sp.length ? `<div class="sec">Sponsored</div><div class="plist">${sp.map(row).join('')}</div>` : '') +
@@ -156,6 +157,33 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
 
   /* ---------- boating: the rules, fuel and pump-outs, and the no-wake band along the shore ---------- */
   const BO = await getJSON('boating.json');
+  const DINE = (d => d && (d.sections || []).some(s => (s.items || []).length) ? d : null)(await getJSON('dine.json')), dineSheet = () => guide(DINE, 'On the water', 'Dock and dine');
+  if (DINE && Q.has('dine')) setTimeout(dineSheet, 800);
+  /* measuring a trip: tap points along the way; straight lines between taps, so follow the channel with a few taps */
+  const measure = (() => {
+    const pts = [], tags = [], ray = new THREE.Raycaster(); let on = false, line = null, dn = null;
+    const mat = new THREE.LineBasicMaterial({color: '#b0351f', depthTest: false, transparent: true});
+    const total = () => pts.reduce((a, q, i) => i ? a + Math.hypot(q.x - pts[i-1].x, q.z - pts[i-1].z) : 0, 0);
+    const draw = () => { if (line){ scene.remove(line); line.geometry.dispose(); line = null; }
+      if (pts.length > 1){ line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.map(q => new THREE.Vector3(q.x, q.y + 3, q.z))), mat); line.renderOrder = 20; line.frustumCulled = false; scene.add(line); } };
+    const dot = q => { const el = document.createElement('div'); el.className = 'lb mdot'; const it = addLabel(el, q.x, q.z, 3, 'center'); tags.push(it); };
+    const undot = () => { const it = tags.pop(); if (it){ it.el.remove(); const i = items.indexOf(it); if (i >= 0) items.splice(i, 1); } };
+    const sheet = () => { const m = total(), mi = m / 1609.34, min = v => Math.max(1, Math.round(mi / v * 60));
+      openSheet('On the water', 'Measure a trip', `<p>${pts.length ? '' : 'Tap the map where you start, then tap along your way. '}Each tap adds a straight leg, so a few taps will follow the channel.</p>
+        <div class="big" style="font:600 30px var(--serif);margin:4px 0">${pts.length > 1 ? (mi < .2 ? Math.round(m * 3.28084) + ' ft' : mi.toFixed(mi < 10 ? 2 : 1) + ' mi') : '—'}</div>
+        ${pts.length > 1 && mi >= .2 ? `<p>About ${min(25)} min at 25 mph · ${min(10)} min at 10 mph · ${min(4)} min paddling at 4 mph</p>` : ''}
+        <div class="acts"><button class="btn" id="mUndo">Undo</button><button class="btn" id="mClear">Clear</button><button class="btn pri" id="mDone">Done</button></div>
+        <p class="fine">A straight-line estimate on this map, not a chart: it ignores no-wake areas, shallows and other boats.</p>`);
+      panel.querySelector('#mUndo').onclick = () => { pts.pop(); undot(); draw(); sheet(); };
+      panel.querySelector('#mClear').onclick = () => { pts.length = 0; while (tags.length) undot(); draw(); sheet(); };
+      panel.querySelector('#mDone').onclick = () => { on = false; pts.length = 0; while (tags.length) undot(); draw(); panel.querySelector('.x').click(); }; };
+    if (canvas && terrain){ canvas.addEventListener('pointerdown', e => dn = [e.clientX, e.clientY]);
+      canvas.addEventListener('pointerup', e => { if (!on || !dn || Math.hypot(e.clientX - dn[0], e.clientY - dn[1]) > 6) return;
+        const r = canvas.getBoundingClientRect(); ray.setFromCamera(new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1), camera);
+        const hit = ray.intersectObject(terrain, true)[0]; if (!hit) return; pts.push(hit.point.clone()); dot(hit.point); draw(); sheet(); }); }
+    return {start(){ on = true; sheet(); }};
+  })();
+  if (Q.has('measure')) setTimeout(() => measure.start(), 800);
   if (BO){
     let band = null;
     function makeBand(){
@@ -171,7 +199,8 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       m.position.set((x0 + x1) / 2, lvl, (z0 + z1) / 2); m.renderOrder = 3; m.visible = false; scene.add(m); return m;
     }
     const chip = addChip('Boating', () => {
-      guide(BO, 'On the water', 'Boating', BO.bandFeet ? `<button class="wide" id="bandBtn" style="margin:0 0 6px"></button>` : '');
+      guide(BO, 'On the water', 'Boating', `<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px">${BO.bandFeet ? '<button class="wide" id="bandBtn" style="margin:0"></button>' : ''}<button class="wide" id="measBtn" style="margin:0">Measure a trip</button>${DINE ? '<button class="wide" id="dineBtn" style="margin:0">Dock and dine</button>' : ''}</div>`);
+      panel.querySelector('#measBtn').onclick = () => measure.start(); const db = panel.querySelector('#dineBtn'); if (db) db.onclick = dineSheet;
       const b = panel.querySelector('#bandBtn'); if (!b) return;
       const label = () => b.textContent = band && band.visible ? 'Hide the no-wake band' : `Show the ${BO.bandFeet}-foot no-wake band`;
       label(); b.onclick = () => { band = band || makeBand(); if (!band) return; band.visible = !band.visible; chip.classList.toggle('fx', band.visible); label();
@@ -181,7 +210,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
   }
 
   /* ---------- public access, and eating by boat: both are guide sheets kept in JSON, every entry with its source ---------- */
-  for (const [file, label, kick, title, q] of [['access.json', 'Public access', 'Open to everyone', 'Public access', 'access'], ['dine.json', 'Dock & dine', 'On the water', 'Dock and dine', 'dine']]){
+  for (const [file, label, kick, title, q] of [['access.json', 'Public access', 'Open to everyone', 'Public access', 'access']]){
     const F = await getJSON(file); if (!F || !(F.sections || []).some(s => (s.items || []).length)) continue;
     const chip = addChip(label, () => guide(F, kick, title));
     if (Q.has(q)) setTimeout(() => chip.click(), 800);
@@ -198,20 +227,28 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({map: tex, transparent: true, opacity: op, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -6, polygonOffsetUnits: -6}));
       m.renderOrder = 2; m.visible = false; scene.add(m); return m;
     };
-    const chip = addChip('1928 map', () => {
+    const MK = await getJSON('markers.json'); let pinned = false;
+    const histSheet = auto => {
+      const ms = (MK && MK.markers) || [];
       openSheet('History', 'The lake when it was new',
         `<p>The dam at Wilsonville was finished in 1926. These are the first government survey maps made afterwards: the western sheet was surveyed in 1927–28 and the eastern in 1935, when the lake was a few years old and most of today's communities were still farms and woods.</p>
          <button class="wide" id="oldBtn" style="margin:0 0 10px"></button>
          <label style="display:block;font:700 11px var(--sc);letter-spacing:.13em">Old map ⟷ today<input id="oldOp" type="range" min="0" max="100" value="${Math.round(op * 100)}" style="display:block;width:100%;margin-top:6px"></label>
-         <p class="fine">No survey of the valley before the flooding exists in this collection, so the farms and the village of Wilsonville under the water are not shown. The two sheets were printed in different colours and meet down the middle of the lake. They cover the lake and south; Honesdale is off the top.</p>
-         <p class="fine">Maps: U.S. Geological Survey, Historical Topographic Map Collection (Ariel, Pa., surveyed 1927–28; Hawley, Pa., 1935 edition).</p>`);
+         <p class="fine">No survey of the valley before the flooding exists in this collection, so the farms and the village of Wilsonville under the water are not shown. The two sheets were printed in different colours and meet down the middle of the lake. They cover the lake and south; Honesdale is off the top.</p>` +
+        (ms.length ? `<div class="sec">State historical markers · ${ms.length}</div><div class="plist">${ms.map((m, i) => `<button data-mk="${i}">${esc(m.n)}<small>${m.year ? 'Dedicated ' + esc(m.year) : 'Marker'}${m.missing ? ' · may no longer be standing' : ''}</small></button>`).join('')}</div>
+         <p class="fine">Markers: Pennsylvania Historical and Museum Commission, public-domain data. Positions come from street addresses and are approximate; read the marker itself for its story.</p>` : '') +
+        `<p class="fine">Maps: U.S. Geological Survey, Historical Topographic Map Collection (Ariel, Pa., surveyed 1927–28; Hawley, Pa., 1935 edition).</p>`);
       const b = panel.querySelector('#oldBtn'), r = panel.querySelector('#oldOp');
       const label = () => b.textContent = old && old.visible ? 'Hide the old map' : 'Show the old map';
       const toggle = on => { old = old || make(); old.visible = on; chip.classList.toggle('fx', on); label(); };
       b.onclick = () => toggle(!(old && old.visible)); r.oninput = () => { op = r.value / 100; if (old) old.material.opacity = op; };
-      if (!old || !old.visible) toggle(true); else label();
-    });
-    if (Q.has('old')) setTimeout(() => chip.click(), 800);
+      if (auto && !(old && old.visible)) toggle(true); else label();
+      if (!pinned){ pinned = true; for (const m of ms){ const [x, z] = toXZ(m.lat, m.lon), el = document.createElement('div'); el.className = 'lb pk hm'; el.textContent = m.n; addLabel(el, x, z, 7, 'center').maxD = 7000; } }
+      panel.querySelectorAll('button[data-mk]').forEach(bt => bt.onclick = () => { const m = ms[+bt.dataset.mk], [x, z] = toXZ(m.lat, m.lon); flyTo(x, z, 1300); });
+    };
+    const chip = addChip('History', () => histSheet(false));
+    if (Q.has('history')) setTimeout(() => histSheet(false), 800);
+    if (Q.has('old')) setTimeout(() => histSheet(true), 800);
   }
 
   /* ---------- a closer look at one place: its paths, buildings and facilities from open map data, and, for an animal park, figures of the animals it says it keeps ---------- */
@@ -270,6 +307,14 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       g.lineJoin = g.lineCap = 'round';
       trace(pk.boundary, true); g.fillStyle = 'rgba(214,224,180,.5)'; g.fill();
       for (const r of pk.parking || []){ trace(r, true); g.fillStyle = '#d9d2c2'; g.fill(); }
+      for (const r of pk.fairways || []){ trace(r, true); g.fillStyle = '#b9d08a'; g.fill(); }
+      for (const r of pk.greens || []){ trace(r, true); g.fillStyle = '#8fc070'; g.fill(); g.strokeStyle = '#5c8a4a'; g.lineWidth = Math.max(1, .3 * S); g.stroke(); }
+      for (const r of pk.tees || []){ trace(r, true); g.fillStyle = '#7fae62'; g.fill(); }
+      for (const r of pk.bunkers || []){ trace(r, true); g.fillStyle = '#efe3bd'; g.fill(); }
+      for (const r of pk.ponds || []){ trace(r, true); g.fillStyle = '#9fbcc0'; g.fill(); }
+      for (const r of pk.pitches || []){ trace(r, true); g.fillStyle = 'rgba(190,170,120,.55)'; g.fill(); g.strokeStyle = '#8a7350'; g.lineWidth = Math.max(1, .25 * S); g.stroke(); }
+      for (const l of pk.holes || []){ trace(l); g.setLineDash([3 * S, 3 * S]); g.strokeStyle = 'rgba(60,80,50,.6)'; g.lineWidth = Math.max(1, .5 * S); g.stroke(); g.setLineDash([]); }
+      for (const l of pk.piers || []){ trace(l); g.strokeStyle = '#8a7350'; g.lineWidth = 2.4 * S; g.stroke(); }
       for (const l of pk.drives || []){ trace(l); g.strokeStyle = '#e6dfcf'; g.lineWidth = 4.5 * S; g.stroke(); }
       for (const l of pk.paths || []){ trace(l); g.strokeStyle = '#8a7350'; g.lineWidth = 3.6 * S; g.stroke(); g.strokeStyle = '#ecdcb4'; g.lineWidth = 2.8 * S; g.stroke(); }
       for (const r of pk.buildings || []){ trace(r, true); g.fillStyle = '#b9a98c'; g.fill(); g.strokeStyle = '#5a4a3a'; g.lineWidth = Math.max(1, .35 * S); g.stroke(); }
@@ -279,7 +324,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       for (let i = 0; i < P.count; i++) P.setY(i, Y(P.getX(i), P.getZ(i)) + .7);
       const plane = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({map: tex, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -5, polygonOffsetUnits: -5})); plane.renderOrder = 3; grp.add(plane);
       grp.add(new THREE.HemisphereLight('#ffffff', '#8a8370', 2.4));
-      const tag = (text, x, z, cls, lift) => { const el = document.createElement('div'); el.className = 'lb pk ' + cls; el.textContent = text; const it = addLabel(el, x, z, lift, 'center'); it.maxD = cls === 'an' ? 1100 : 2600; return it; };
+      const tag = (text, x, z, cls, lift) => { const el = document.createElement('div'); el.className = 'lb pk ' + cls; el.textContent = text; const it = addLabel(el, x, z, lift, 'center'); it.maxD = cls === 'an' ? 1100 : pk.labelD || 2600; return it; };
       for (const q of pk.pts || []){ const [x, z] = xz(q.ll); tag(q.n, x, z, 'fa', 5); }
       /* the figures stand beside the footpaths, evenly spaced: decoration, not a plan of the enclosures */
       const segs = []; let total = 0; for (const l of pk.paths || []){ const q = l.map(xz); for (let i = 1; i < q.length; i++){ const d = Math.hypot(q[i][0] - q[i-1][0], q[i][1] - q[i-1][1]); segs.push([q[i-1], q[i], d]); total += d; } }
@@ -296,17 +341,53 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       if (!grp) build();
       const A = pk.animals || [];
       openSheet(pk.kick || 'A closer look', poi.name,
-        (pk.intro ? `<p>${esc(pk.intro)}</p>` : '') +
+        (pk.intro ? `<p>${esc(pk.intro)}</p>` : '') + (pk.lines || []).map(l => `<p>${esc(l)}</p>`).join('') +
         (A.length ? `<div class="sec">Animals the park lists</div>` + A.map(gp => `<p style="margin:6px 0 0"><b>${esc(gp.t)}</b><br>${esc(gp.list.join(' · '))}</p>`).join('') : '') +
         (pk.things && pk.things.length ? `<div class="sec">Things to do</div>` + pk.things.map(t => `<div class="gi"><h3>${esc(t.n)}</h3><p>${esc(t.note || '')}</p></div>`).join('') : '') +
         (pk.visit ? `<div class="sec">Visiting</div><p>${esc(pk.visit)}</p>` : '') +
-        `<div class="acts">${pk.url ? `<a class="btn pri" href="${esc(pk.url)}" target="_blank" rel="noopener">Park's website</a>` : ''}<button class="btn" id="pkPlace">Directions</button><button class="btn" id="pkShare">Share</button></div>
+        `<div class="acts">${pk.url ? `<a class="btn pri" href="${esc(pk.url)}" target="_blank" rel="noopener">Website</a>` : ''}<button class="btn" id="pkPlace">Directions</button><button class="btn" id="pkShare">Share</button></div>
          <p class="fine">${esc(pk.fine || '')}${pk.updated ? ' Checked ' + esc(pk.updated) + '.' : ''}</p>`);
       panel.querySelector('#pkPlace').onclick = () => openPlace(poi); panel.querySelector('#pkShare').onclick = () => share(poi.name, '?park=' + encodeURIComponent(pk.id));
       const c0 = bnd.reduce((a, q) => [a[0] + q[0] / bnd.length, a[1] + q[1] / bnd.length], [0, 0]), at = pk.focus ? xz(pk.focus) : c0; flyTo(at[0], at[1], pk.viewD || 520);
     };
     poi.park = pk; if (c.hooks) (c.hooks.parks = c.hooks.parks || {})[poi.id] = parkSheet;
     if (Q.get('park') === pk.id) setTimeout(parkSheet, 900);
+  }
+
+  /* ---------- essentials and getting here (built by data/fetch_essentials.py from OpenStreetMap) ---------- */
+  const ES = await getJSON('essentials.json');
+  if (ES && ((ES.groups || []).some(g => g.items.length) || (ES.here || []).length)){
+    const GOT = (ES.groups || []).some(g => g.items.length);
+    const ONE = {'Hospital and urgent care': 'Clinic', 'Pharmacy': 'Pharmacy', 'Groceries': 'Supermarket', 'Gas': 'Gas station', 'EV charging': 'EV charger', 'ATM and banks': 'ATM', 'Public restrooms': 'Restroom'};
+    let pinned = false; const flat = [];
+    const essSheet = () => {
+      flat.length = 0; const hrs = m => { m = Math.round(m / 5) * 5; return m < 60 ? m + ' min' : `${Math.floor(m / 60)} h${m % 60 ? ' ' + m % 60 + ' min' : ''}`; };
+      openSheet('Practical', GOT ? 'Essentials' : 'Getting here', (ES.groups.filter(g => g.items.length).map(g => `<div class="sec">${esc(g.t)} · ${g.items.length}</div><div class="plist">${g.items.map(it => { flat.push(it);
+          return `<button data-e="${flat.length - 1}">${esc(it.n || ONE[g.t] || g.t)}${it.er ? ' · emergency room' : ''}<small>${esc([it.a, it.h].filter(Boolean).join(' · '))}</small></button>`; }).join('')}</div>`).join('')) +
+        (ES.here && ES.here.length ? `<div class="sec">Getting here</div>${ES.here.map(h => `<p style="margin:3px 0"><b>${esc(h.n)}</b> · ${h.mi} miles · about ${hrs(h.min)}</p>`).join('')}<p class="fine">Driving to the visitors center by the dam, worked out from OpenStreetMap roads with no traffic or stops. Allow more on summer weekends.</p>` : '') +
+        (!GOT ? '' : `<p class="fine">In an emergency call 911. Places come from OpenStreetMap volunteers and may be out of date or missing: phone ahead for anything urgent.${ES.updated ? ' Gathered ' + esc(ES.updated) + '.' : ''}</p>`));
+      panel.querySelectorAll('button[data-e]').forEach(b => b.onclick = () => { const it = flat[+b.dataset.e], [x, z] = toXZ(it.lat, it.lon); flyTo(x, z, 1300); });
+      if (!pinned){ pinned = true; for (const g of ES.groups) for (const it of g.items){ const [x, z] = toXZ(it.lat, it.lon), el = document.createElement('div'); el.className = 'lb pk fa'; el.textContent = it.n || ONE[g.t] || g.t; addLabel(el, x, z, 6, 'center').maxD = 4200; } }
+    };
+    addChip(GOT ? 'Essentials' : 'Getting here', essSheet); if (Q.has('essentials')) setTimeout(essSheet, 800);
+  }
+
+  /* ---------- find by: a few things you can tell from the map itself, plus whatever owners have told us (tags.json) ---------- */
+  { const TG = (await getJSON('tags.json')) || {}, lake = D.water.filter(w => w.n === 'Lake Wallenpaupack').map(w => w.o);
+    const seg = (p, a, b) => { const dx = b[0] - a[0], dz = b[1] - a[1], t = Math.max(0, Math.min(1, ((p.x - a[0]) * dx + (p.z - a[1]) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(p.x - a[0] - t * dx, p.z - a[1] - t * dz); };
+    const shore = p => { let d = 1e9; for (const r of lake) for (let i = 1; i < r.length; i++){ if (Math.abs(r[i][0] - p.x) > 600 && Math.abs(r[i-1][0] - p.x) > 600) continue; d = Math.min(d, seg(p, r[i-1], r[i])); } return d; };
+    const boat = new Set(DINE ? DINE.sections.flatMap(s => (s.items || []).map(i => i.poi)) : []);
+    const sets = [
+      {id: 'lake', label: 'On the lake', why: 'Places to eat, drink or stay within about 300 feet of the lake shore, measured on this map. Being near the water is not the same as having a view or a dock.', list: () => D.pois.filter(p => (p.cat === 'food' || p.cat === 'stay') && shore(p) < 92)},
+      {id: 'boat', label: 'Arrive by boat', why: 'Places that say customers can come by boat. Call ahead about docking.', list: () => D.pois.filter(p => boat.has(p.id))},
+      {id: 'open', label: 'Open now', why: 'Only places whose hours are on the map; most have not told us theirs yet.', list: () => D.pois.filter(p => { const o = openNow(p); return o && o.open; })},
+      ...Object.entries(TG.tags || {}).map(([id, t]) => ({id, label: t.label, why: t.why || 'Told to us by the owners.', list: () => D.pois.filter(p => (TG.places && TG.places[p.id] || []).includes(id))}))];
+    const findSheet = id => { const lists = sets.map(t => ({...t, got: t.list().sort((a, b) => a.name.localeCompare(b.name))})).filter(t => t.got.length || t.id === 'open'), t = lists.find(t => t.id === id) || lists[0]; if (!t) return;
+      openSheet('Find by', t.label, `<div class="tabs">${lists.map(o => `<button data-tag="${esc(o.id)}" aria-pressed="${o === t}">${esc(o.label)}</button>`).join('')}</div><p>${esc(t.why)}</p>` +
+        (t.got.length ? `<div class="plist">${t.got.map(p => `<button data-poi="${esc(p.id)}">${esc(p.name)}<small>${esc(p.kind || '')}</small></button>`).join('')}</div>` : '<p><b>None right now.</b></p>') +
+        `<p class="fine">Run a place? Use 'Claim or correct' on its pin to add dog friendly, kid friendly, open late and more.</p>`);
+      panel.querySelectorAll('button[data-tag]').forEach(b => b.onclick = () => findSheet(b.dataset.tag)); };
+    addChip('Find by…', () => findSheet()); if (Q.has('find')) setTimeout(() => findSheet(Q.get('find')), 800);
   }
 
   /* ---------- day plans: the publisher's own picks; hidden until plans.json says approved (preview with ?plans=preview) ---------- */
@@ -341,8 +422,18 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       (CT.price ? `<p style="font:600 20px var(--serif);margin:10px 0 0">${esc(CT.price)}</p>` : '') +
       `<div class="acts">${mail}${form}<a class="btn" href="?demo&town=hawley">See a sample</a><a class="btn" href="?tour&wx=clear&day">Watch the tour</a></div>` +
       (mail || form ? '' : `<p><b>${esc(BZ.soon || 'Enquiries open soon.')}</b></p>`) +
+      `<div class="sec">Free tools</div><div class="acts"><a class="btn" href="?host">Guest link for rental hosts</a><button class="btn" id="bzEmbed">Map for your website</button></div>` +
       (DEMO ? '<p class="fine">Sample view: the contact and price shown here are placeholders.</p>' : '') +
       `<p class="fine">${esc(BZ.fine || '')}</p>`);
+    panel.querySelector('#bzEmbed').onclick = () => embedSheet(null);
+  }
+  function embedSheet(p){                                // a small copy of the map for a business's own website
+    const src = `${here}?embed${p ? '&p=' + encodeURIComponent(p.id) : ''}`, code = `<iframe src="${src}" title="Map of Lake Wallenpaupack" width="100%" height="420" style="border:1px solid #22303a" loading="lazy"></iframe>`;
+    openSheet('For your website', p ? p.name : 'The lake map', `<p>Paste this into your website where you want the map to appear${p ? ', centred on your pin' : ''}. It is free, and visitors can open the full map from it.</p>
+      <textarea id="emCode" rows="5" readonly style="width:100%;box-sizing:border-box;font:13px ui-monospace,Menlo,monospace;padding:8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)">${esc(code)}</textarea>
+      <div class="acts"><button class="btn pri" id="emCopy">Copy the code</button><a class="btn" href="${esc(src)}" target="_blank" rel="noopener">Preview</a></div>
+      <p class="fine">Most site builders have an "embed" or "HTML" block for this. The map may not be altered, and its credit line must stay visible.</p>`);
+    panel.querySelector('#emCopy').onclick = () => navigator.clipboard ? navigator.clipboard.writeText(code).then(() => say('Code copied.'), () => say('Could not copy.')) : panel.querySelector('#emCode').select();
   }
   function claimSheet(p){
     const f = (id, label, ph = '', type = 'text') => `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">${label}<input id="cl_${id}" type="${type}" placeholder="${esc(ph)}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></label>`;
@@ -351,15 +442,15 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<p>Run or own this place? Tell us what is right. Nothing is published until it has been checked.</p>` +
       f('who', 'Your name and role', 'Pat Smith, owner') + f('reach', 'Phone or email', '') + f('site', 'Website', 'https://') +
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Opening hours<textarea id="cl_hours" rows="3" placeholder="Mon–Thu 11–9, Fri–Sat 11–10, closed Sun; closed January" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>` +
-      tick('dock', 'Customers can arrive by boat') + tick('fuel', 'Fuel dock') + tick('pump', 'Pump-out') + tick('gone', 'This place has closed or moved') + tick('feat', 'Tell me about a featured pin') +
+      tick('dock', 'Customers can arrive by boat') + tick('fuel', 'Fuel dock') + tick('pump', 'Pump-out') + tick('dog', 'Dog friendly') + tick('kid', 'Good for kids') + tick('late', 'Open after 9 pm') + tick('gone', 'This place has closed or moved') + tick('feat', 'Tell me about a featured pin') +
       `<label style="display:block;margin:8px 0 0;font:700 11px var(--sc);letter-spacing:.13em">Anything else<textarea id="cl_note" rows="2" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;font:500 16px var(--serif);padding:7px 8px;border:1px solid var(--ink);background:#fffdf6;color:var(--ink)"></textarea></label>
-       <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Send by email</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a></div>` +
+       <div class="acts">${CT.email ? '<button class="btn pri" id="clSend">Send by email</button>' : CT.form ? '<button class="btn pri" id="clSend">Copy and open the form</button>' : ''}<button class="btn" id="clCopy">Copy the details</button><a class="btn" href="${esc(cardLink(p))}" target="_blank" rel="noopener">Print a QR card</a><button class="btn" id="clEmbed">Map for your website</button></div>` +
       (CT.email || CT.form ? '' : `<p><b>${esc(BZ.soon || 'Sending opens soon.')}</b> You can copy your details for now.</p>`) +
       `<p class="fine">${CT.email ? 'Send opens your own email app with the details filled in; attach a photo there if you would like one shown. ' : ''}Only send a photo you took or have the right to share.</p>`);
     const v = id => panel.querySelector('#cl_' + id), text = () => [`Place: ${p.name} (${p.kind || ''})`, `Map link: ${here}?p=${p.id}`, `From: ${v('who').value}`, `Reach me at: ${v('reach').value}`, `Website: ${v('site').value}`, `Hours: ${v('hours').value}`,
-      `Arrive by boat: ${v('dock').checked ? 'yes' : '-'}`, `Fuel dock: ${v('fuel').checked ? 'yes' : '-'}`, `Pump-out: ${v('pump').checked ? 'yes' : '-'}`, `Closed or moved: ${v('gone').checked ? 'yes' : '-'}`, `Featured pin: ${v('feat').checked ? 'please tell me more' : '-'}`, `Notes: ${v('note').value}`].join('\n');
+      `Arrive by boat: ${v('dock').checked ? 'yes' : '-'}`, `Fuel dock: ${v('fuel').checked ? 'yes' : '-'}`, `Pump-out: ${v('pump').checked ? 'yes' : '-'}`, `Dog friendly: ${v('dog').checked ? 'yes' : '-'}`, `Good for kids: ${v('kid').checked ? 'yes' : '-'}`, `Open after 9 pm: ${v('late').checked ? 'yes' : '-'}`, `Closed or moved: ${v('gone').checked ? 'yes' : '-'}`, `Featured pin: ${v('feat').checked ? 'please tell me more' : '-'}`, `Notes: ${v('note').value}`].join('\n');
     const copy = () => navigator.clipboard ? navigator.clipboard.writeText(text()).then(() => say('Details copied.'), () => say('Could not copy.')) : say('Could not copy.');
-    panel.querySelector('#clCopy').onclick = copy;
+    panel.querySelector('#clCopy').onclick = copy; panel.querySelector('#clEmbed').onclick = () => embedSheet(p);
     const send = panel.querySelector('#clSend'); if (send) send.onclick = () => { if (!v('who').value.trim() || !v('reach').value.trim()) return say('Please add your name and how to reach you.');
       if (CT.email) location.href = `mailto:${CT.email}?subject=${encodeURIComponent('Lake Wallenpaupack map: ' + p.name)}&body=${encodeURIComponent(text())}`; else { copy(); open(CT.form, '_blank', 'noopener'); } };
   }

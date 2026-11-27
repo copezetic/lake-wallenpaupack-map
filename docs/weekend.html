@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>This weekend at the lake · picture maker</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Cormorant+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f1eadb;color:#22303a;font:500 17px 'Cormorant Garamond',Georgia,serif;display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 12px}
+canvas{width:min(92vw,432px);height:auto;border:1px solid #22303a;box-shadow:6px 6px 0 rgba(34,48,58,.16)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+button,select{font:700 12px 'Cormorant SC',Georgia,serif;letter-spacing:.14em;color:#f7f2e6;background:#22303a;border:1px solid #22303a;padding:9px 13px 8px;cursor:pointer}
+select{background:#f7f2e6;color:#22303a}p{max-width:440px;margin:0;text-align:center}
+</style>
+</head>
+<body>
+<div class="bar"><select id="span"><option value="weekend">This weekend</option><option value="week">Next 7 days</option><option value="next">Next weekend</option></select>
+<select id="shape"><option value="1350">Portrait (Instagram, Facebook)</option><option value="1080">Square</option><option value="1920">Story</option></select>
+<button id="dl">Download the picture</button></div>
+<canvas id="c" width="1080" height="1350"></canvas>
+<p id="msg"></p>
+<p>Made from the events list on the map. Check the dates before posting; the map's link is on the picture.</p>
+<script>
+const TZ = 'America/New_York', ymd = d => new Intl.DateTimeFormat('en-CA', {timeZone: TZ}).format(d);
+const add = (s, n) => { const d = new Date(s + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const dow = s => new Date(s + 'T12:00:00').getDay(), fmt = (s, o) => new Date(s + 'T12:00:00').toLocaleDateString('en-US', o);
+const cv = document.getElementById('c'), g = cv.getContext('2d'), logo = new Image(); logo.src = 'logo.svg';
+let EV = [];
+function range(){ const today = ymd(new Date()), k = document.getElementById('span').value;
+  if (k === 'week') return [today, add(today, 6), 'The week ahead'];
+  let fri = today; const w = dow(today); if (w === 0) fri = add(today, -2); else if (w === 6) fri = add(today, -1); else fri = add(today, 5 - w);
+  if (k === 'next') fri = add(fri, 7); const a = fri < today && k !== 'next' ? today : fri;
+  return [a, add(fri, 2), k === 'next' ? 'Next weekend' : 'This weekend']; }
+function wrap(text, max){ const out = []; let line = ''; for (const w of text.split(' ')){ const t = line ? line + ' ' + w : w; if (g.measureText(t).width > max && line){ out.push(line); line = w; } else line = t; } if (line) out.push(line); return out; }
+function draw(){
+  const H = +document.getElementById('shape').value, W = 1080; cv.height = H;
+  const [a, b, title] = range(), list = EV.filter(e => e.d0 && e.d0 <= b && (e.d1 || e.d0) >= a).sort((x, y) => (x.d0 < a) - (y.d0 < a) || x.d0.localeCompare(y.d0));
+  g.fillStyle = '#f1eadb'; g.fillRect(0, 0, W, H); g.strokeStyle = '#22303a'; g.lineWidth = 3; g.strokeRect(28, 28, W - 56, H - 56); g.lineWidth = 1; g.strokeRect(40, 40, W - 80, H - 80);
+  g.textAlign = 'center'; g.fillStyle = '#22303a'; let y = H > 1500 ? 200 : 96;
+  if (logo.complete && logo.naturalWidth) g.drawImage(logo, W / 2 - 60, y, 120, 120); y += 170;
+  g.font = "700 30px 'Cormorant SC', Georgia, serif"; g.letterSpacing = '6px'; g.fillStyle = '#7a3b2e'; g.fillText('LAKE WALLENPAUPACK', W / 2, y); y += 84;
+  g.letterSpacing = '0px'; g.fillStyle = '#22303a'; g.font = "600 92px 'Cormorant Garamond', Georgia, serif"; g.fillText(title, W / 2, y); y += 52;
+  g.font = "italic 500 36px 'Cormorant Garamond', Georgia, serif"; g.fillText(fmt(a, {month: 'long', day: 'numeric'}) + (a === b ? '' : ' to ' + fmt(b, {month: 'long', day: 'numeric'})), W / 2, y); y += 40;
+  g.beginPath(); g.moveTo(140, y); g.lineTo(W - 140, y); g.stroke(); y += 30;
+  const foot = H - 150, room = foot - y, n = list.length, per = n ? Math.min(150, room / n) : 0, big = per >= 120; let shown = 0;
+  g.textAlign = 'left';
+  for (const e of list){ if (y + per > foot + 4) break; shown++;
+    g.fillStyle = '#7a3b2e'; g.font = `700 ${big ? 26 : 22}px 'Cormorant SC', Georgia, serif`; g.letterSpacing = '3px';
+    const wd = d => fmt(d, {weekday: 'short'}).toUpperCase(), e1 = e.d1 || e.d0;
+    const when = e1 === e.d0 ? wd(e.d0) : e.d0 < a && e1 > b ? 'ONGOING' : e.d0 < a ? 'TO ' + wd(e1) : e1 > b ? 'FROM ' + wd(e.d0) : wd(e.d0) + '–' + wd(e1);
+    g.fillText(when, 110, y + (big ? 44 : 38)); g.letterSpacing = '0px';
+    g.fillStyle = '#22303a'; g.font = `600 ${big ? 44 : 36}px 'Cormorant Garamond', Georgia, serif`; const lines = wrap(e.n, W - 400).slice(0, per >= 140 ? 2 : 1);
+    lines.forEach((l, i) => g.fillText(l, 290, y + (big ? 46 : 38) + i * (big ? 46 : 38)));
+    g.font = `italic 500 ${big ? 29 : 25}px 'Cormorant Garamond', Georgia, serif`; g.fillStyle = '#4a5a63'; g.fillText([e.time, e.where].filter(Boolean).join(' · ').slice(0, 58), 290, y + (big ? 46 : 38) * lines.length + (big ? 36 : 30));
+    y += per; }
+  if (!n){ g.textAlign = 'center'; g.font = "italic 500 40px 'Cormorant Garamond', Georgia, serif"; g.fillText('No dated events on the list for these days.', W / 2, y + 120); }
+  g.textAlign = 'center'; g.fillStyle = '#22303a'; g.font = "700 24px 'Cormorant SC', Georgia, serif"; g.letterSpacing = '4px';
+  g.fillText(n > shown ? `AND ${n - shown} MORE ON THE MAP` : 'SEE THEM ALL ON THE MAP', W / 2, H - 112); g.letterSpacing = '0px';
+  g.font = "500 27px 'Cormorant Garamond', Georgia, serif"; g.fillText((location.host + location.pathname.replace(/weekend\.html$/, '')).replace(/\/$/, ''), W / 2, H - 74);
+  document.getElementById('msg').textContent = n ? `${n} event${n === 1 ? '' : 's'} between ${fmt(a, {month: 'short', day: 'numeric'})} and ${fmt(b, {month: 'short', day: 'numeric'})}${n > shown ? `; ${shown} fit on the picture` : ''}.` : 'Nothing dated in that range.';
+}
+document.getElementById('span').onchange = draw; document.getElementById('shape').onchange = draw; logo.onload = draw;
+document.getElementById('dl').onclick = () => { const a = document.createElement('a'); a.download = 'lake-wallenpaupack-' + range()[0] + '.png'; a.href = cv.toDataURL('image/png'); a.click(); };
+Promise.all([fetch('events.json', {cache: 'no-cache'}).then(r => r.json()), document.fonts.load("600 92px 'Cormorant Garamond'"), document.fonts.load("700 30px 'Cormorant SC'"), document.fonts.load("italic 500 36px 'Cormorant Garamond'")]).then(([j]) => { EV = j.events || []; draw(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+ "_note": "Tags owners have told us about. tags: id -> label (and optional why). places: place id -> list of tag ids. Empty until owners reply through the claim form.",
+ "tags": {
+  "dog": {
+   "label": "Dog friendly"
+  },
+  "kid": {
+   "label": "Good for kids"
+  },
+  "late": {
+   "label": "Open late"
+  }
+ },
+ "places": {}
+}

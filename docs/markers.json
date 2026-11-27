@@ -1,0 +1,79 @@
+{
+ "_note": "State historical markers inside the map, from the Pennsylvania Historical and Museum Commission dataset on data.pa.gov (xt8f-pzzz, public domain). Names, years and address-derived positions only; no inscription text.",
+ "updated": "2026-11-26",
+ "markers": [
+  {
+   "n": "\"Winter Wonderland\"",
+   "lat": 41.574514,
+   "lon": -75.255677,
+   "year": "2021"
+  },
+  {
+   "n": "Delaware & Hudson Canal",
+   "lat": 41.57222,
+   "lon": -75.25555,
+   "year": "1947"
+  },
+  {
+   "n": "Dorflinger Glass Works",
+   "lat": 41.53,
+   "lon": -75.2,
+   "year": "1951"
+  },
+  {
+   "n": "General Lyman Louis Lemnitzer",
+   "lat": 41.572008,
+   "lon": -75.255353,
+   "year": "2022"
+  },
+  {
+   "n": "Honesdale",
+   "lat": 41.57756,
+   "lon": -75.27254,
+   "year": "1948"
+  },
+  {
+   "n": "Lincoln Nomination",
+   "lat": 41.57336,
+   "lon": -75.25586,
+   "year": "1968"
+  },
+  {
+   "n": "Ruth McGinnis (1911-1974)",
+   "lat": 41.56967,
+   "lon": -75.25413,
+   "year": "2016"
+  },
+  {
+   "n": "Stourbridge Lion",
+   "lat": 41.57693,
+   "lon": -75.25835,
+   "year": "1947"
+  },
+  {
+   "n": "Stourbridge Lion",
+   "lat": 41.57223,
+   "lon": -75.25554,
+   "year": "1947"
+  },
+  {
+   "n": "Wallenpaupack",
+   "lat": 41.3963,
+   "lon": -75.24463,
+   "year": "1948",
+   "missing": true
+  },
+  {
+   "n": "Wayne County",
+   "lat": 41.57455,
+   "lon": -75.25407,
+   "year": "1981"
+  },
+  {
+   "n": "Wyoming-Minisink Path",
+   "lat": 41.40303,
+   "lon": -75.24141,
+   "year": "1950"
+  }
+ ]
+}

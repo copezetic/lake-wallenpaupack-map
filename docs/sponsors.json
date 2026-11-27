@@ -1,5 +1,5 @@
 {
- "_note": "Paid placements. Each entry: poi (a place id from the map, or a new id with an 'add' block giving name, cat, kind, lat, lon), until (last paid day, YYYY-MM-DD), and optional blurb, photo, photoCredit, url. Entries marked demo only show when the address ends in ?demo.",
+ "_note": "Paid placements. Each entry: poi (a place id from the map, or a new id with an 'add' block giving name, cat, kind, lat, lon), until (last paid day, YYYY-MM-DD), and optional blurb, photo, photoCredit, url. Entries marked demo only show when the address ends in ?demo. An optional offer {text, until} shows as a boxed line on the place's card.",
  "sponsors": [
   {
    "poi": "demo-sponsor",
@@ -12,7 +12,11 @@
     "lat": 41.4764,
     "lon": -75.1813
    },
-   "blurb": "This is what a sponsored place looks like: a larger pin that is always on the map, first place in its town guide, and room for a photo, a few lines of your own and a link. This business does not exist."
+   "blurb": "This is what a sponsored place looks like: a larger pin that is always on the map, first place in its town guide, and room for a photo, a few lines of your own and a link. This business does not exist.",
+   "offer": {
+    "text": "Sample offer: a free coffee with any breakfast when you mention the map.",
+    "until": "2099-12-31"
+   }
   }
  ]
 }

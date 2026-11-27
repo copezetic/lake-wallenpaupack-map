@@ -107,3 +107,11 @@ artwork are not open source; the map data keeps its own licences, listed above.
 - `docs/historic.jpg` + `historic.json` — the 1927–28 and 1935 USGS sheets warped onto the map by `data/build_historic.py` (source GeoTIFFs in `data/historic/`, not committed).
 - `docs/sw.js`, `manifest.webmanifest`, `icon-*.png` — add-to-home-screen and a saved copy for weak signal (network first).
 - Tour variants: `?tour=hawley` (one town), `?tour&biz=<place id>` (one business as a featured pin); upright windows stand further back. Record with `data/record_tour.mjs`.
+- Guest links: `?host` lets a rental host drop a pin and copy a `?stay=lat,lon&t=name` link for guests (no account, nothing stored).
+- `?embed[&p=<place id>]` — a stripped copy for a business's own site (iframe code is offered from the claim form and the For businesses page).
+- `docs/weekend.html` — makes the "This weekend at the lake" picture from `events.json` (portrait, square or story); download and post.
+- `docs/essentials.json` — hospital, pharmacy, groceries, gas, EV, ATMs, restrooms from OSM plus drive distances (OSRM); rebuild with `data/fetch_essentials.py`.
+- `docs/tags.json` — owner-supplied tags (dog friendly, good for kids, open late) for the Find by… sheet; "On the lake" and "Arrive by boat" are worked out by the viewer.
+- `docs/markers.json` — PHMC state historical markers (public domain, data.pa.gov xt8f-pzzz), shown in the History sheet with the 1928 map.
+- `docs/parks.json` — closer looks. The animal park is hand-kept (`hand: true`); golf courses, marinas and campgrounds are rebuilt by `data/build_looks.py` from OSM.
+- Sponsors can carry an `offer` {text, until}; the Boating sheet has a trip measurer (`?measure`).

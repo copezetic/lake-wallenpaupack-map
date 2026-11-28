@@ -1,6 +1,6 @@
 {
-  "version": "d9bb3a9f3e175915",
-  "bytes": 23483822,
+  "version": "d0e42d512eb28e38",
+  "bytes": 23495675,
   "files": [
     "./",
     "access.json",
@@ -95,6 +95,7 @@
     "dine.json",
     "discovery.js",
     "docks.json",
+    "eggs.js",
     "essentials.json",
     "events.json",
     "extras.js",

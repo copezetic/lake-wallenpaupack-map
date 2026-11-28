@@ -1,6 +1,7 @@
 /* Lake Wallenpaupack map — town guides, homes for sale, sponsored places, trails, boating, public access, day plans, the business pages, opening hours and the overview tour.
    Everything shown comes from the map data or from the hand-kept JSON files beside this one; nothing is made up here.
    © 2026 DeWitt Hutchins. All rights reserved. */
+import { initEggs } from './eggs.js?v=1';
 const Q = new URLSearchParams(location.search);
 const DEMO = Q.has('demo');
 const TODAY = new Intl.DateTimeFormat('en-CA', {timeZone: 'America/New_York'}).format(new Date());
@@ -397,13 +398,14 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       const tag = document.createElement('div'); tag.className = 'lb pk an'; tag.textContent = 'Somebody’s lunch'; const lab = addLabel(tag, cx, cz, SC * 3.2 + 3, 'center'); lab.maxD = 1300;
       const L = 46, ang = -.7, dx = Math.cos(ang), dz = Math.sin(ang);
       const tick = now => { requestAnimationFrame(tick);
-        const near = camera.position.distanceTo(tb.position) < 2600; g.visible = near; if (!near) return;
+        const near = camera.position.distanceTo(tb.position) < 2600; g.visible = near; if (!near) return; if (camera.position.distanceTo(tb.position) < 900 && c.hooks && c.hooks.eggFound) c.hooks.eggFound('bear');
         const t = now / 1000, ph = (t * .09) % 1, out = ph < .5, k = out ? ph * 2 : 2 - ph * 2, s = 6 + k * L;      // away from the table and back again
         const x = cx + dx * s, z = cz + dz * s; bear.position.set(x, Y(x, z) + .5 + Math.abs(Math.sin(t * 5)) * .25, z); bear.rotation.y = -ang + (out ? 0 : Math.PI);
         legL.position.x = Math.sin(t * 5) * .22; legR.position.x = -Math.sin(t * 5) * .22; arm.position.x = .1 - Math.sin(t * 5) * .15; basket.rotation.z = Math.sin(t * 5) * .12;
         lab.v.set(x, Y(x, z) + SC * 3.2 + 3, z); };
       requestAnimationFrame(tick);
     } }
+  try { initEggs({...c, camera}); } catch (e) { console.warn('eggs', e); }       // the other hidden jokes; a failure here must never stop the map
   /* ---------- the feature tour: a short guided walk through what the map does, one card at a time ---------- */
   { const st = document.createElement('style'); st.textContent = `#ftour{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;width:min(520px,calc(100vw - 24px));background:var(--card);color:var(--ink);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(20,30,36,.28);padding:14px 16px 12px;display:none}
 #ftour.on{display:block}#ftour small{font:700 10.5px var(--sc);letter-spacing:.2em;color:var(--ink-soft)}#ftour h3{font:600 23px/1.15 var(--serif);margin:3px 0 5px}#ftour p{font:500 16.5px/1.4 var(--serif);margin:0 0 10px}

@@ -192,6 +192,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
 #zoom button{height:46px;border:0;border-bottom:1px solid var(--rule);background:none;color:var(--ink);font:500 28px/1 var(--serif);cursor:pointer;padding:0}
 #zoom button:last-child{border-bottom:0;height:auto;padding:8px 2px 7px;font:700 10px/1.15 var(--sc);letter-spacing:.1em}
 #zoom button:hover{background:var(--paper-2)}
+#zoom button.tl{height:32px;font:700 10px/1 var(--sc);letter-spacing:.12em}#zoom button.tl.on{background:var(--ink);color:var(--card)}body.sheet #zoom .tl,body.tour #zoom .tl{display:none}
 #zoom,#locate,#compass{transition:bottom .35s cubic-bezier(.2,.8,.2,1)}
 #load{position:fixed;inset:0;z-index:20;display:grid;place-items:center;background:var(--paper);transition:opacity .6s}
 #load span{font:italic 600 22px var(--serif);color:var(--ink-soft)}
@@ -272,7 +273,7 @@ body.embed header .tools,body.embed #chips,body.embed #hint,body.embed #locate,b
 
 <aside id="panel" aria-live="polite"></aside>
 
-<div id="zoom"><button id="zIn" title="Zoom in" aria-label="Zoom in">+</button><button id="zOut" title="Zoom out" aria-label="Zoom out">−</button><button id="zAll" title="Show the whole lake">Whole map</button></div>
+<div id="zoom"><button id="zIn" title="Zoom in" aria-label="Zoom in">+</button><button id="zOut" title="Zoom out" aria-label="Zoom out">−</button><button class="tl" data-tilt="0.08" title="Look straight down">Top</button><button class="tl" data-tilt="0.85" title="Angled view">3D</button><button class="tl" data-tilt="1.32" title="Look across the land, toward the horizon">Low</button><button id="zAll" title="Show the whole lake">Whole map</button></div>
 <button id="locate" title="Show where I am" aria-label="Show where I am">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2" fill="currentColor"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v4M12 18.5v4M1.5 12h4M18.5 12h4"/></svg>
 </button>
@@ -300,7 +301,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=8';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=19';
+import { initExtras, openNow } from './extras.js?v=20';
 import { initVisitor } from './visitor.js';
 import { searchEntries, applyPlaceDetails } from './discovery.js';
 import { initImmersive } from './immersive.js?v=4';
@@ -776,7 +777,12 @@ function view(){ const s = new THREE.Spherical().setFromVector3(camera.position.
 function closePanel(){ clearRoute(); panel.classList.remove('open', 'route'); for (const el of pinEls.values()) el.classList.remove('sel'); back = null; placeOpen = false; }
 function dismiss(){ const b = back, now = view(); closePanel(); if (b && b.d > now.d * 1.15) flyTo(b.x, b.z, b.d, b.az); }   // step back out to where you were
 addEventListener('keydown', e => { if (e.key === 'Escape'){ dismiss(); hideResults(); } });
-function zoomBy(f){ const v = view(); flyTo(v.x, v.z, Math.min(controls.maxDistance, Math.max(controls.minDistance, v.d * f))); fly.ms = 380; }
+function zoomBy(f){ const v = view(); flyTo(v.x, v.z, Math.min(controls.maxDistance, Math.max(controls.minDistance, v.d * f))); fly.ms = 380; fly.p1 = fly.p0; }   // zooming keeps whatever tilt you chose
+/* tilt: three plain buttons, because the two-finger tilt gesture is hard on a phone */
+function tiltTo(pol){ const v = view(); flyTo(v.x, v.z, v.d); fly.p1 = pol; fly.ms = 520; }
+const tiltBtns = [...document.querySelectorAll('#zoom .tl')]; let tiltOn = -1;
+tiltBtns.forEach(b => b.onclick = () => tiltTo(+b.dataset.tilt));
+function tiltMark(phi){ const k = phi < .45 ? 0 : phi < 1.12 ? 1 : 2; if (k !== tiltOn){ tiltOn = k; tiltBtns.forEach((b, i) => b.classList.toggle('on', i === k)); } }
 document.getElementById('zIn').onclick = () => zoomBy(.6);
 document.getElementById('zOut').onclick = () => zoomBy(1.7);
 document.getElementById('zAll').onclick = () => { closePanel(); flyTo(HOME.t.x, HOME.t.z, HOME.d, HOME.az); };
@@ -1309,7 +1315,7 @@ function frame(now){
   imm.update(now);                                   // a ride takes the camera over here
   if (controls.target.y < 0) controls.target.y = 0;
   if (!fly && !imm.riding()){ const pad = 9000; controls.target.x = Math.min(M.xmax + pad, Math.max(M.xmin - pad, controls.target.x)); controls.target.z = Math.min(M.zmax + pad, Math.max(M.zmin - pad, controls.target.z)); }
-  offTmp.copy(camera.position).sub(controls.target); sphTmp.setFromVector3(offTmp);
+  offTmp.copy(camera.position).sub(controls.target); sphTmp.setFromVector3(offTmp); tiltMark(sphTmp.phi);
   if (isFinite(sphTmp.theta)) needle.setAttribute('transform', `rotate(${(sphTmp.theta * 180 / Math.PI).toFixed(1)} 30 30)`);
   document.body.classList.toggle('far', sphTmp.radius > 3600);
   camD = imm.riding() ? 2300 : sphTmp.radius;       // during a ride the surroundings are dressed as if seen from a little way off

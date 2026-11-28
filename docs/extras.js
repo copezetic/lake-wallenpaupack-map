@@ -383,7 +383,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
     const golf = D.pois.find(p => p.park && /golf/i.test(p.kind)), nStay = D.pois.length, coms = (c.COMS || []).length;
     let i = -1, undo = null, season0 = null;
     const STEPS = [
-      {b: 'Welcome to the lake', t: `The whole of Lake Wallenpaupack and the towns around it, with ${nStay.toLocaleString()} places on it. Drag to move, pinch or scroll to zoom, and tap any pin. This tour takes about a minute.`, go: () => at(41.4115, -75.248, 21000)},
+      {b: 'Welcome to the lake', t: `The whole of Lake Wallenpaupack and the towns around it, with ${nStay.toLocaleString()} places on it. Drag to move, pinch or scroll to zoom, and tap any pin. Use Top, 3D and Low on the left to tilt the view. This tour takes about a minute.`, go: () => at(41.4115, -75.248, 21000)},
       {b: 'Marinas and docks', t: 'Every marina is here, with docks traced from aerial photographs. Tap a marina and choose “See the docks” for its layout.', go: () => at(41.439944, -75.176635, 800)},
       golf && {b: 'Closer looks', t: 'Golf courses, the animal park and the marinas open into detailed layouts. This is a golf course, with fairways, greens and numbered holes.', go: () => { c.hooks.parks[golf.id](); panel.querySelector('.x')?.click(); flyTo(golf.x, golf.z, 1500); }},
       tn('Hawley') && {b: 'Towns', t: 'Each town has its own guide to eating, shopping and staying. Look under Explore, or search for a place by name at the top.', go: () => flyTo(tn('Hawley').x, tn('Hawley').z, 2600)},

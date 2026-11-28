@@ -388,7 +388,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       const bear = new THREE.Group(), B = '#2a2522', T = '#b98d5a';
       bx(.9, 1.25, .75, B, 0, 1.45, 0, bear); bx(.62, .56, .6, B, 0, 2.4, 0, bear); bx(.3, .22, .26, T, .36, 2.3, 0, bear); bx(.1, .09, .1, '#141110', .52, 2.36, 0, bear);
       for (const sd of [1, -1]) bx(.16, .18, .12, B, -.05, 2.74, sd * .24, bear);
-      bx(.95, .05, .95, '#d9bf7a', 0, 2.71, 0, bear); bx(.5, .2, .5, '#d9bf7a', 0, 2.82, 0, bear); bx(.52, .06, .52, '#7a3b2e', 0, 2.76, 0, bear);   // a straw sun hat with a band
+      bx(.95, .05, .95, '#4d862d', 0, 2.71, 0, bear); bx(.5, .2, .5, '#4d862d', 0, 2.82, 0, bear); bx(.52, .06, .52, '#244f28', 0, 2.76, 0, bear);   // a green hat with a dark green band
       const legL = bx(.34, .85, .32, B, 0, .42, .2, bear), legR = bx(.34, .85, .32, B, 0, .42, -.2, bear), arm = bx(.28, .9, .26, B, .1, 1.5, -.5, bear);
       const armB = new THREE.Group(); armB.position.set(.1, 1.95, .5); bear.add(armB); bx(.28, .9, .26, B, .25, -.3, 0, armB).rotation.z = .9;
       const basket = new THREE.Group(); bx(.62, .36, .44, '#c9a25a', 0, 0, 0, basket); bx(.66, .05, .48, '#a57f3f', 0, .2, 0, basket); bx(.05, .3, .05, '#a57f3f', -.26, .36, 0, basket); bx(.05, .3, .05, '#a57f3f', .26, .36, 0, basket); bx(.57, .05, .05, '#a57f3f', 0, .5, 0, basket);

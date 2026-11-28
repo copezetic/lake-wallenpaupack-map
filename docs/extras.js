@@ -374,6 +374,40 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<p class="fine">Listing figures: <a href="${esc(MK.source_url)}" target="_blank" rel="noopener">${esc(MK.source)}</a>. They describe homes listed for sale (asking prices), not recorded sale prices, and cover whole counties and ZIP codes, not just lakefront. ZIP codes with few listings swing widely. Seasonal shares: U.S. Census Bureau, American Community Survey. General information only, not an appraisal or advice.</p>`);
     addChip('Market', marketSheet); if (Q.has('market')) setTimeout(marketSheet, 800);
   }
+  /* ---------- the feature tour: a short guided walk through what the map does, one card at a time ---------- */
+  { const st = document.createElement('style'); st.textContent = `#ftour{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;width:min(520px,calc(100vw - 24px));background:var(--card);color:var(--ink);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(20,30,36,.28);padding:14px 16px 12px;display:none}
+#ftour.on{display:block}#ftour small{font:700 10.5px var(--sc);letter-spacing:.2em;color:var(--ink-soft)}#ftour h3{font:600 23px/1.15 var(--serif);margin:3px 0 5px}#ftour p{font:500 16.5px/1.4 var(--serif);margin:0 0 10px}
+#ftour .row{display:flex;gap:8px;align-items:center}#ftour button{font:700 11px var(--sc);letter-spacing:.14em;color:var(--ink);background:none;border:1px solid var(--ink);padding:8px 12px 7px;cursor:pointer}#ftour button.pri{background:var(--ink);color:var(--card)}#ftour button[disabled]{opacity:.35;cursor:default}#ftour .sp{flex:1}`; document.head.appendChild(st);
+    const card = document.createElement('div'); card.id = 'ftour'; card.setAttribute('role', 'dialog'); card.setAttribute('aria-label', 'Tour of the map'); document.body.appendChild(card);
+    const at = (lat, lon, d) => { const [x, z] = toXZ(lat, lon); flyTo(x, z, d); }, tn = n => D.towns.find(t => t.n === n), sc = () => (c.hooks && c.hooks.scene) || {};
+    const golf = D.pois.find(p => p.park && /golf/i.test(p.kind)), nStay = D.pois.length, coms = (c.COMS || []).length;
+    let i = -1, undo = null, season0 = null;
+    const STEPS = [
+      {b: 'Welcome to the lake', t: `The whole of Lake Wallenpaupack and the towns around it, with ${nStay.toLocaleString()} places on it. Drag to move, pinch or scroll to zoom, and tap any pin. This tour takes about a minute.`, go: () => at(41.4115, -75.248, 21000)},
+      {b: 'Marinas and docks', t: 'Every marina is here, with docks traced from aerial photographs. Tap a marina and choose “See the docks” for its layout.', go: () => at(41.439944, -75.176635, 800)},
+      golf && {b: 'Closer looks', t: 'Golf courses, the animal park and the marinas open into detailed layouts. This is a golf course, with fairways, greens and numbered holes.', go: () => { c.hooks.parks[golf.id](); panel.querySelector('.x')?.click(); flyTo(golf.x, golf.z, 1500); }},
+      tn('Hawley') && {b: 'Towns', t: 'Each town has its own guide to eating, shopping and staying. Look under Explore, or search for a place by name at the top.', go: () => flyTo(tn('Hawley').x, tn('Hawley').z, 2600)},
+      {b: 'Lake communities', t: 'The lake communities are named along the shore. Pick one under Communities to see it on its own.', go: () => at(41.3822, -75.2492, 1500)},
+      {b: 'Through the seasons', t: '', go: () => { const s = sc(); if (!s.setSeason) return; season0 = s.season ? s.season() : 'summer'; const k = season0 === 'fall' ? 'winter' : 'fall'; s.setSeason(k); undo = () => s.setSeason(season0);
+          card.querySelector('p').textContent = `This is the lake in ${k}. Change the season and the time of day under Conditions.`; at(41.3822, -75.2492, 1100); }},
+      {b: 'Day and night', t: '', go: () => { const s = sc(); if (!s.sky) return; const dark = s.sky.dark(); s.sky.setClock(dark ? 13 : 21); undo = () => s.sky.setClock(null);
+          card.querySelector('p').textContent = dark ? 'It is dark at the lake right now, so this is the same view by day.' : 'And this is the same map after dark, with the lights on.'; const h = tn('Hawley'); if (h) flyTo(h.x, h.z, 1000); }},
+      {b: 'Take a ride', t: 'Ride a boat down the lake, drive Route 507 or Route 6, take the train or the rail bike, or go fishing. Look for Ride.', go: () => at(41.4115, -75.248, 6500)},
+      {b: 'The practical things', t: 'Groceries and beer, power outages and who to call, public beaches and boat launches, boating rules, fishing, events and housing market figures are each a tap away.', go: () => at(41.4115, -75.248, 12000)},
+      {b: 'That is the tour', t: 'Add wallymap.com to your home screen to keep it handy. Own a business, sit on a community board or sell homes here? See the links at the bottom of the map.', go: () => at(41.4115, -75.248, 21000)}
+    ].filter(Boolean);
+    const show = k => { if (undo){ try { undo(); } catch (e) {} undo = null; }
+      i = k; const s = STEPS[i]; closePanelSafe();
+      card.innerHTML = `<small>TOUR · ${i + 1} OF ${STEPS.length}</small><h3>${esc(s.b)}</h3><p>${esc(s.t)}</p><div class="row"><button id="ftB" ${i ? '' : 'disabled'}>Back</button><span class="sp"></span><button id="ftE">${i === STEPS.length - 1 ? 'Close' : 'End tour'}</button>${i === STEPS.length - 1 ? '' : '<button id="ftN" class="pri">Next</button>'}</div>`;
+      card.querySelector('#ftB').onclick = () => i && show(i - 1); card.querySelector('#ftE').onclick = end; const n = card.querySelector('#ftN'); if (n){ n.onclick = () => show(i + 1); n.focus(); }
+      try { s.go(); } catch (e) { console.warn('tour step', e); } };
+    const closePanelSafe = () => { const x = panel.classList.contains('open') && panel.querySelector('.x'); if (x) x.click(); };
+    function end(){ if (undo){ try { undo(); } catch (e) {} undo = null; } card.classList.remove('on'); i = -1; }
+    const startTour = () => { card.classList.add('on'); show(0); };
+    addEventListener('keydown', e => { if (i < 0) return; if (e.key === 'Escape') end(); else if (e.key === 'ArrowRight' && i < STEPS.length - 1) show(i + 1); else if (e.key === 'ArrowLeft' && i) show(i - 1); });
+    if (!c.EMBED && !Q.has('tour')){ addChip('Take the tour', startTour); const l = document.getElementById('bTour'); if (l) l.onclick = e => { e.preventDefault(); startTour(); }; if (Q.has('features')) setTimeout(startTour, 1500); }
+    if (c.hooks) c.hooks.featureTour = startTour;
+  }
   /* stocking up: groceries, beer distributors and wine and spirits stores, nearest the middle of the view first */
   { const KS = [['Grocery store', 'Groceries'], ['Beer distributor', 'Beer'], ['Wine and spirits store', 'Wine and spirits']];
     const has = D.pois.some(p => KS.some(k => k[0] === p.kind));

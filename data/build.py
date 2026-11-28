@@ -268,6 +268,7 @@ if os.path.exists(p('places_overture.geojsonl')):
         f = json.loads(line); pr = f['properties']; name = (pr.get('names') or {}).get('primary')
         hit = ov_cat(pr.get('taxonomy') or {})
         if not name or not hit or not hit[0] or (pr.get('confidence') or 0) < 0.7: continue
+        if pr.get('operating_status') in ('permanently_closed', 'temporarily_closed'): continue      # the source itself says it has shut
         name = tidy(name)
         if ', Pennsylvania' in name or DULL.search(name + ' ' + pretty(pr['taxonomy']['primary'])): continue   # encyclopedia entries and trades
         lon, lat = f['geometry']['coordinates'][:2]

@@ -23,6 +23,7 @@ KIND = {k: g for g, ks in GROUPS for k in ks}; out = {g: [] for g, _ in GROUPS};
 for l in open('places_overture.geojsonl'):
     f = json.loads(l); p = f['properties']; pr = (p.get('taxonomy') or {}).get('primary') or ''; n = (p.get('names') or {}).get('primary')
     if pr not in KIND or not n or (p.get('confidence') or 0) < 0.6 or SKIP.search(n): continue
+    if p.get('operating_status') in ('permanently_closed', 'temporarily_closed'): continue
     lon, lat = f['geometry']['coordinates'][:2]
     if not (A['W'] <= lon <= A['E'] and A['S'] <= lat <= A['N']): continue
     key = re.sub(r'[^a-z0-9]', '', n.lower())[:18]

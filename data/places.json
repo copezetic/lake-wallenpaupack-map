@@ -300,5 +300,125 @@
   },
   "was": "Nemanie Village (listed as a hotel)",
   "why": "corrected by the brokerage, 2026-11-27: this is their office; Nemanie Village is a community they developed"
+ },
+ {
+  "id": "ov-9fc306ce-f36",
+  "drop": true,
+  "was": "Just Rumors Bar & Grill",
+  "why": "checked 2026-11-27: 412 Route 390 (Route 390 at Gumbletown Rd) is now listed as The Lager Haus on Discover NEPA (page updated 2026-03-17); it was Hammered Steel Tavern in between. Just Rumors name is gone.",
+  "source": "https://www.discovernepa.com/thing-to-do/hammered-steel-tavern/"
+ },
+ {
+  "id": "ov-a7d506b3-bee",
+  "drop": true,
+  "was": "Stan's Cafe",
+  "why": "checked 2026-11-27: Restaurantji's entry for 16 Beach Lake Hwy (still on the stans-cafe URL) is now titled Lena's, a family breakfast/lunch spot; Stan's last dated review found is April 2022. Rename inferred from the address match.",
+  "source": "https://www.restaurantji.com/pa/honesdale/"
+ },
+ {
+  "id": "ov-fac483c6-6a4",
+  "drop": true,
+  "was": "Up A Creek Inn",
+  "why": "checked 2026-11-27: MapQuest listing for 148 S Sterling Rd is marked 'Permanently closed' (no closing date given).",
+  "source": "https://www.mapquest.com/us/pennsylvania/up-a-creek-inn-304355418"
+ },
+ {
+  "id": "ov-311d9299-4e8",
+  "drop": true,
+  "was": "Black & Brass Coffee Roasting",
+  "why": "checked 2026-11-27: Official site (footer 2016-2026) lists only 101 Grandview Ave, Honesdale and 101 Penn Ave, Scranton; the 520 Main St cafe is no longer listed. The brand itself is open at Grandview Ave.",
+  "source": "https://www.blackandbrasscoffee.com/"
+ },
+ {
+  "id": "ov-a9de7424-d3f",
+  "drop": true,
+  "was": "KFC",
+  "why": "checked 2026-11-27: KFC's official location page for 569 Hamlin Hwy returns 404, and Menupix/Restaurantji list California Taco at that address with current hours; no news item confirming the changeover was found.",
+  "source": "https://www.menupix.com/pennsylvania/restaurants/31894408/California-Taco-Hamlin-PA"
+ },
+ {
+  "id": "ov-670764b1-b9d",
+  "drop": true,
+  "was": "Dyberry Forks",
+  "why": "checked 2026-11-27: OpenTable pages mark the restaurant permanently closed (latest review Sept 2025) and dyberryforks.com returns 404; no closing news item found, worth a confirming look.",
+  "source": "https://www.opentable.com/r/dyberry-forks-honesdale?lang=es"
+ },
+ {
+  "id": "ov-c5ea9da6-53e",
+  "drop": true,
+  "was": "The Bean",
+  "why": "checked 2026-11-27: 318 Main Ave, Hawley is now a Black & Brass Coffee Roasting Co. retail cafe; no trace of 'The Bean' there.",
+  "source": "https://www.yahoo.com/news/black-brass-coffee-roasting-co-200100146.html"
+ },
+ {
+  "id": "ov-897f905b-55a",
+  "drop": true,
+  "was": "Bongo Road House",
+  "why": "checked 2026-11-27: A different business, Nurnberger Bierhaus, now occupies 2136 Lake Ariel Hwy (DiscoverNEPA listing updated 2026-06-03); bongoroadhouse.net no longer resolves.",
+  "source": "https://discovernepa.com/listing/nurnberger-bierhaus/"
+ },
+ {
+  "id": "ov-f8b0a70f-a80",
+  "drop": true,
+  "was": "Welcome Lake Food And Beverage",
+  "why": "checked 2026-11-27: This is the LLC name; the restaurant at 318 Welcome Lake Rd trades as White Owl Steakhouse (570-729-7000), listed on TableAgent/PoconoGo with no closure note but nothing dated 2026.",
+  "source": "https://tableagent.com/scranton/the-white-owl-steakhouse/"
+ },
+ {
+  "id": "ov-b36a8277-556",
+  "patch": {
+   "name": "Runaway Train Brewery",
+   "url": ""
+  },
+  "was": "Irving Cliff Brewery",
+  "why": "checked 2026-11-27: Irving Cliff Brewery is marked permanently closed; Runaway Train Brewery opened in the same 2 Chapel St building in Aug 2023 and held a brewfest there 2026-05-16.",
+  "source": "https://discovernepa.com/listing/runaway-train-brewery/"
+ },
+ {
+  "id": "ov-401d7077-5ab",
+  "patch": {
+   "name": "IHOP",
+   "kind": "Restaurant",
+   "url": ""
+  },
+  "was": "Twin Rocks Diner",
+  "why": "checked 2026-11-27: WNEP reported the Twin Rocks Diner closed and was converted to an IHOP by Liberty Travel Plazas; IHOP now lists 133 Twin Rocks Rd, Lake Ariel.",
+  "source": "https://www.wnep.com/article/news/local/wayne-county/ihop-coming-to-wayne-county/523-7b21990d-b0a6-4e54-9632-90880f7ccd28"
+ },
+ {
+  "id": "white-owl-7902913457",
+  "patch": {
+   "name": "White Owl Steakhouse"
+  },
+  "was": "White Owl",
+  "why": "checked 2026-11-27: Listed as White Owl Steakhouse / Tavern & Restaurant at 318 Welcome Lake Rd (570-729-7000) on TableAgent and PoconoGo with hours, but nothing dated 2026.",
+  "source": "https://tableagent.com/scranton/the-white-owl-steakhouse/"
+ },
+ {
+  "id": "bruno-pizza-7835181359",
+  "patch": {
+   "name": "Brother Bruno's Pizza"
+  },
+  "was": "Bruno Pizza",
+  "why": "checked 2026-11-27: Listed as Brother Bruno's Pizza at 123 Village Center Dr (Lords Valley) on BBB and Restaurantji; no dated 2026 status.",
+  "source": "https://www.restaurantji.com/pa/hawley/pizza"
+ },
+ {
+  "id": "waymart-hotel-7717482309",
+  "patch": {
+   "name": "Waymart Hotel Restaurant & Saloon"
+  },
+  "was": "Waymart Hotel",
+  "why": "checked 2026-11-27: DiscoverNEPA and MapQuest listings for Waymart Hotel Restaurant & Saloon, 205 Carbondale Rd, with daily hours and phone; listings undated (weak).",
+  "source": "https://www.discovernepa.com/thing-to-do/waymart-hotel-restaurant-saloon/"
+ },
+ {
+  "id": "ov-d719706f-351",
+  "patch": {
+   "name": "Watson Brothers Country Store and Deli"
+  },
+  "was": "Watson Bros Deli",
+  "why": "checked 2026-11-27: MapQuest lists 'Watson Brothers Country Store and Deli' on Route 6 (family-owned since 2007), likely the same business, but undated and at a differently written address.",
+  "source": "https://startpage.mapquest.com/us/pennsylvania/watson-brothers-country-store-and-deli-377879986"
  }
 ]

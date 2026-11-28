@@ -1,0 +1,1023 @@
+{
+ "checked": "2026-11-27",
+ "method": "web search per place by research agents; unsure = no dated evidence either way",
+ "verdicts": [
+  {
+   "id": "a-taste-of-puerto-rico-14274554384",
+   "name": "A Taste Of Puerto Rico",
+   "verdict": "unsure",
+   "evidence": "Undated Discover NEPA listing exists with no address; 734 Main St is tied in directories to Trackside Grill (itself reported closed). No dated 2026 evidence.",
+   "source": "https://discovernepa.com/listing/a-taste-of-puerto-rico/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-51876a32-64b",
+   "name": "Angell's Dairy Bar",
+   "verdict": "unsure",
+   "evidence": "No listing found under this name; the dairy bar now listed in Newfoundland is Backroads Cafe & Dairy Bar, 1048 Main St (possible successor, not confirmed).",
+   "source": "https://www.discovernepa.com/thing-to-do/backroads-cafe-dairy-bar/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-a971698c-0c0",
+   "name": "Beach Lake Country Cafe",
+   "verdict": "unsure",
+   "evidence": "Listed at 1041 Beach Lake Hwy on Restaurantji/Discover NEPA (also called The Country Cafe and Pizzeria), but listings are undated.",
+   "source": "https://www.discovernepa.com/thing-to-do/the-country-cafe-and-pizzeria/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "bistro-1202-14028926808",
+   "name": "Bistro 1202",
+   "verdict": "unsure",
+   "evidence": "Restaurant inside Hotel Wayne, 1202 Main St, Honesdale; directories list daily hours 11:30-9 and no closed flag, but nothing dated 2026.",
+   "source": "https://www.mapquest.com/us/pennsylvania/bistro-1202-375280892",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-c89473e0-4bf",
+   "name": "Brankos Patisserie du Jour",
+   "verdict": "unsure",
+   "evidence": "MapQuest and Restaurantji both show a 'Closed' label with no hours, but neither says permanently; no closure announcement found.",
+   "source": "https://www.restaurantji.com/pa/honesdale/brankos-patisserie-/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-e9204656-147",
+   "name": "Busters Cafe",
+   "verdict": "unsure",
+   "evidence": "Only a bare directory entry for Busters; the same address 1631 Route 507 is also listed as Patty & Franks (burger joint, with hours). Undated, so which is current is unclear.",
+   "source": "https://frankiapp.com/business/patty-franks-581193.md",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-7e3956d4-8d3",
+   "name": "Country Cafe Hamlin Pennsylvania",
+   "verdict": "unsure",
+   "evidence": "Discover NEPA lists Country Cafe at the Hamlin Hwy/Mt Cobb Hwy intersection; an Airbnb places entry for Country Cafe, 229 Mt Cobb Hwy, is marked permanently closed (undated). Leans closed, not confirmed.",
+   "source": "https://discovernepa.com/listing/country-cafe-hamlin",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "drafts-bar-grill-1188016375",
+   "name": "Drafts Bar & Grill",
+   "verdict": "unsure",
+   "evidence": "Listed at 1256 Hamlin Hwy (formerly Backdraft Sports Bar & Grill) on MapQuest, Discover NEPA and Restaurantji with no closed flag; nothing dated 2026.",
+   "source": "https://discovernepa.com/listing/drafts-bar-grill/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-66374885-8af",
+   "name": "Fare",
+   "verdict": "unsure",
+   "evidence": "MapQuest lists Fare at 209 Miller Dr on the Wayne County Fairgrounds; undated, no 2026 evidence found.",
+   "source": "https://www.mapquest.com/us/pennsylvania/fare-363757891",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "greentown-grille-7814408059",
+   "name": "Greentown Grille",
+   "verdict": "unsure",
+   "evidence": "Listed at 1549 Route 507 (SinglePlatform menu, radio feature naming the owners); all undated.",
+   "source": "https://places.singleplatform.com/greentown-grille/menu",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-77969a59-fd5",
+   "name": "Half Baked Sandwich Joint",
+   "verdict": "unsure",
+   "evidence": "Listed on Discover NEPA and Restaurantji (4.9, ~78 reviews) at 1008 Main St beside the Cooperage, no closed flag; undated.",
+   "source": "https://discovernepa.com/listing/half-baked-sandwich-joint/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-5937cc9c-ca1",
+   "name": "Honesdale Candy Mix",
+   "verdict": "unsure",
+   "evidence": "No listing or mention found for this name or address.",
+   "source": null,
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-734743c7-5df",
+   "name": "Java & More",
+   "verdict": "unsure",
+   "evidence": "Described as the on-site coffee shop of the Wayne Inn, 100 Terrace St; directories list daily hours, but undated.",
+   "source": "https://discovernepa.com/listing/wayne-inn/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-9fc306ce-f36",
+   "name": "Just Rumors Bar & Grill",
+   "verdict": "closed",
+   "evidence": "412 Route 390 (Route 390 at Gumbletown Rd) is now listed as The Lager Haus on Discover NEPA (page updated 2026-03-17); it was Hammered Steel Tavern in between. Just Rumors name is gone.",
+   "source": "https://www.discovernepa.com/thing-to-do/hammered-steel-tavern/",
+   "new_name": "The Lager Haus",
+   "website": null
+  },
+  {
+   "id": "ov-dff810ae-5b6",
+   "name": "Laurel Ridge Restaurant",
+   "verdict": "unsure",
+   "evidence": "No listing found for Laurel Ridge at 736 Route 739; only other Lords Valley restaurants turned up.",
+   "source": null,
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-695503f3-f3c",
+   "name": "Maple City Beverage",
+   "verdict": "unsure",
+   "evidence": "Maple City Beverage LLC appears only as a company record at 560 Main St; the restaurant trading at 560 Main St Ste B is Native (reviews to 2025-11-02). Likely the legal entity behind Native, i.e. a duplicate.",
+   "source": "https://www.mapquest.com/us/pennsylvania/native-424540639",
+   "new_name": "Native",
+   "website": null
+  },
+  {
+   "id": "ov-c219e454-45d",
+   "name": "New Asian Buffet",
+   "verdict": "unsure",
+   "evidence": "No listing found for New Asian Buffet or Ming Court at 1199 Texas Palmyra Hwy.",
+   "source": null,
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "paulie-s-14028926807",
+   "name": "Paulie's",
+   "verdict": "unsure",
+   "evidence": "Matches Paulie's Hot Dogs, 403 Park St, Honesdale, listed on Discover NEPA/MapQuest/Restaurantji with no closed flag; undated.",
+   "source": "https://discovernepa.com/listing/paulies-hot-dogs/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "promised-land-inn-7802372923",
+   "name": "Promised Land Inn",
+   "verdict": "unsure",
+   "evidence": "OpenTable lists it at 1045 (not 1054) Route 390 with Thu-Sun dinner hours; Trip.com shows 'currently closed'. Both undated.",
+   "source": "https://www.opentable.com/r/promised-land-inn-greentown",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-4b4c16f3-e7d",
+   "name": "Rockledge Snack Shack",
+   "verdict": "unsure",
+   "evidence": "No listing found; Rockledge is a private lake community, so this is probably a members' seasonal amenity rather than a public business.",
+   "source": "https://poconogo.com/stay/rockledge-on-wallenpaupack",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-a7d506b3-bee",
+   "name": "Stan's Cafe",
+   "verdict": "closed",
+   "evidence": "Restaurantji's entry for 16 Beach Lake Hwy (still on the stans-cafe URL) is now titled Lena's, a family breakfast/lunch spot; Stan's last dated review found is April 2022. Rename inferred from the address match.",
+   "source": "https://www.restaurantji.com/pa/honesdale/",
+   "new_name": "Lena's",
+   "website": null
+  },
+  {
+   "id": "ov-178b8ed9-4df",
+   "name": "The Alpine Wurst and Meat House",
+   "verdict": "open",
+   "evidence": "On the USDA FSIS inspected-establishment list at 1106 Texas Palmyra Hwy (grant dated 2024-07-08); deli/retail praised in a Jan 2025 review. Reviews say the sit-down restaurant side is not operating.",
+   "source": "https://www.fsis.usda.gov/inspection/fsis-inspected-establishments/alpine-wurst-meat-house",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-10d11436-549",
+   "name": "The Firepit at Sosa's Pallet Bar & Grill",
+   "verdict": "unsure",
+   "evidence": "No listing or mention found for this name or address.",
+   "source": null,
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-cf0e570f-142",
+   "name": "The Mud Hut Bar & Grill",
+   "verdict": "unsure",
+   "evidence": "No listing or mention found for this name or address.",
+   "source": null,
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-fdac4ced-8f7",
+   "name": "Trio's Restaurant",
+   "verdict": "unsure",
+   "evidence": "OpenTable has an unbookable, review-less listing at 1315 Hamlin Hwy; nothing dated.",
+   "source": "https://opentable.com/r/trios-lake-ariel",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-fac483c6-6a4",
+   "name": "Up A Creek Inn",
+   "verdict": "closed",
+   "evidence": "MapQuest listing for 148 S Sterling Rd is marked 'Permanently closed' (no closing date given).",
+   "source": "https://www.mapquest.com/us/pennsylvania/up-a-creek-inn-304355418",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-b469084d-9be",
+   "name": "Wally's Restaurant & Pizzeria",
+   "verdict": "open",
+   "evidence": "MapQuest lists it at 2503 Route 6 as open with reviews as recent as Sept 2025; Yellow Pages also shows an older name, Muggs Country Kitchen, at the address. No 2026-dated item.",
+   "source": "https://startpage.mapquest.com/us/pennsylvania/wallys-restaurant-pizzeria-742506773",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "wendy-s-13998508106",
+   "name": "Wendy's",
+   "verdict": "unsure",
+   "evidence": "No Honesdale page surfaced on locations.wendys.com; only a delivery-app entry 'near Honesdale' and an address-less MapQuest page (latest review July 2025). Location not confirmed.",
+   "source": "https://www.mapquest.com/us/pennsylvania/wendys-25898108",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-0fd11707-192",
+   "name": "smash_squared",
+   "verdict": "unsure",
+   "evidence": "Restaurantji lists Smash Squared (burgers) at 630 Main St with a review, no closed flag; undated.",
+   "source": "https://www.restaurantji.com/pa/honesdale/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "a-and-j-roadside-grill-7802210436",
+   "name": "A and J Roadside Grill",
+   "verdict": "unsure",
+   "evidence": "No web listing found under this name; only an OpenStreetMap point added 2020-08 near Greentown (41.2974,-75.2192).",
+   "source": "https://www.openstreetmap.org/node/7802210436",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-0721f4fb-eeb",
+   "name": "Anna-capri Diner",
+   "verdict": "unsure",
+   "evidence": "No listing found for an Anna-Capri Diner at 732 Hamlin Hwy; searches return only other diners.",
+   "source": "https://discovernepa.com/where-to-eat/dining/iconic-retro-diners/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-bdc8b320-493",
+   "name": "Betty Boop’s Airport Cafe",
+   "verdict": "unsure",
+   "evidence": "A pilot review dated 2025-09-21 says the cafe is 'up and running', but MapQuest/BringFido flag it closed and nothing dated 2026 was found.",
+   "source": "https://fly2lunch.com/restaurant.php?apt=N30",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-311d9299-4e8",
+   "name": "Black & Brass Coffee Roasting",
+   "verdict": "closed",
+   "evidence": "Official site (footer 2016-2026) lists only 101 Grandview Ave, Honesdale and 101 Penn Ave, Scranton; the 520 Main St cafe is no longer listed. The brand itself is open at Grandview Ave.",
+   "source": "https://www.blackandbrasscoffee.com/",
+   "new_name": null,
+   "website": "https://www.blackandbrasscoffee.com/"
+  },
+  {
+   "id": "ov-8e086089-f3e",
+   "name": "Brother Bruno's",
+   "verdict": "unsure",
+   "evidence": "Listed by BBB and Restaurantji at 123 Village Center Dr (Lords Valley), phone 570-775-0430, but no dated 2026 evidence found.",
+   "source": "https://www.bbb.org/us/pa/hawley/category/pizza",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-55f78ff4-e8c",
+   "name": "CB CB Hot Dogs",
+   "verdict": "unsure",
+   "evidence": "No listing found under this name on NY-97 in Narrowsburg (which is in New York, outside the map area).",
+   "source": "https://www.iexitapp.com/guide/New%20York/32/Narrowsburg/29333",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-1fcea9ff-195",
+   "name": "Coutts Blueberry Farm Market",
+   "verdict": "unsure",
+   "evidence": "Directories list Coutts market/ice cream at 2575 US-6 (LocalHarvest updated 2025-01; another says open late April-October, so likely seasonal), but nothing dated 2026.",
+   "source": "https://www.localharvest.org/coutts-blueberry-farm-market-M36494",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "dunkin-1536639914",
+   "name": "Dunkin'",
+   "verdict": "open",
+   "evidence": "This is the Honesdale Dunkin' at 1181 Texas Palmyra Hwy; mapped on OpenStreetMap 2026-07-08 with hours 5am-9pm, matching current third-party listings and a Dunkin' careers posting.",
+   "source": "https://www.openstreetmap.org/way/1536639914",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-b7474044-bb4",
+   "name": "Gallagher’s Coffee And More",
+   "verdict": "unsure",
+   "evidence": "Wanderlog reviews describe it as a coffee/candy stop at Promised Land; undated, and the neighbouring lake store is seasonal, so it may be closed for winter.",
+   "source": "https://wanderlog.com/place/details/4472985/gallaghers-coffee--more",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d62a8d9f-32b",
+   "name": "Greshams Landing",
+   "verdict": "unsure",
+   "evidence": "Gresham's Landing is a multi-tenant retail complex at 2489 Route 6 (home of Gresham's Ice Cream Shoppe), not a restaurant of that name; no dated status found.",
+   "source": "https://activerain.com/blogsview/4293408/lake-wallenpaupack-business-spotlight-gresham-s-landing",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-9fa6888b-5f5",
+   "name": "Halfway House Restaurant",
+   "verdict": "unsure",
+   "evidence": "Only an undated Punchbowl directory entry (Halfway House Restaurant & Tavern, 60 Brook Rd) was found; no reviews or 2026 evidence.",
+   "source": "https://www.punchbowl.com/vendors/pa-pennsylvania/beach-lake/c-restaurants.amp",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-b36a8277-556",
+   "name": "Irving Cliff Brewery",
+   "verdict": "closed",
+   "evidence": "Irving Cliff Brewery is marked permanently closed; Runaway Train Brewery opened in the same 2 Chapel St building in Aug 2023 and held a brewfest there 2026-05-16.",
+   "source": "https://discovernepa.com/listing/runaway-train-brewery/",
+   "new_name": "Runaway Train Brewery",
+   "website": null
+  },
+  {
+   "id": "ov-33a173de-4a8",
+   "name": "Jimmie G’s",
+   "verdict": "unsure",
+   "evidence": "No listing for Jimmie G's; directories show 356 Tisdel Rd as Ravenhaus Tavern (570-937-9370), undated, so which name is current is unclear.",
+   "source": "https://www.superpages.com/lake-ariel-pa/pubnerd",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-a9de7424-d3f",
+   "name": "KFC",
+   "verdict": "closed",
+   "evidence": "KFC's official location page for 569 Hamlin Hwy returns 404, and Menupix/Restaurantji list California Taco at that address with current hours; no news item confirming the changeover was found.",
+   "source": "https://www.menupix.com/pennsylvania/restaurants/31894408/California-Taco-Hamlin-PA",
+   "new_name": "California Taco (different business at the address)",
+   "website": null
+  },
+  {
+   "id": "leunes-tavern-14029026004",
+   "name": "Leunes Tavern",
+   "verdict": "unsure",
+   "evidence": "Listed at 913 Main St, Honesdale (also as Leunes' Lounge Bar); last health inspection on record 2024-04-05, OSM point edited 2026-10-17, but no clear 2026 operating evidence.",
+   "source": "https://discovernepa.com/listing/leunes-lounge-bar",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-ebdb241f-f64",
+   "name": "Market 13",
+   "verdict": "unsure",
+   "evidence": "DiscoverNEPA lists it as a grab-and-go deli; last inspection on record 2024-09-10. Restaurantji also shows 'McCaffery's Market' at the same address, so it may have been renamed.",
+   "source": "https://discovernepa.com/listing/market-13/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "oreganato-s-7837410058",
+   "name": "Oreganato's",
+   "verdict": "unsure",
+   "evidence": "No listing found for Oreganato's at 641 PA-739; only an OpenStreetMap point from 2020. Restaurantji lists FM Pizza and Sausage Company nearby at 625 PA-739.",
+   "source": "https://www.openstreetmap.org/node/7837410058",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d4b96986-da2",
+   "name": "Paupack Watering Hole",
+   "verdict": "unsure",
+   "evidence": "Listed by DiscoverNEPA, Overlook Maps and Restaurantji at 153 Welwood Ave (570-390-8633), but none of the listings carries a 2026 date.",
+   "source": "https://discovernepa.com/listing/paupack-watering-hole/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "renegades-saloon-440644749",
+   "name": "Renegades Saloon",
+   "verdict": "open",
+   "evidence": "At 1058 Main St, Newfoundland; ticketed wrestling show held there 2026-07-31 and AllEvents lists shows on 2026-11-21 and 2026-12-05.",
+   "source": "https://www.tickettailor.com/events/littlemaniamidgetwrestlingallstars/1936366",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-f509ed4c-5c6",
+   "name": "Rolly's Pizza & Grill",
+   "verdict": "unsure",
+   "evidence": "Superpages and Sluurpy list it at 614 Purdytown Tpke (570-390-4745) with hours, but undated; no 2026 evidence.",
+   "source": "https://www.sluurpy.com/pt/lakeville/restaurant/3713779/rolly-s-pizza-and-grill",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-ac26b896-006",
+   "name": "Subway",
+   "verdict": "open",
+   "evidence": "Subway's official store page lists 496 Hamlin Highway (inside Exxon/Joe's Kwik Mart) with hours 8am-9pm.",
+   "source": "https://restaurants.subway.com/united-states/pa/lake-ariel/496-hamlin-highway",
+   "new_name": null,
+   "website": "https://restaurants.subway.com/united-states/pa/lake-ariel/496-hamlin-highway"
+  },
+  {
+   "id": "ov-66c12200-e71",
+   "name": "The Beach House at Fawn Lake",
+   "verdict": "unsure",
+   "evidence": "Restaurantji lists 'Fawn Lake Beach House' at 111 Cove Oaks Lane (a private-community lakeside eatery, likely seasonal); undated, no 2026 evidence.",
+   "source": "https://www.restaurantji.com/pa/hawley/",
+   "new_name": "Fawn Lake Beach House (listing name)",
+   "website": null
+  },
+  {
+   "id": "ov-e5dc33b4-201",
+   "name": "The Honesdale Pub",
+   "verdict": "unsure",
+   "evidence": "DiscoverNEPA and Restaurantji list The Honesdale Pub at 1872 Elm Place (the former Kim's Pub & Grub / Reilly's Irish Pub site), which suggests a recent opening, but no dated source was found.",
+   "source": "https://discovernepa.com/?p=474515",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-c5d4b34e-8c0",
+   "name": "The Summit at Maple Grove",
+   "verdict": "unsure",
+   "evidence": "No listing found for The Summit at Maple Grove at 418 Maple Grove Rd, Moscow.",
+   "source": "https://www.discovernepa.com/thing-to-do/country-cafe-daleville/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-401d7077-5ab",
+   "name": "Twin Rocks Diner",
+   "verdict": "closed",
+   "evidence": "WNEP reported the Twin Rocks Diner closed and was converted to an IHOP by Liberty Travel Plazas; IHOP now lists 133 Twin Rocks Rd, Lake Ariel.",
+   "source": "https://www.wnep.com/article/news/local/wayne-county/ihop-coming-to-wayne-county/523-7b21990d-b0a6-4e54-9632-90880f7ccd28",
+   "new_name": "IHOP (replaced the diner)",
+   "website": "https://restaurants.ihop.com/en-us/pa/lake-ariel/breakfast-133-twin-rocks-rd.-5649"
+  },
+  {
+   "id": "ov-231b179f-ee3",
+   "name": "Vinnys II",
+   "verdict": "unsure",
+   "evidence": "Only an undated SinglePlatform menu page for 'Vinnys II' at 163 Ledgedale Rd (570-290-3961); no reviews or 2026 evidence.",
+   "source": "https://places.singleplatform.com/vinnys-ii-0/menu",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d719706f-351",
+   "name": "Watson Bros Deli",
+   "verdict": "unsure",
+   "evidence": "MapQuest lists 'Watson Brothers Country Store and Deli' on Route 6 (family-owned since 2007), likely the same business, but undated and at a differently written address.",
+   "source": "https://startpage.mapquest.com/us/pennsylvania/watson-brothers-country-store-and-deli-377879986",
+   "new_name": "Watson Brothers Country Store and Deli (listing name)",
+   "website": null
+  },
+  {
+   "id": "white-owl-7902913457",
+   "name": "White Owl",
+   "verdict": "unsure",
+   "evidence": "Listed as White Owl Steakhouse / Tavern & Restaurant at 318 Welcome Lake Rd (570-729-7000) on TableAgent and PoconoGo with hours, but nothing dated 2026.",
+   "source": "https://tableagent.com/scranton/the-white-owl-steakhouse/",
+   "new_name": "White Owl Steakhouse (listing name)",
+   "website": null
+  },
+  {
+   "id": "ov-9948541a-32e",
+   "name": "Al Dentes Pizzeria and Creamery - Golf Park Drive lake ariel",
+   "verdict": "unsure",
+   "evidence": "Directory listings and commercial real-estate listings (business/property offered for sale, undated); no dated 2026 evidence of operation.",
+   "source": "https://commercial.century21.com/listing/1148-golf-park-drive-lake-ariel-pa-18436-REN036011918",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-b610635f-e20",
+   "name": "Auntie Anne's",
+   "verdict": "unsure",
+   "evidence": "No Auntie Anne's location page found for Honesdale; address is the Walmart Supercenter and nothing confirms a pretzel kiosk there.",
+   "source": "https://www.walmart.com/store/2480",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "beyond-bagels-7817709248",
+   "name": "Beyond Bagels",
+   "verdict": "unsure",
+   "evidence": "MapQuest listing at 163 Ledgedale Rd with reviews into late 2024/2025; shows 'closed' but likely an hours snapshot; no 2026 evidence.",
+   "source": "https://www.mapquest.com/us/pennsylvania/beyond-bagels-667794025",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "blooming-grove-tavern-7851765157",
+   "name": "Blooming Grove Tavern",
+   "verdict": "unsure",
+   "evidence": "Only directory records (BG Tavern Inc, Yellow Pages phone 570-226-2240); no reviews or dated activity.",
+   "source": "https://naicslist.com/company-profile/bg-tavern-inc-hawley-pa-18428",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "bruno-pizza-7835181359",
+   "name": "Bruno Pizza",
+   "verdict": "unsure",
+   "evidence": "Listed as Brother Bruno's Pizza at 123 Village Center Dr (Lords Valley) on BBB and Restaurantji; no dated 2026 status.",
+   "source": "https://www.restaurantji.com/pa/hawley/pizza",
+   "new_name": "Brother Bruno's Pizza",
+   "website": null
+  },
+  {
+   "id": "ov-0f62eb2b-a5c",
+   "name": "China House",
+   "verdict": "unsure",
+   "evidence": "MapQuest listing with reviews at 322 Main Ave; undated, no 2026 evidence.",
+   "source": "https://www.mapquest.com/us/pennsylvania/china-house-2199852",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d17882fc-4e4",
+   "name": "Dabs Scoops And Treats",
+   "verdict": "unsure",
+   "evidence": "DiscoverNEPA lists it as a year-round ice cream shop plus a DABS Scoops Mobile truck; listings undated.",
+   "source": "https://www.discovernepa.com/thing-to-do/dabs-scoops-treats/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-670764b1-b9d",
+   "name": "Dyberry Forks",
+   "verdict": "closed",
+   "evidence": "OpenTable pages mark the restaurant permanently closed (latest review Sept 2025) and dyberryforks.com returns 404; no closing news item found, worth a confirming look.",
+   "source": "https://www.opentable.com/r/dyberry-forks-honesdale?lang=es",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d47374f6-b18",
+   "name": "Grandma's Candy Carousel",
+   "verdict": "unsure",
+   "evidence": "No web trace of this name in Honesdale at all.",
+   "source": "https://discovernepa.com/where-to-eat/chocolate-and-candy-shops-in-nepa/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-7dfc584f-49c",
+   "name": "Gretchen's Grotto",
+   "verdict": "open",
+   "evidence": "Restaurantji Honesdale page (updated November 2026) lists it with a growing review count; Menupix shows Tue-Fri hours, phone 570-253-6263.",
+   "source": "https://www.restaurantji.com/pa/honesdale/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-68ce6cd1-5dc",
+   "name": "Harlins",
+   "verdict": "unsure",
+   "evidence": "Superpages/Birdeye list Harlin's at 1284 Hamlin Hwy (unclaimed); Restaurantji's 'harlins' page is now Rif's Italian Deli at 605 Hamlin Hwy, and Airbnb guides mark Rif's Place closed. Conflicting.",
+   "source": "https://reviews.birdeye.com/harlin-s-place-147120714653087",
+   "new_name": "Rif's Italian Deli (possible, 605 Hamlin Hwy)",
+   "website": null
+  },
+  {
+   "id": "ov-ffdeead7-984",
+   "name": "Jam Room Brewing Company",
+   "verdict": "open",
+   "evidence": "Songkick lists concerts scheduled 2026-2027 at the taproom; most sources give the address as 101 Creamery Rd, Greentown, not 875 Main St Newfoundland.",
+   "source": "https://www.songkick.com/venues/4589450-jam-room-brewing-co",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-43201f41-dd1",
+   "name": "Joey Boba",
+   "verdict": "open",
+   "evidence": "Restaurantji listing (site updated November 2026) shows it open with Wed-Sat 12-7 hours and active Facebook/Instagram links.",
+   "source": "https://www.restaurantji.com/pa/honesdale/joey-boba-/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "la-casa-de-brewer-14067346832",
+   "name": "La Casa De Brewer",
+   "verdict": "unsure",
+   "evidence": "No web trace of this name in Pike or Wayne County.",
+   "source": "https://www.pikecountycourier.com/features/living-local/breweries-and-wineries-near-pike-county-BK5941737",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "limerick-tavern-885546827",
+   "name": "Limerick Tavern",
+   "verdict": "unsure",
+   "evidence": "No listing under this name found in area bar directories.",
+   "source": "https://www.yellowpages.com/hawley-pa/bars",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-3555b2b1-f17",
+   "name": "Meat Heads",
+   "verdict": "unsure",
+   "evidence": "Only a low-quality page describing a Meat Heads takeout burger spot in Hawley; no address, date or status.",
+   "source": "https://www.poconomountains.com/hawley/restaurants/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "panda-garden-7835181357",
+   "name": "Panda Garden",
+   "verdict": "unsure",
+   "evidence": "MapQuest listing at 123 Village Center Dr and appears among Uber Eats Hawley options; undated, no 2026 confirmation.",
+   "source": "https://www.mapquest.com/us/pennsylvania/panda-garden-377845810",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-ff08d7f8-05a",
+   "name": "Pocono Pizza",
+   "verdict": "unsure",
+   "evidence": "No 'Pocono Pizza' on Route 6 Hawley found; only an unlocated DoorDash 'Pocono Pizza and Eatery' page.",
+   "source": "https://page-service.doordash.com/store/pocono-pizza-and-eatery-24647357",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-4037b393-fd8",
+   "name": "Rickard's Cider Mill",
+   "verdict": "seasonal",
+   "evidence": "Included in DiscoverNEPA's fall 2026 cider roundup; season runs late September to late November, so closing for winter about now.",
+   "source": "https://discovernepa.com/things-to-do/farms-and-markets/celebrate-fall-with-nepas-finest-apple-ciders",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-2a9ad959-976",
+   "name": "Rule 62 Cafe",
+   "verdict": "unsure",
+   "evidence": "No web trace of this name around Lake Ariel/Hamlin.",
+   "source": "https://www.restaurantji.com/pa/lake-ariel/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-b2c84e0b-8b3",
+   "name": "TJ's Lakeside Bar & Grill",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA lists 'Lakeside Live' music at TJ's Lakeside Bar & Grill (at Silver Birches, Hawley) Memorial Day-Labor Day 2026; likely summer-only, winter status not confirmed.",
+   "source": "https://discovernepa.com/event/lakeside-live/2026-09-06/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-c5ea9da6-53e",
+   "name": "The Bean",
+   "verdict": "closed",
+   "evidence": "318 Main Ave, Hawley is now a Black & Brass Coffee Roasting Co. retail cafe; no trace of 'The Bean' there.",
+   "source": "https://www.yahoo.com/news/black-brass-coffee-roasting-co-200100146.html",
+   "new_name": "Black & Brass Coffee Roasting Co. (current occupant)",
+   "website": null
+  },
+  {
+   "id": "ov-2ba1911b-ee9",
+   "name": "The Lager Haus",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing for The Lager Haus (Route 390 & Gumbletown Rd, Tafton) updated 2026-03-17; page slug is 'hammered-steel-tavern', suggesting a prior name.",
+   "source": "https://www.discovernepa.com/thing-to-do/hammered-steel-tavern/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-72693bb5-e77",
+   "name": "The Wake Zone - Indoor Golf + Taproom",
+   "verdict": "open",
+   "evidence": "Current Pocono Mountains and golf-sim listings with Thu-Sun hours; Wallenpaupack Brewing's second taproom, address given as 274 PA-507.",
+   "source": "https://www.poconomountains.com/ptn-detail/the-wake-zone/69f8901a7786f4cebf63887a/",
+   "new_name": null,
+   "website": "https://thewakezone-pa.com/"
+  },
+  {
+   "id": "ov-9e2e424a-3d3",
+   "name": "Two Guys From Italy",
+   "verdict": "unsure",
+   "evidence": "Listed at 1199 Texas Palmyra Hwy Ste D on MapQuest/Restaurantji (site updated November 2026) with many reviews, but no explicit dated status or hours seen.",
+   "source": "https://www.restaurantji.com/pa/honesdale/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "wallenpaupack-brewing-company-979366351",
+   "name": "Wallenpaupack Brewing Company",
+   "verdict": "open",
+   "evidence": "Weekly trivia listed through 2026-11-26 and ChristKindl Markt Nov 29-Dec 20, 2026 at 73 Welwood Ave, Hawley.",
+   "source": "https://discovernepa.com/event/trivia-night-12/2026-11-26/",
+   "new_name": null,
+   "website": "https://wallenpaupackbrewingco.com"
+  },
+  {
+   "id": "waymart-hotel-7717482309",
+   "name": "Waymart Hotel",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA and MapQuest listings for Waymart Hotel Restaurant & Saloon, 205 Carbondale Rd, with daily hours and phone; listings undated (weak).",
+   "source": "https://www.discovernepa.com/thing-to-do/waymart-hotel-restaurant-saloon/",
+   "new_name": "Waymart Hotel Restaurant & Saloon",
+   "website": "https://waymarthotel.com"
+  },
+  {
+   "id": "ov-5ca8e1a0-e9c",
+   "name": "Yoga International",
+   "verdict": "unsure",
+   "evidence": "River Reporter (undated) says Yoga International opened a first-floor cafe at 630 Main St; no current evidence it still operates.",
+   "source": "https://riverreporter.com/stories/yoga-for-everyone,111",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "alpine-tavern-7801464022",
+   "name": "Alpine Tavern",
+   "verdict": "unsure",
+   "evidence": "No listing for an Alpine Tavern on Route 390 found; directories show only Knotty Pine Pub (1172), Mountainhouse Tavern/Hurricane Helen's (1179) and Promised Land Inn (1045) on that road.",
+   "source": "https://www.superpages.com/greentown-pa/taverns",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-a6f1d005-39b",
+   "name": "Backroads Cafe And Dairy Bar",
+   "verdict": "unsure",
+   "evidence": "Listed on DiscoverNEPA (listing last updated 2025-12-29) and Restaurantji (Nov 2026 page, 255 reviews) with no closure note, but nothing dated 2026; likely open.",
+   "source": "https://discovernepa.com/listing/backroads-cafe-dairy-bar",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-6649fd4f-e2a",
+   "name": "BiBimBus",
+   "verdict": "unsure",
+   "evidence": "No listing or mention of BiBimBus in Narrowsburg found in search.",
+   "source": "https://sullivancatskills.com/outdoor-dining",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-897f905b-55a",
+   "name": "Bongo Road House",
+   "verdict": "closed",
+   "evidence": "A different business, Nurnberger Bierhaus, now occupies 2136 Lake Ariel Hwy (DiscoverNEPA listing updated 2026-06-03); bongoroadhouse.net no longer resolves.",
+   "source": "https://discovernepa.com/listing/nurnberger-bierhaus/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-17aa9121-c57",
+   "name": "Burger Shack",
+   "verdict": "open",
+   "evidence": "Restaurantji page (dated Nov 2026) lists it at 1014 Texas Palmyra Hwy with current hours Mon-Fri 11:30-7, Sat 12-7, Sun 12-4 and 4.9 from 148 reviews; no review dates shown.",
+   "source": "https://www.restaurantji.com/pa/honesdale/burger-shack-/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-076ea188-77e",
+   "name": "Cora's 1850 Bistro",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing last updated 2026-05-14 with current weekly specials and no closure note; Restaurantji lists it at 525 Welwood Ave.",
+   "source": "https://discovernepa.com/listing/coras-1850-bistro/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-bdc85eab-ae5",
+   "name": "Deacon Hill",
+   "verdict": "unsure",
+   "evidence": "No business named Deacon Hill found; 652 Park St is listed as Gretchen's Grotto (active listing, 193 reviews), so this may be bad data or a duplicate of that restaurant.",
+   "source": "https://www.menupix.com/pennsylvania/restaurants/3810210/Gretchens-Grotto-Honesdale-PA",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-8078e7d8-669",
+   "name": "Emmá",
+   "verdict": "unsure",
+   "evidence": "Only undated opening coverage found; emmaeatery.com no longer resolves and sister restaurant Ba & Me (same founder, same alley) closed June 2026, so it may be closed but no source says so.",
+   "source": "https://radiocatskill.org/ba-me-closes-in-honesdale-after-12-years-in-business/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "gravity-ice-cream-4562170803",
+   "name": "Gravity Ice Cream",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing (6th Street, Honesdale) last updated 2026-10-20 with no closure note; soft-serve stand, so possibly shut for winter but not confirmed.",
+   "source": "https://www.discovernepa.com/thing-to-do/gravity-ice-cream/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-d4ad9d07-c90",
+   "name": "Habaneros Tacos",
+   "verdict": "unsure",
+   "evidence": "No listing found for a Habaneros at 658 Route 739, Lords Valley, and habaneroslordsvalleypa.com no longer resolves.",
+   "source": "https://discovernepa.com/where-to-eat/dining/mexican-restaurants-in-northeastern-pa/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-3d6d61ee-1c1",
+   "name": "Hollows Hot Dogs",
+   "verdict": "unsure",
+   "evidence": "No listing or mention of Hollows Hot Dogs at 727 Hamlin Hwy found.",
+   "source": "https://www.restaurantji.com/pa/lake-ariel/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-529e06f0-743",
+   "name": "Jam Room Brewing Company",
+   "verdict": "open",
+   "evidence": "Songkick lists concerts at the venue on 2026-01-16, 2026-03-20 and 2026-05-15; listed on Restaurantji (167 reviews). jamroombrewing.co returned 404 when fetched.",
+   "source": "https://www.songkick.com/venues/4589450-jam-room-brewing-co",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "john-s-italian-restaurant-837382087",
+   "name": "John's Italian Restaurant",
+   "verdict": "unsure",
+   "evidence": "Listed at 1406 Route 507 on MapQuest, OpenTable and Restaurantji (348 reviews) with no permanent-closure note, but no dated 2026 evidence and johnsitalianrt507.com no longer resolves.",
+   "source": "https://www.restaurantji.com/pa/greentown/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-5027fa5f-7b5",
+   "name": "Lake Side Deli & Grill",
+   "verdict": "unsure",
+   "evidence": "Listed at 2531 US-6 on Restaurantji (101 reviews) alongside a likely duplicate/older name 'Deli Central'; an undated BizQuest ad offers the business for sale 'open and operating until sale'.",
+   "source": "https://www.bizquest.com/business-for-sale/lake-side-deli-and-grill/BW2013015/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-f5d6dd76-b04",
+   "name": "Lori's Corner Kitchen",
+   "verdict": "open",
+   "evidence": "Its own website is live (dine-in, take-out, catering, phone 570-689-7080) and Superpages shows hours 6am-3pm; no dated 2026 post seen.",
+   "source": "http://www.loriscornerkitchen.com/",
+   "new_name": null,
+   "website": "http://www.loriscornerkitchen.com/"
+  },
+  {
+   "id": "mountainhouse-tavern-7802210422",
+   "name": "Mountainhouse Tavern",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing last updated 2026-03-31 and a show listed there for 2026-09-13; Restaurantji 222 reviews. Superpages also shows 'Hurricane Helen's Pub' at the same address (likely an older name).",
+   "source": "https://discovernepa.com/listing/mountainhouse-tavern/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-1b3d6445-eba",
+   "name": "Papa's Ice Cream Cottage",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing last updated 2026-07-07 and Restaurantji lists it at 1800 Fair Ave (74 reviews); ice cream stand, so possibly shut for winter but not confirmed.",
+   "source": "https://discovernepa.com/listing/papas-ice-cream-cottage/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-f2de7553-7c4",
+   "name": "Pork Authority BBQ",
+   "verdict": "unsure",
+   "evidence": "MapQuest lists it at 1311 Route 507 (status unclear); FestivalNet shows it as a BBQ trailer run by Promised Land Inn, so it may be a mobile/event vendor rather than a fixed restaurant.",
+   "source": "https://festivalnet.com/Promised-Land-Inn-d-b-a-Pork-Authority-BBQ",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "roadside-bistro-1218051537",
+   "name": "Roadside Bistro",
+   "verdict": "unsure",
+   "evidence": "Food truck/catering at 1026 Main St listed on PoconoGo, MapQuest and Restaurantji (181 reviews) with no closure note, but nothing dated 2026.",
+   "source": "https://poconogo.com/?p=25821",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "shelly-s-444463290",
+   "name": "Shelly's",
+   "verdict": "unsure",
+   "evidence": "No restaurant called Shelly's found in the area; no address to search on.",
+   "source": "https://www.poconomountains.com/hawley/restaurants/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "tablespoons-kitchen-1541027866",
+   "name": "Tablespoons Kitchen",
+   "verdict": "open",
+   "evidence": "DiscoverNEPA listing last updated 2026-10-21 with hours Thu-Sat 12-4; vegan/gluten-free cafe at 933 Main St, Honesdale.",
+   "source": "https://discovernepa.com/listing/tablespoons-kitchen/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "the-ellendale-1222576113",
+   "name": "The Ellendale",
+   "verdict": "unsure",
+   "evidence": "No listing for a bar called The Ellendale found in the area; no address to search on.",
+   "source": "https://www.yellowpages.com/honesdale-pa/bars",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-607b2a10-0e2",
+   "name": "The Lumber Shack Ice Cream Shoppe",
+   "verdict": "unsure",
+   "evidence": "No listing or mention of a Lumber Shack ice cream shop on Sawmill Rd found.",
+   "source": "https://www.restaurantji.com/pa/lake-ariel/ice-cream/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-c04ed532-c46",
+   "name": "Three Bakers",
+   "verdict": "unsure",
+   "evidence": "Wholesale gluten-free commercial bakery (not a retail shop) at 360 J&J Rd, Moscow PA; a Yelp review from about March 2025 says it is 'no longer in business' but a later review still mentions its bread in stores. Possibly closed; not a public storefront either way.",
+   "source": "https://www.mapquest.com/us/pennsylvania/three-bakers-365213305",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-5e228963-3cc",
+   "name": "Two Guys From Italy Pizzeria",
+   "verdict": "unsure",
+   "evidence": "No listing at 6 Railroad Dr; Two Guys From Italy is listed in Honesdale at 1199 Texas Palmyra Hwy Ste D (Restaurantji, 311 reviews), so this entry may be an old address or duplicate.",
+   "source": "https://www.restaurantji.com/pa/honesdale/",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-f917b381-4d6",
+   "name": "Wallenpaupack Cafe And Restaurant",
+   "verdict": "unsure",
+   "evidence": "Only a bare Yellow Pages mention of 'Lake Wallenpaupack Cafe & Restaurant' at 2192 Route 6; no hours, reviews or other listings.",
+   "source": "https://www.yellowpages.com/hawley-pa/mip/the-dock-526644730",
+   "new_name": null,
+   "website": null
+  },
+  {
+   "id": "ov-f8b0a70f-a80",
+   "name": "Welcome Lake Food And Beverage",
+   "verdict": "unsure",
+   "evidence": "This is the LLC name; the restaurant at 318 Welcome Lake Rd trades as White Owl Steakhouse (570-729-7000), listed on TableAgent/PoconoGo with no closure note but nothing dated 2026.",
+   "source": "https://tableagent.com/scranton/the-white-owl-steakhouse/",
+   "new_name": "White Owl Steakhouse",
+   "website": null
+  },
+  {
+   "id": "ov-eb0a4dca-f3d",
+   "name": "paradise woods",
+   "verdict": "unsure",
+   "evidence": "No listing or mention of Paradise Woods at 21 Leah Ln found; likely a home-based business.",
+   "source": "https://www.bbb.org/us/pa/waymart/category/bakery",
+   "new_name": null,
+   "website": null
+  }
+ ]
+}

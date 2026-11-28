@@ -374,6 +374,35 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       `<p class="fine">Listing figures: <a href="${esc(MK.source_url)}" target="_blank" rel="noopener">${esc(MK.source)}</a>. They describe homes listed for sale (asking prices), not recorded sale prices, and cover whole counties and ZIP codes, not just lakefront. ZIP codes with few listings swing widely. Seasonal shares: U.S. Census Bureau, American Community Survey. General information only, not an appraisal or advice.</p>`);
     addChip('Market', marketSheet); if (Q.has('market')) setTimeout(marketSheet, 800);
   }
+  /* ---------- a small joke for anyone who zooms in on the public campground: a black bear making off with a picnic basket ---------- */
+  { const camp = D.pois.find(p => /Wilsonville Recreation Area Campground/.test(p.name)) || D.pois.find(p => p.kind === 'Campground');
+    if (camp && !c.EMBED){
+      const SC = 5.5, cx = camp.x + 34, cz = camp.z + 22, g = new THREE.Group(), mats = new Map();
+      const M3 = col => mats.get(col) || mats.set(col, new THREE.MeshLambertMaterial({color: col})).get(col);
+      const bx = (w, h, d, col, x, y, z, par) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), M3(col)); m.position.set(x, y, z); (par || g).add(m); return m; };
+      /* the picnic table it came from, with a checked cloth */
+      const tb = new THREE.Group(); bx(2.2, .12, 1, '#8a6a45', 0, .9, 0, tb); bx(2.2, .1, .34, '#8a6a45', 0, .5, .78, tb); bx(2.2, .1, .34, '#8a6a45', 0, .5, -.78, tb);
+      for (const sx of [-.8, .8]) bx(.12, .9, 1.7, '#6f5335', sx, .45, 0, tb); bx(1.2, .03, 1.02, '#c8452c', 0, .98, 0, tb); bx(.4, .035, 1.03, '#f7f2e6', -.2, .98, 0, tb); bx(.4, .035, 1.03, '#f7f2e6', .5, .98, 0, tb);
+      tb.scale.setScalar(SC); tb.position.set(cx, Y(cx, cz) + .5, cz); tb.rotation.y = .5; g.add(tb);
+      /* the bear, walking upright, basket on one arm */
+      const bear = new THREE.Group(), B = '#2a2522', T = '#b98d5a';
+      bx(.9, 1.25, .75, B, 0, 1.45, 0, bear); bx(.62, .56, .6, B, 0, 2.4, 0, bear); bx(.3, .22, .26, T, .36, 2.3, 0, bear); bx(.1, .09, .1, '#141110', .52, 2.36, 0, bear);
+      for (const sd of [1, -1]) bx(.16, .18, .12, B, -.05, 2.74, sd * .24, bear);
+      const legL = bx(.34, .85, .32, B, 0, .42, .2, bear), legR = bx(.34, .85, .32, B, 0, .42, -.2, bear), arm = bx(.28, .9, .26, B, .1, 1.5, -.5, bear);
+      const armB = new THREE.Group(); armB.position.set(.1, 1.95, .5); bear.add(armB); bx(.28, .9, .26, B, .25, -.3, 0, armB).rotation.z = .9;
+      const basket = new THREE.Group(); bx(.62, .36, .44, '#c9a25a', 0, 0, 0, basket); bx(.66, .05, .48, '#a57f3f', 0, .2, 0, basket); bx(.05, .3, .05, '#a57f3f', -.26, .36, 0, basket); bx(.05, .3, .05, '#a57f3f', .26, .36, 0, basket); bx(.57, .05, .05, '#a57f3f', 0, .5, 0, basket);
+      bx(.3, .04, .46, '#c8452c', .05, .23, 0, basket); basket.position.set(.72, -.72, 0); armB.add(basket);
+      bear.scale.setScalar(SC); g.add(bear); g.add(new THREE.HemisphereLight('#ffffff', '#8a8370', 2.4)); scene.add(g); g.visible = false;
+      const tag = document.createElement('div'); tag.className = 'lb pk an'; tag.textContent = 'Somebody’s lunch'; const lab = addLabel(tag, cx, cz, SC * 3.2 + 3, 'center'); lab.maxD = 1300;
+      const L = 46, ang = -.7, dx = Math.cos(ang), dz = Math.sin(ang);
+      const tick = now => { requestAnimationFrame(tick);
+        const near = camera.position.distanceTo(tb.position) < 2600; g.visible = near; if (!near) return;
+        const t = now / 1000, ph = (t * .09) % 1, out = ph < .5, k = out ? ph * 2 : 2 - ph * 2, s = 6 + k * L;      // away from the table and back again
+        const x = cx + dx * s, z = cz + dz * s; bear.position.set(x, Y(x, z) + .5 + Math.abs(Math.sin(t * 5)) * .25, z); bear.rotation.y = -ang + (out ? 0 : Math.PI);
+        legL.position.x = Math.sin(t * 5) * .22; legR.position.x = -Math.sin(t * 5) * .22; arm.position.x = .1 - Math.sin(t * 5) * .15; basket.rotation.z = Math.sin(t * 5) * .12;
+        lab.v.set(x, Y(x, z) + SC * 3.2 + 3, z); };
+      requestAnimationFrame(tick);
+    } }
   /* ---------- the feature tour: a short guided walk through what the map does, one card at a time ---------- */
   { const st = document.createElement('style'); st.textContent = `#ftour{position:fixed;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;width:min(520px,calc(100vw - 24px));background:var(--card);color:var(--ink);border:1px solid var(--ink);box-shadow:0 10px 30px rgba(20,30,36,.28);padding:14px 16px 12px;display:none}
 #ftour.on{display:block}#ftour small{font:700 10.5px var(--sc);letter-spacing:.2em;color:var(--ink-soft)}#ftour h3{font:600 23px/1.15 var(--serif);margin:3px 0 5px}#ftour p{font:500 16.5px/1.4 var(--serif);margin:0 0 10px}

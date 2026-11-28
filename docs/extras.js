@@ -231,10 +231,14 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       m.renderOrder = 2; m.visible = false; scene.add(m); return m;
     };
     const MK = await getJSON('markers.json'); let pinned = false;
+    const HS = await getJSON('history.json');            // the story of the lake: hand-kept, every entry with its source
+    const story = () => !HS ? '' : `<p>${esc(HS.intro)}</p>` + HS.eras.map((era, i) => `<div class="sec">${esc(era.t)}</div>` + era.items.map((it, j) =>
+      `<div class="hrow"><b>${esc(it.y)}</b><p>${esc(it.text)}${it.lat ? ` <button class="lnk" data-hs="${i}.${j}">Show on the map</button>` : ''}<small>${it.src.map(x => `<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.n)}</a>`).join(' · ')}</small></p></div>`).join('')).join('') +
+      `<p class="fine">${esc(HS.fine)}</p><div class="sec">The first maps of the new lake</div>`;
     const histSheet = auto => {
       const ms = (MK && MK.markers) || [];
-      openSheet('History', 'The lake when it was new',
-        `<p>The dam at Wilsonville was finished in 1926. These are the first government survey maps made afterwards: the western sheet was surveyed in 1927–28 and the eastern in 1935, when the lake was a few years old and most of today's communities were still farms and woods.</p>
+      openSheet('History', HS ? 'The story of the lake' : 'The lake when it was new',
+        story() + `<p>The dam at Wilsonville was finished in 1926. These are the first government survey maps made afterwards: the western sheet was surveyed in 1927–28 and the eastern in 1935, when the lake was a few years old and most of today's communities were still farms and woods.</p>
          <button class="wide" id="oldBtn" style="margin:0 0 10px"></button>
          <label style="display:block;font:700 11px var(--sc);letter-spacing:.13em">Old map ⟷ today<input id="oldOp" type="range" min="0" max="100" value="${Math.round(op * 100)}" style="display:block;width:100%;margin-top:6px"></label>
          <p class="fine">No survey of the valley before the flooding exists in this collection, so the farms and the village of Wilsonville under the water are not shown. The two sheets were printed in different colours and meet down the middle of the lake. They cover the lake and south; Honesdale is off the top.</p>` +
@@ -247,6 +251,7 @@ body.tour header .tools,body.tour #chips,body.tour #zoom,body.tour #locate,body.
       b.onclick = () => toggle(!(old && old.visible)); r.oninput = () => { op = r.value / 100; if (old) old.material.opacity = op; };
       if (auto && !(old && old.visible)) toggle(true); else label();
       if (!pinned){ pinned = true; for (const m of ms){ const [x, z] = toXZ(m.lat, m.lon), el = document.createElement('div'); el.className = 'lb pk hm'; el.textContent = m.n; addLabel(el, x, z, 7, 'center').maxD = 7000; } }
+      panel.querySelectorAll('button[data-hs]').forEach(bt => bt.onclick = () => { const [i, j] = bt.dataset.hs.split('.'), it = HS.eras[+i].items[+j], [x, z] = toXZ(it.lat, it.lon); flyTo(x, z, it.d || 2600); });
       panel.querySelectorAll('button[data-mk]').forEach(bt => bt.onclick = () => { const m = ms[+bt.dataset.mk], [x, z] = toXZ(m.lat, m.lon); flyTo(x, z, 1300); });
     };
     const chip = addChip('History', () => histSheet(false));

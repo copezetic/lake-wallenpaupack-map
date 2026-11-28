@@ -101,8 +101,10 @@ guide('things-to-do', 'Things to do around Lake Wallenpaupack', 'Parks, golf cou
 d = J('outdoors'); guide('hiking-and-outdoors', 'Hiking and the outdoors at Lake Wallenpaupack', 'Where to hike and get outside around Lake Wallenpaupack, from the organisations that look after each place.', sections(d) + f'<p class="fine">{e(d["fine"])}</p>' + srcs(d))
 d = J('fishing'); guide('fishing', 'Fishing Lake Wallenpaupack', d['intro'], sections(d) + f'<p class="fine">{e(d["fine"])}</p>' + srcs(d))
 d = J('boating'); guide('boating-rules', 'Boating rules on Lake Wallenpaupack', d['intro'], sections(d) + f'<p class="fine">{e(d["fine"])}</p>' + srcs(d))
-d = J('markers'); guide('history', 'History around Lake Wallenpaupack', 'State historical markers around the lake and its towns, and a 1928 survey map you can lay over the modern one.',
-    '<h2>State historical markers</h2><ul class="l">' + ''.join(f'<li><b>{e(m["n"])}</b><small>Marker dedicated {e(m["year"])}</small></li>' for m in d['markers']) + '</ul><p class="fine">Marker names and years are from the Pennsylvania Historical and Museum Commission dataset on data.pa.gov.</p>', '?history')
+HS = J('history')
+hist = '<p>' + e(HS['intro']) + '</p>' + ''.join('<h2>' + e(er['t']) + '</h2><ul class="l">' + ''.join('<li><b>' + e(i['y']) + '</b> ' + e(i['text']) + '<small>Source: ' + ', '.join(f'<a href="{e(x["u"])}" rel="nofollow noopener">{e(x["n"])}</a>' for x in i['src']) + '</small></li>' for i in er['items']) + '</ul>' for er in HS['eras']) + '<p class="fine">' + e(HS['fine']) + '</p>'
+d = J('markers'); guide('history', 'The history of Lake Wallenpaupack', 'How Lake Wallenpaupack was built in 1924-26: the name, the valley and village of Wilsonville before the water, the dam and flow line, and the lake since, each line with its source.',
+    hist + '<h2>State historical markers</h2><ul class="l">' + ''.join(f'<li><b>{e(m["n"])}</b><small>Marker dedicated {e(m["year"])}</small></li>' for m in d['markers']) + '</ul><p class="fine">Marker names and years are from the Pennsylvania Historical and Museum Commission dataset on data.pa.gov.</p>', '?history')
 d = J('events'); ev = sorted((x for x in d['events'] if x.get('d0', '') >= TODAY), key=lambda x: x['d0'])
 guide('events', 'Events around Lake Wallenpaupack', 'Upcoming events in Hawley, Honesdale and around the lake, each linked to its organiser.',
     '<ul class="l">' + ''.join(f'<li>{f"""<a href="{e(x["url"])}" rel="nofollow noopener">{e(x["n"])}</a>""" if x.get("url") else "<b>" + e(x["n"]) + "</b>"}<small>{e(datetime.date.fromisoformat(x["d0"]).strftime("%A, %B %-d, %Y"))}{" · " + e(x["where"]) if x.get("where") else ""}{". " + e(x["note"]) if x.get("note") else ""}</small></li>' for x in ev) + f'</ul><p class="fine">Dates come from the organisers\' own listings, checked {e(d["updated"])}. Confirm before you travel.</p>')
@@ -117,6 +119,7 @@ for old_slug, target in DETAILS.get('pageAliases', {}).items():
 if os.path.exists('../docs/market.json'):
     exec(open('seo_market.py').read())
 exec(open('seo_more.py').read())
+json.dump({'guides': NAV}, open('../docs/guides.json', 'w'), indent=0)      # the Guides menu on the map reads this
 page('guide/index.html', 'Guides to Lake Wallenpaupack | WallyMap', 'Guides to Lake Wallenpaupack: marinas, public beaches and launches, dock and dine, restaurants, places to stay, fishing, boating rules, history and events.',
      '<h1>Guides to Lake Wallenpaupack</h1><p>Plain lists drawn from the 3D map, for when you want to read rather than explore.</p><a class="btn" href="/">Open the 3D map</a><ul class="l">' + ''.join(f'<li><a href="/guide/{s}.html">{e(t)}</a></li>' for s, t in NAV) + '</ul>', kick='WallyMap')
 # drop pages for places that no longer exist

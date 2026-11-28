@@ -96,6 +96,7 @@ body.aerial .lake{color:#f7f2e6;text-shadow:0 1px 3px #22303a,0 0 5px #22303a}
 body.aerial #credit,body.aerial #hint{background:rgba(247,242,230,.95);padding:5px 8px;border-radius:2px}
 #hint{max-width:40vw;text-align:right}
 .chips{display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 0;pointer-events:auto;width:fit-content}
+.hrow{display:grid;grid-template-columns:62px 1fr;gap:10px;margin:0 0 10px}.hrow b{font:700 13px var(--sc);letter-spacing:.06em;padding-top:2px}.hrow p{margin:0}.hrow small{display:block;margin-top:3px;font-size:11px;opacity:.75}
 .chip{font:600 12px var(--sc);letter-spacing:.14em;color:var(--ink);background:rgba(247,242,230,.86);
   border:1px solid var(--rule);border-radius:999px;padding:6px 12px 5px;cursor:pointer;display:flex;align-items:center;gap:7px}
 .chip i{width:8px;height:8px;border-radius:50%;background:var(--c);display:block}
@@ -303,7 +304,7 @@ import * as THREE from 'three';
 import { MapControls } from 'three/addons/controls/MapControls.js';
 import { initSky } from './sky.js?v=8';
 import { initFishing } from './fishing.js?v=1';
-import { initExtras, openNow } from './extras.js?v=23';
+import { initExtras, openNow } from './extras.js?v=24';
 import { initVisitor } from './visitor.js';
 import { searchEntries, applyPlaceDetails } from './discovery.js';
 import { initImmersive } from './immersive.js?v=4';
@@ -659,6 +660,13 @@ function flyTo(x, z, d, az){
   let da = fly.a1 - fly.a0; while (da > Math.PI) da -= 2*Math.PI; while (da < -Math.PI) da += 2*Math.PI; fly.a1 = fly.a0 + da;
 }
 canvas.addEventListener('pointerdown', () => { fly = null; });
+// frame a set of points (or, with none, the opening view of the lake); used by the Explore menu
+function frameOn(pts){
+  if (!pts || !pts.length) return flyTo(HOME.t.x, HOME.t.z, HOME.d, HOME.az);
+  let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (const p of pts){ x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); z0 = Math.min(z0, p.z); z1 = Math.max(z1, p.z); }
+  const asp = (innerWidth / innerHeight) || 1.6, span = Math.max((x1 - x0) / Math.min(1, asp), (z1 - z0) * 1.25);
+  flyTo((x0 + x1) / 2, (z0 + z1) / 2, Math.min(controls.maxDistance, Math.max(2600, span * 1.15)));
+}
 canvas.addEventListener('wheel', () => { fly = null; }, {passive: true});
 
 /* ---------------- labels & pins ---------------- */
@@ -721,7 +729,7 @@ function layout(){
 /* ---------------- panel ---------------- */
 const panel = document.getElementById('panel');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const hooks = {};                                    // filled in by extras.js: the claim form and the business page
+const hooks = {flying: () => !!fly, frame: pts => frameOn(pts)};                                    // filled in by extras.js: the claim form and the business page
 function openPlace(p){
   for (const el of pinEls.values()) el.classList.remove('sel');
   pinEls.get(p.id)?.classList.add('sel');

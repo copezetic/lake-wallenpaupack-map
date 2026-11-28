@@ -29,3 +29,5 @@ body.embed #nav,body.tour #nav,body.riding #nav{display:none!important}
 .pin.collection-pin .tag,.pin.collection-pin .stem{visibility:visible!important}.pin.collection-pin .tag{background:#7a3b2e;color:#fffdf6;border-color:#7a3b2e}.pin.collection-pin .dot{background:#7a3b2e!important;width:13px;height:13px}
 
 .search-note{margin:0;padding:8px 12px;font:12px/1.4 system-ui,sans-serif;color:var(--ink-soft);border-bottom:1px solid var(--rule)}body.is-offline #panel{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+
+.navmenu a.chip{text-decoration:none;display:inline-flex;align-items:center}

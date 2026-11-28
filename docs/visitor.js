@@ -8,7 +8,7 @@ export function initVisitor(c) {
   function persist() { try { localStorage.setItem(key,JSON.stringify(trip)); return true; } catch { say('Browser storage is unavailable. Use Share to keep your trip link.'); return false; } }
   function marks(){ for(const [id,el] of pinEls) el.classList.toggle('trip-pin',trip.stops.includes(id)); }
   const menu = document.getElementById('nav');
-  menu.innerHTML = `<details id="exploreMenu"><summary>Explore</summary><div class="navmenu" id="exploreItems"><span class="menu-title">Find places & plan a day</span></div></details><details id="conditionsMenu"><summary>Conditions</summary><div class="navmenu" id="conditionItems"></div></details><button class="navbtn" id="myWeekend">My weekend</button><details id="experienceMenu"><summary>Map</summary><div class="navmenu" id="experienceItems"><span class="menu-title">Map experience</span></div></details>`;
+  menu.innerHTML = `<details id="exploreMenu"><summary>Explore</summary><div class="navmenu" id="exploreItems"><span class="menu-title">Find places & plan a day</span></div></details><details id="conditionsMenu"><summary>Conditions</summary><div class="navmenu" id="conditionItems"></div></details><details id="guidesMenu"><summary>Guides</summary><div class="navmenu" id="guideItems"><span class="menu-title">Guides to the lake: plain pages to read, print or share</span></div></details><button class="navbtn" id="myWeekend">My weekend</button><details id="experienceMenu"><summary>Map</summary><div class="navmenu" id="experienceItems"><span class="menu-title">Map experience</span></div></details>`;
   const groups = {explore:document.getElementById('exploreItems'),conditions:document.getElementById('conditionItems'),experience:document.getElementById('experienceItems')};
   const closeMenus = () => menu.querySelectorAll('details').forEach(d=>d.open=false);
   menu.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{ if(d.open) menu.querySelectorAll('details').forEach(o=>{if(o!==d)o.open=false;}); }));
@@ -20,7 +20,22 @@ export function initVisitor(c) {
     const label=b.textContent.trim(); const group = b.dataset.menu || (/^(Traffic|Weather|\d+°|Conditions|Forecast)/.test(label)|| b.title==='Weather at the lake' ? 'conditions' : /^(Ride|Sound|Time & season|About)$/.test(label) ? 'experience' : 'explore');
     if(b.id==='bInfo') groups.experience.append(b); else groups[group].append(b);
     b.addEventListener('click',()=>{if(!b.hasAttribute('aria-pressed'))closeMenus();});
+    b.addEventListener('click',()=>setTimeout(()=>overview(b),90));
   }
+  // Choosing something in Explore also moves the map: to the places it is about, or back to the whole lake.
+  const STILL=/^(Market|Utilities|Find by|Day plans|Take the tour|About|Homes for sale|Open houses|Essentials|Getting here)/, STOCK=new Set(['Grocery store','Beer distributor','Wine and spirits store']);
+  function overview(b){
+    if(!hooks.frame||hooks.flying?.()||b.id==='bInfo')return; const label=b.textContent.trim();
+    if(!b.classList.contains('sky')&&b.hasAttribute('aria-pressed')){ if(b.getAttribute('aria-pressed')!=='true')return; const k=Object.keys(CATS).find(k=>CATS[k].label===label); if(k)hooks.frame(D.pois.filter(p=>p.cat===k)); return; }
+    if(STILL.test(label))return;
+    if(/^Groceries/.test(label))return hooks.frame(D.pois.filter(p=>STOCK.has(p.kind)));
+    if(/^Towns/.test(label))return;
+    hooks.frame(null);
+  }
+  fetch('guides.json').then(r=>r.ok?r.json():null).then(g=>{ if(!g)return; const box=document.getElementById('guideItems');
+    for(const [slug,title] of g.guides){const a=document.createElement('a');a.className='chip';a.href='/guide/'+slug+'.html';a.textContent=title;box.append(a);}
+    const all=document.createElement('a');all.className='chip sky';all.href='/guide/';all.textContent='All guides';box.append(all);
+  }).catch(()=>{});
   ['bFish','bEvents','bComs','bInfo'].forEach(id=>move(document.getElementById(id)));
   const chips=document.getElementById('chips');
   const drain=()=>[...chips.children].forEach(move); drain(); new MutationObserver(drain).observe(chips,{childList:true});

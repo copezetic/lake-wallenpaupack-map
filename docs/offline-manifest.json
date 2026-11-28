@@ -1,6 +1,6 @@
 {
-  "version": "d0e42d512eb28e38",
-  "bytes": 23495675,
+  "version": "ec097b7a6171face",
+  "bytes": 23526815,
   "files": [
     "./",
     "access.json",
@@ -123,8 +123,10 @@
     "guide/towns.html",
     "guide/utilities-and-services.html",
     "guide/waterfront-dining.html",
+    "guides.json",
     "historic.jpg",
     "historic.json",
+    "history.json",
     "icon-180.png",
     "icon-192.png",
     "icon-512.png",

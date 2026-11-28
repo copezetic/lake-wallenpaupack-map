@@ -1,0 +1,408 @@
+{
+ "updated": "2026-11-28",
+ "intro": "Lake Wallenpaupack is a century old. Before 1926 this was a creek valley of farms, mills and one small village. Here is how it became a lake, with the source for each line.",
+ "fine": "Compiled from the sources linked under each line. Where they disagree, both figures are given. Something wrong or missing? Write to info@wallymap.com.",
+ "eras": [
+  {
+   "t": "Before the lake",
+   "items": [
+    {
+     "y": "The name",
+     "text": "Wallenpaupack is a Lenape name for the creek. Sources translate it differently: \"the stream of swift and slow water\", \"deep and dark\", or \"deep, dead water\".",
+     "src": [
+      {
+       "n": "Lake Wallenpaupack Watershed Management District",
+       "u": "https://wallenpaupackwatershed.org/about/lake-wallenpaupack/"
+      },
+      {
+       "n": "Wikipedia, Wallenpaupack Creek",
+       "u": "https://en.wikipedia.org/wiki/Wallenpaupack_Creek"
+      }
+     ]
+    },
+    {
+     "y": "The creek",
+     "text": "Wallenpaupack Creek runs about 30 miles to the Lackawaxen River. Roughly 13 miles of it now lie under the lake, which begins at the Ledgedale bridge.",
+     "src": [
+      {
+       "n": "Wikipedia, Wallenpaupack Creek",
+       "u": "https://en.wikipedia.org/wiki/Wallenpaupack_Creek"
+      }
+     ],
+     "lat": 41.36843,
+     "lon": -75.32013,
+     "d": 3200
+    },
+    {
+     "y": "1751",
+     "text": "A tract of 12,150 acres along the creek was surveyed for the Penn family as Wallenpaupack Manor.",
+     "src": [
+      {
+       "n": "Mathews, History of Wayne, Pike and Monroe Counties (1886)",
+       "u": "https://www.pa-roots.com/pike/history/chapter10.html"
+      }
+     ]
+    },
+    {
+     "y": "1774",
+     "text": "Settlers from Connecticut arrived and laid out lots. They built a fort of upright hewn timbers enclosing about an acre, with a spring and a blockhouse inside.",
+     "src": [
+      {
+       "n": "Mathews, History of Wayne, Pike and Monroe Counties (1886)",
+       "u": "https://www.pa-roots.com/pike/history/chapter10.html"
+      }
+     ],
+     "lat": 41.3962,
+     "lon": -75.19629,
+     "d": 3200
+    },
+    {
+     "y": "1778",
+     "text": "After the Battle of Wyoming the settlers fled toward the Delaware. Seventeen of them came back in 1783 and found about fourteen log houses still standing.",
+     "src": [
+      {
+       "n": "Mathews, History of Wayne, Pike and Monroe Counties (1886)",
+       "u": "https://www.pa-roots.com/pike/history/chapter10.html"
+      }
+     ]
+    },
+    {
+     "y": "1790s",
+     "text": "Judge James Wilson, a signer of the Declaration of Independence and Supreme Court justice, acquired the manor and built a factory near the falls to make cloth from flax and hemp. It failed and ruined him. Wilsonville was named for him.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society, Palmyra Township",
+       "u": "https://www.waynehistorypa.com/research/townships/palmyra"
+      },
+      {
+       "n": "Mathews, History of Wayne, Pike and Monroe Counties (1886)",
+       "u": "https://www.pa-roots.com/pike/history/chapter10.html"
+      },
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      }
+     ],
+     "lat": 41.45203,
+     "lon": -75.17906,
+     "d": 2600
+    },
+    {
+     "y": "1799",
+     "text": "Wilsonville served briefly as the Wayne County seat. When Pike County was formed in 1814 the creek became the county line, as the lake still is.",
+     "src": [
+      {
+       "n": "Mathews, History of Wayne, Pike and Monroe Counties (1886)",
+       "u": "https://www.pa-roots.com/pike/history/chapter10.html"
+      },
+      {
+       "n": "Wayne County Historical Society, Palmyra Township",
+       "u": "https://www.waynehistorypa.com/research/townships/palmyra"
+      }
+     ],
+     "lat": 41.45203,
+     "lon": -75.17906,
+     "d": 2600
+    },
+    {
+     "y": "1828",
+     "text": "The Delaware & Hudson Canal opened from Honesdale down the Lackawaxen to the Hudson River: 108 miles and 108 locks. It was abandoned in 1898.",
+     "src": [
+      {
+       "n": "National Park Service",
+       "u": "https://www.nps.gov/upde/learn/historyculture/dhcanal.htm"
+      }
+     ],
+     "lat": 41.47592,
+     "lon": -75.18212,
+     "d": 4200
+    },
+    {
+     "y": "1850",
+     "text": "The Pennsylvania Coal Company finished its gravity railroad to Paupack Eddy, which was renamed Hawley the following year after the company's first president.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society, gravity railroad",
+       "u": "https://waynehistorypa.com/research/historictopics/gravityrailroad"
+      }
+     ],
+     "lat": 41.47592,
+     "lon": -75.18212,
+     "d": 4200
+    },
+    {
+     "y": "1840s–1893",
+     "text": "Tanneries worked the valley. The one at Ledgedale, once called Tannerytown, employed about 200 before it burned in 1892 and closed the next year.",
+     "src": [
+      {
+       "n": "Greene-Dreher Historical Society",
+       "u": "https://www.greenedreherhs.org/learn-share/local-history/history-of-ledgedale/"
+      }
+     ],
+     "lat": 41.36843,
+     "lon": -75.32013,
+     "d": 3200
+    }
+   ]
+  },
+  {
+   "t": "Building the lake, 1924–1926",
+   "items": [
+    {
+     "y": "By 1913",
+     "text": "Land along the creek was already being bought up for a dam. Lacawac Sanctuary puts the total at about 15,000 acres by 1913.",
+     "src": [
+      {
+       "n": "Lacawac Sanctuary",
+       "u": "https://lacawac.org/history/"
+      }
+     ],
+     "lat": 41.379275,
+     "lon": -75.29157,
+     "d": 3000
+    },
+    {
+     "y": "1924",
+     "text": "Pennsylvania Power & Light began construction. Sources put the work force between 2,000 and nearly 3,000. A railroad was built for the job and 17 miles of road were rerouted.",
+     "src": [
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      },
+      {
+       "n": "Greene-Dreher Historical Society",
+       "u": "https://www.greenedreherhs.org/learn-share/local-history/history-of-ledgedale/"
+      },
+      {
+       "n": "Lake Wallenpaupack Watershed Management District",
+       "u": "https://wallenpaupackwatershed.org/about/lake-wallenpaupack/"
+      }
+     ]
+    },
+    {
+     "y": "The village",
+     "text": "Wilsonville lay in the path of the water. Its homes and businesses were moved, and so was the Purdytown cemetery. Stone walls and foundations remain underwater off Wilsonville Recreation Area.",
+     "src": [
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      },
+      {
+       "n": "Pocono Mountains Visitors Bureau",
+       "u": "https://www.poconomountains.com/plan-your-vacation/explore-our-area/lake-wallenpaupack/"
+      }
+     ],
+     "lat": 41.450305,
+     "lon": -75.181155,
+     "d": 2200
+    },
+    {
+     "y": "A holdout",
+     "text": "The Spinnler family refused to sell their farm, and the project went ahead around it. In the 1930s they began selling lots, which became one of the first lake communities.",
+     "src": [
+      {
+       "n": "Spinnler Point association",
+       "u": "https://www.spinnlerpoint.com/history"
+      }
+     ],
+     "lat": 41.43044,
+     "lon": -75.19612,
+     "d": 2600
+    },
+    {
+     "y": "The dam",
+     "text": "The concrete dam at Wilsonville is 1,280 feet long and 70 feet high.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society",
+       "u": "https://www.waynehistorypa.com/places/id/198"
+      }
+     ],
+     "lat": 41.459777,
+     "lon": -75.185135,
+     "d": 1800
+    },
+    {
+     "y": "The flow line",
+     "text": "Water leaves the lake through a pipe 3.5 miles long to the power station at Kimbles on the Lackawaxen. It was first built of about five million board feet of Douglas fir from Washington state, and replaced with 14-foot steel pipe in 1956–58.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society",
+       "u": "https://www.waynehistorypa.com/places/id/198"
+      }
+     ],
+     "lat": 41.46842,
+     "lon": -75.12156,
+     "d": 5200
+    },
+    {
+     "y": "1925–26",
+     "text": "The dam was finished in November 1925 and the valley took about seven months to fill.",
+     "src": [
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      },
+      {
+       "n": "Greene-Dreher Historical Society",
+       "u": "https://www.greenedreherhs.org/learn-share/local-history/history-of-ledgedale/"
+      }
+     ]
+    },
+    {
+     "y": "June 1926",
+     "text": "The 44,000-kilowatt station at Kimbles began generating.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society",
+       "u": "https://www.waynehistorypa.com/places/id/198"
+      }
+     ],
+     "lat": 41.46842,
+     "lon": -75.12156,
+     "d": 3000
+    },
+    {
+     "y": "July 1926",
+     "text": "The lake opened to the public on July 31, 1926. That same year a hot dog stand opened on the shore that grew into White Beauty View Resort.",
+     "src": [
+      {
+       "n": "Wikipedia, citing The Morning Call",
+       "u": "https://en.wikipedia.org/wiki/Lake_Wallenpaupack"
+      },
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      }
+     ]
+    },
+    {
+     "y": "The cost",
+     "text": "Accounts differ: the Wayne County Historical Society gives $1,026,000 for the dam and about $8 million for the whole project; other accounts give lower totals.",
+     "src": [
+      {
+       "n": "Wayne County Historical Society",
+       "u": "https://www.waynehistorypa.com/places/id/198"
+      },
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "t": "The lake since",
+   "items": [
+    {
+     "y": "Today",
+     "text": "5,700 acres, 13 miles long, with 52 miles of shoreline and a deepest point of about 60 feet. The watershed that feeds it covers 219 square miles.",
+     "src": [
+      {
+       "n": "Chamber of the Northern Poconos",
+       "u": "https://www.northernpoconos.org/lake-wallenpaupack/"
+      },
+      {
+       "n": "Lake Wallenpaupack Watershed Management District",
+       "u": "https://wallenpaupackwatershed.org/about/lake-wallenpaupack/"
+      }
+     ]
+    },
+    {
+     "y": "Late 1920s",
+     "text": "The Singer family farmhouse of 1904 became an inn, Silver Birches, after the power company bought most of the farm.",
+     "src": [
+      {
+       "n": "Historic Hotels of America",
+       "u": "https://www.historichotels.org/us/hotels-resorts/silver-birches"
+      }
+     ],
+     "lat": 41.43196,
+     "lon": -75.180243,
+     "d": 2200
+    },
+    {
+     "y": "The parks",
+     "text": "The power company laid out four public recreation areas: Wilsonville and Caffrey at the north end, Ledgedale and Ironwood Point at the south.",
+     "src": [
+      {
+       "n": "Greene-Dreher Historical Society",
+       "u": "https://www.greenedreherhs.org/learn-share/local-history/history-of-ledgedale/"
+      }
+     ]
+    },
+    {
+     "y": "August 1955",
+     "text": "Hurricane Diane. The Lackawaxen at Hawley crested at 24.8 feet, more than twice its 11-foot flood stage and the highest tropical-storm flood on record there.",
+     "src": [
+      {
+       "n": "National Weather Service",
+       "u": "https://www.weather.gov/media/marfc/Tropcal_Floods/DEL/Hawley.pdf"
+      }
+     ],
+     "lat": 41.47592,
+     "lon": -75.18212,
+     "d": 4200
+    },
+    {
+     "y": "1960s–70s",
+     "text": "The second-home boom brought the lake communities and far more boating.",
+     "src": [
+      {
+       "n": "Greene-Dreher Historical Society",
+       "u": "https://www.greenedreherhs.org/learn-share/local-history/history-of-ledgedale/"
+      }
+     ]
+    },
+    {
+     "y": "1966",
+     "text": "The Watres family gave 341 acres above the lake to create Lacawac Sanctuary. Lake Lacawac was named a National Natural Landmark in 1968.",
+     "src": [
+      {
+       "n": "Lacawac Sanctuary",
+       "u": "https://lacawac.org/history/"
+      }
+     ],
+     "lat": 41.379275,
+     "lon": -75.29157,
+     "d": 3000
+    },
+    {
+     "y": "1979",
+     "text": "Pike and Wayne counties and 14 townships formed the Lake Wallenpaupack Watershed Management District, the first of its kind in Pennsylvania.",
+     "src": [
+      {
+       "n": "Lake Wallenpaupack Watershed Management District",
+       "u": "https://wallenpaupackwatershed.org/about/lake-wallenpaupack/"
+      }
+     ]
+    },
+    {
+     "y": "2015–16",
+     "text": "PPL's power plants passed to Talen Energy in 2015. Talen sold the Wallenpaupack plant to a subsidiary of Brookfield Renewable, closing on April 1, 2016.",
+     "src": [
+      {
+       "n": "Wikipedia, citing The Morning Call",
+       "u": "https://en.wikipedia.org/wiki/Lake_Wallenpaupack"
+      },
+      {
+       "n": "Talen Energy release, SEC filing",
+       "u": "https://www.sec.gov/Archives/edgar/data/0001622536/000162253616000113/exhibit99104042016.htm"
+      }
+     ]
+    },
+    {
+     "y": "2026",
+     "text": "The lake turned 100, marked with a ceremony and a community celebration in July.",
+     "src": [
+      {
+       "n": "WVIA News, July 2026",
+       "u": "https://www.wvia.org/news/local/2026-07-26/lake-wallenpaupack-marks-100-years-of-generating-electric-economics-and-outdoor-recreation"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

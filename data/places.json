@@ -365,16 +365,6 @@
   "source": "https://tableagent.com/scranton/the-white-owl-steakhouse/"
  },
  {
-  "id": "ov-b36a8277-556",
-  "patch": {
-   "name": "Runaway Train Brewery",
-   "url": ""
-  },
-  "was": "Irving Cliff Brewery",
-  "why": "checked 2026-11-27: Irving Cliff Brewery is marked permanently closed; Runaway Train Brewery opened in the same 2 Chapel St building in Aug 2023 and held a brewfest there 2026-05-16.",
-  "source": "https://discovernepa.com/listing/runaway-train-brewery/"
- },
- {
   "id": "ov-401d7077-5ab",
   "patch": {
    "name": "IHOP",
@@ -420,5 +410,30 @@
   "was": "Watson Bros Deli",
   "why": "checked 2026-11-27: MapQuest lists 'Watson Brothers Country Store and Deli' on Route 6 (family-owned since 2007), likely the same business, but undated and at a differently written address.",
   "source": "https://startpage.mapquest.com/us/pennsylvania/watson-brothers-country-store-and-deli-377879986"
+ },
+ {
+  "id": "ov-b36a8277-556",
+  "drop": true,
+  "was": "Irving Cliff Brewery",
+  "why": "closed; Runaway Train Brewery at the same address is already on the map as ov-f69f9f1e-01e"
+ },
+ {
+  "id": "ov-ec9ff207-f5b",
+  "drop": true,
+  "was": "Hopping Eagle Brewing Company (Silk Mill)",
+  "why": "the brewery moved to Route 6; the Route 6 pin is ov-9ff88f25-004"
+ },
+ {
+  "id": "ov-ffdeead7-984",
+  "drop": true,
+  "was": "Jam Room Brewing Company (Newfoundland)",
+  "why": "sources list the brewery at 101 Creamery Rd, Greentown; that pin is ov-529e06f0-743"
+ },
+ {
+  "id": "ov-085a0232-087",
+  "drop": true,
+  "was": "Antler Ridge Winery (Waymart)",
+  "why": "checked 2026-11-27: the winery's own locations page lists only Ulster and Mertztown; no Waymart location",
+  "source": "https://www.antlerridgewinery.com/locations.php"
  }
 ]

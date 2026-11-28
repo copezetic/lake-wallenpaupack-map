@@ -1,7 +1,7 @@
 {
  "title": "Lake beer & wine trail",
  "updated": "2026-11-27",
- "intro": "Eight brewery and wine stops around Hawley, Tafton, Greentown and Honesdale. Pick a small outing, check current opening hours, and save the places you want to visit.",
+ "intro": "Nine brewery, wine and cider stops around Hawley, Tafton, Greentown, Honesdale and Mt. Cobb. Pick a small outing, check current opening hours, and save the places you want to visit.",
  "transport": "Arrange a designated driver or transport before tasting. These stops are spread across several towns; this is not a walking or boating route.",
  "regional": {
   "name": "Official Pocono Beverage Trail",
@@ -55,6 +55,12 @@
    "name": "Three Hammers Winery",
    "note": "The winery itself, on a 15-acre property with a pond on Welcome Lake Road north-east of Hawley. Walk-in tastings, wine by the glass and bottle, outdoor seating in good weather. No kitchen and no outside food; pets are not allowed, service dogs excepted. Its site lists it open daily.",
    "url": "https://threehammerswinery.com/winery-hawley"
+  },
+  {
+   "poi": "ov-01dad947-fbf",
+   "name": "Ritter's Farm Winery & Cidery",
+   "note": "Farm winery and cidery on Mt. Cobb Road, west of Hamlin, making red, white and fruit wines and hard ciders, with food on site. No pets on the winery grounds and no outside food or drink. Its site says it is closed for the season, with its products sold at The Shoppes at Ritter's Farm until Christmas.",
+   "url": "https://ritterswinery.com/"
   }
  ],
  "outings": [

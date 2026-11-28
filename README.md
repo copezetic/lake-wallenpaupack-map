@@ -20,8 +20,8 @@ business shown.
     python fetch_dem.py                      # terrain for the detailed map
     python fetch_far.py                      # coarse terrain for the faded country beyond it
     python fetch_osm.py                      # roads, water, places, piers
-    overturemaps download --bbox=-75.445,41.250,-75.020,41.605 -f geojsonseq -t building -o buildings.geojsonl
-    overturemaps download --bbox=-75.445,41.250,-75.020,41.605 -f geojsonseq -t place -o places_overture.geojsonl
+    overturemaps download --bbox=-75.500,41.250,-75.020,41.605 -f geojsonseq -t building -o buildings.geojsonl
+    overturemaps download --bbox=-75.500,41.250,-75.020,41.605 -f geojsonseq -t place -o places_overture.geojsonl
     python build.py                          # writes docs/lake-data.json and docs/tiles/
 
 Needs Python with `numpy`, `shapely`, `pillow` and `overturemaps`.

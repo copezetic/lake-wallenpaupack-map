@@ -435,5 +435,14 @@
   "was": "Antler Ridge Winery (Waymart)",
   "why": "checked 2026-11-27: the winery's own locations page lists only Ulster and Mertztown; no Waymart location",
   "source": "https://www.antlerridgewinery.com/locations.php"
+ },
+ {
+  "id": "ov-01dad947-fbf",
+  "patch": {
+   "name": "Ritter's Farm Winery & Cidery",
+   "url": "https://ritterswinery.com/",
+   "major": true
+  },
+  "why": "name and site from the winery's own website, checked 2026-11-27"
  }
 ]
